@@ -209,3 +209,85 @@ details.adv { background: var(--surface); border-radius: .9rem; padding: .25rem 
 .codice { display: inline-block; font-family: ui-monospace, "Roboto Mono", monospace; font-size: .85em; font-weight: 600; letter-spacing: .03em;
   background: var(--primary-c); color: var(--on-primary-c); border-radius: .4rem; padding: .05rem .4rem; }
 .codgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: .45rem .75rem; font-size: .9rem; }
+
+/* ===== Grafica moderna (1.6.0) — Material 3 Expressive ===== */
+.msr { font-family: "Material Symbols Rounded"; font-weight: normal; font-style: normal; font-size: 1.5rem; line-height: 1;
+  display: inline-block; width: 1em; height: 1em; overflow: hidden; white-space: nowrap; direction: ltr; letter-spacing: normal;
+  text-transform: none; word-wrap: normal; -webkit-font-feature-settings: "liga"; font-feature-settings: "liga";
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; vertical-align: middle; flex: none; }
+:root { --radius: 1.75rem; --shadow: 0 1px 2px rgb(0 0 0 / .06), 0 2px 8px rgb(0 0 0 / .05); }
+@media (prefers-color-scheme: dark) { :root { --shadow: none; } }
+
+/* Barra in alto: traslucida con sfocatura */
+.topbar { background: color-mix(in srgb, var(--surface) 82%, transparent); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); }
+.brand { font-size: 1.05rem; font-weight: 600; letter-spacing: .01em; }
+.brand img { width: 1.75rem; height: 1.75rem; border-radius: .55rem; }
+.btn-aa { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; min-width: 0; padding: 0; border-radius: 50%; background: var(--surface-c); color: var(--on-surface); }
+.btn-aa .msr { font-size: 1.35rem; }
+#netstate { display: inline-flex; align-items: center; gap: .25rem; }
+#netstate .msr { font-size: 1rem; }
+
+/* Titoli più espressivi */
+h1 { font-size: 1.85rem; font-weight: 500; letter-spacing: -.01em; margin: .5rem 0 .25rem; }
+h1.display { font-size: clamp(1.7rem, 4.5vw + .6rem, 2.6rem); font-weight: 600; line-height: 1.12; letter-spacing: -.02em; margin: .75rem 0 .35rem; }
+.hero-cerca { padding: .25rem .1rem .25rem; }
+.hint { font-size: .9rem; }
+
+/* Ricerca a pillola */
+.searchcard { padding: .4rem; border-radius: 100px; background: var(--surface-c); box-shadow: var(--shadow); }
+.searchcard .searchrow { align-items: center; gap: .25rem; }
+.searchcard .searchico { color: var(--muted); margin-left: .65rem; }
+.searchcard input { border: 0; background: transparent; min-height: 3rem; font-size: 1.05rem; padding-left: .35rem; }
+.searchcard input:focus { outline: none; }
+.searchcard:focus-within { outline: 2px solid var(--primary); outline-offset: 0; }
+.searchcard .btn { width: 3rem; height: 3rem; min-height: 0; padding: 0; border-radius: 50%; display: grid; place-items: center; background: var(--primary); color: var(--on-primary); }
+#catStats { padding: .35rem .9rem 0; }
+
+/* Schede e riquadri */
+.card { border-radius: var(--radius); box-shadow: var(--shadow); }
+.tile { --h: 150; border-radius: var(--radius); padding: 1.1rem 1rem 1rem; min-height: 8.25rem; gap: .2rem; box-shadow: var(--shadow);
+  background: linear-gradient(160deg, hsl(var(--h) 60% 96%) 0%, var(--surface-c) 65%); transition: transform .15s cubic-bezier(.2,.8,.2,1), box-shadow .15s, background .15s; }
+.tile-ico { width: 3rem; height: 3rem; border-radius: 1rem; margin-bottom: .55rem; background: hsl(var(--h) 75% 86%); color: hsl(var(--h) 70% 20%); }
+.tile-ico .msr { font-size: 1.6rem; font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; }
+.tile-t { font-size: 1.02rem; font-weight: 600; letter-spacing: -.005em; }
+@media (pointer: fine) { .tile:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgb(0 0 0 / .08); } }
+@media (prefers-color-scheme: dark) {
+  .tile { background: linear-gradient(160deg, hsl(var(--h) 35% 14%) 0%, var(--surface-c) 70%); }
+  .tile-ico { background: hsl(var(--h) 45% 26%); color: hsl(var(--h) 80% 88%); }
+}
+
+/* Pagine di dettaglio */
+.viewhead { gap: .6rem; margin-top: .4rem; }
+.back { display: grid; place-items: center; background: var(--surface-c); box-shadow: var(--shadow); }
+.back .msr { font-size: 1.4rem; }
+h2.sezione { color: var(--primary); letter-spacing: .08em; }
+.item { border-radius: 1.25rem; box-shadow: var(--shadow); }
+.kpi { border-radius: 1.25rem; }
+.kpi .v { font-size: 1.4rem; font-weight: 600; letter-spacing: -.01em; }
+.result .hero .kpi:nth-child(3) { background: var(--primary-c); }
+.result .hero .kpi:nth-child(3) .v, .result .hero .kpi:nth-child(3) .l { color: var(--on-primary-c); }
+.big { font-size: 1.45rem; font-weight: 600; letter-spacing: -.01em; }
+input, select { border-radius: 1rem; }
+.btn { letter-spacing: .01em; }
+details.card > summary { font-weight: 600; }
+
+/* Barra di navigazione Material 3 */
+.bottombar { background: color-mix(in srgb, var(--surface-c) 88%, transparent); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  border-top: 1px solid color-mix(in srgb, var(--outline) 45%, transparent); }
+.bottombar .ico { width: 4rem; height: 2rem; border-radius: 100px; transition: background .2s, width .2s; }
+.bottombar .ico .msr { font-size: 1.45rem; transition: font-variation-settings .2s; }
+.bottombar button.active .ico .msr { font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; color: var(--on-primary-c); }
+.bottombar button { font-size: .75rem; letter-spacing: .02em; }
+@media (min-width: 840px) and (min-height: 481px) { .bottombar { border-top: 0; border-right: 1px solid color-mix(in srgb, var(--outline) 45%, transparent); } }
+
+/* Transizioni tra pagine */
+@view-transition { navigation: auto; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .22s; animation-timing-function: cubic-bezier(.2,.8,.2,1); }
+@media (prefers-reduced-motion: reduce) { ::view-transition-old(root), ::view-transition-new(root) { animation: none; } .tile { transition: none; } }
+summary { flex-wrap: nowrap; }
+.kpi .v { font-size: 1.25rem; }
+#catStats { padding: .1rem 1.1rem .4rem; }
+#tab-reparti [data-list] > .card { border-radius: 100px; padding: .4rem; }
+#tab-reparti [data-list] > .card input { border: 0; background: transparent; }
+#tab-reparti [data-list] > .card:focus-within { outline: 2px solid var(--primary); }
+#tab-reparti [data-list] > .card input:focus { outline: none; }

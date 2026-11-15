@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.5.0';
+const VERSION = '1.6.0';
 const CHANGELOG = [
+  { v: '1.6.0', data: '15/11/2026', voci: ['Grafica modernizzata in stile Pixel (Material 3 Expressive): icone Material al posto delle emoji, colori diversi per ogni reparto e strumento.', 'Ricerca a pillola con titolo grande, barre traslucide, ombre leggere, angoli più morbidi.', 'Animazioni fluide tra le pagine.'] },
   { v: '1.5.0', data: '15/11/2026', voci: ['Nuovo reparto Raccordi, pressacavi e cassette: Gewiss, BTicino, Vimar, Bocchiotti/Inset, Cembre, BM Group, Palazzoli, Scame.', 'Cassette da parete e da incasso (muratura e cartongesso) con codici e misure principali.', 'Guida rapida per scegliere pressacavi, raccordi e cassette.'] },
   { v: '1.4.0', data: '15/11/2026', voci: ['Nuovo reparto Morsetti, capicorda e connessioni: Cembre, BM Group, Weidmüller, Cabur, con guida rapida (colori capicorda, vite/molla/push-in, puntali).', 'Triple gestionale anche per Cembre (CEM), BM Group (BMM) e Weidmüller (WEI).'] },
   { v: '1.3.2', data: '15/11/2026', voci: ['Codici gestionale Elettrocampania già inseriti nell\'app: niente da importare.'] },
@@ -102,6 +103,7 @@ function scarica(nome, contenuto, tipo) {
 
 /* ============ NAVIGAZIONE: 4 schede, ognuna con elenco → dettaglio ============ */
 let tabCorrente = 'cerca';
+const transizione = fn => (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) ? document.startViewTransition(fn) : fn();
 function mostraTab(nome) {
   tabCorrente = nome;
   $$('.tab').forEach(t => t.classList.toggle('active', t.id === 'tab-' + nome));
@@ -129,8 +131,8 @@ function apriTab(nome, push = true) {
   Report.log('tab', { nome });
   if (nome === 'cerca' && matchMedia('(pointer: fine)').matches) setTimeout(() => $('#q').focus(), 50);
 }
-$$('.bottombar button').forEach(b => b.addEventListener('click', () => apriTab(b.dataset.tab)));
-$$('[data-open]').forEach(t => t.addEventListener('click', () => apriVista('strumenti', t.dataset.open)));
+$$('.bottombar button').forEach(b => b.addEventListener('click', () => transizione(() => apriTab(b.dataset.tab))));
+$$('[data-open]').forEach(t => t.addEventListener('click', () => transizione(() => apriVista('strumenti', t.dataset.open))));
 document.addEventListener('click', e => { if (e.target.closest('.back')) history.back(); });
 // Tasto indietro di Android: chiude la vista aperta, poi torna alla scheda precedente
 history.replaceState({ tab: 'cerca' }, '');
@@ -403,7 +405,7 @@ function cerca(q) {
   const cod = Codici.cerca(q);
   const codHtml = Codici.dati && (cod.famiglie.length || cod.fornitori.length) && cod.fornitori.length < Codici.dati.fornitori.length ? `<h2 class="sezione">Codici gestionale</h2>${Codici.html(cod, 6)}` : '';
   const rep = RepartiUI.cerca(q).slice(0, 6);
-  const repHtml = codHtml + (rep.length ? `<h2 class="sezione">Nei reparti</h2>${rep.map(x => `<button class="item item-link" data-goto-rep="${x.reparto.id}"><div class="t">${esc(x.marca.marca)}${Codici.tripla(x.marca.marca) ? ` <span class="codice">${esc(Codici.tripla(x.marca.marca))}</span>` : ''} <span class="chip">${x.reparto.icona} ${esc(x.reparto.nome)}</span></div><div class="m">${esc(x.marca.modelli)}</div></button>`).join('')}` : '');
+  const repHtml = codHtml + (rep.length ? `<h2 class="sezione">Nei reparti</h2>${rep.map(x => `<button class="item item-link" data-goto-rep="${x.reparto.id}"><div class="t">${esc(x.marca.marca)}${Codici.tripla(x.marca.marca) ? ` <span class="codice">${esc(Codici.tripla(x.marca.marca))}</span>` : ''} <span class="chip">${esc(x.reparto.nome)}</span></div><div class="m">${esc(x.marca.modelli)}</div></button>`).join('')}` : '');
   if (!lista.length) { out.innerHTML = repHtml + (CATALOGO.length ? '<h2 class="sezione">Catalogo</h2><p class="hint">Nessun articolo nel catalogo.</p>' : '') + '<h2 class="sezione">Online</h2>' + web; return; }
   const etichetta = (k, v) => ({ curva: 'curva ' + String(v).toUpperCase(), tipo: 'tipo ' + String(v).toUpperCase(), poli: v + 'P', polin: String(v).toUpperCase(), IP: 'IP' + v }[k] ?? `${v} ${k}`);
   out.innerHTML = repHtml + '<h2 class="sezione">Catalogo</h2>' + lista.map(a => {

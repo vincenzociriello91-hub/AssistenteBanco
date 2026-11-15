@@ -4,7 +4,7 @@
 
 const REPARTI = [
   {
-    id: 'civile', nome: 'Elettrico civile', icona: '🔌',
+    id: 'civile', nome: 'Elettrico civile', icona: 'electrical_services', tinta: 215,
     marche: [
       { marca: 'BTicino', modelli: 'Living Now, Matix, Matix GO, Axolute' },
       { marca: 'Vimar', modelli: 'Plana, Arké, Eikon, Linea, Neve Up' },
@@ -21,7 +21,7 @@ const REPARTI = [
     </ul>`
   },
   {
-    id: 'illuminazione', nome: 'Illuminazione', icona: '💡',
+    id: 'illuminazione', nome: 'Illuminazione', icona: 'lightbulb', tinta: 45,
     marche: [
       { marca: 'Philips (Signify)', modelli: 'Lampade e apparecchi LED professionali, Philips Hue (smart), Interact (illuminazione connessa)' },
       { marca: 'Ledvance (Osram)', modelli: 'Lampadine LED, proiettori LED Performance, strisce LED, alimentatori e controlli' },
@@ -43,7 +43,7 @@ const REPARTI = [
     </ul>`
   },
   {
-    id: 'clima', nome: 'Condizionatori', icona: '❄️',
+    id: 'clima', nome: 'Condizionatori', icona: 'ac_unit', tinta: 190,
     marche: [
       { marca: 'Daikin', modelli: 'Ururu Sarara (FTXZ), Emura (FTXJ), Stylish (FTXA), Perfera (FTXM), Comfora (FTXP), Sensira (FTXF)', note: 'Esterne mono RXZ, RXJ, RXA, RXM, RXP; multisplit 2MXM–5MXM; pompe di calore Altherma' },
       { marca: 'Mitsubishi Electric', modelli: 'Kirigamine Style (MSZ-LN), Kirigamine Zen (MSZ-EF), Linea Plus (MSZ-AP), Linea Smart (MSZ-HR, MSZ-DW)', note: 'Esterne mono MUZ; multisplit MXZ; pompe di calore Ecodan' },
@@ -60,7 +60,7 @@ const REPARTI = [
     </ul>`
   },
   {
-    id: 'cavi', nome: 'Cavi', icona: '🧵',
+    id: 'cavi', nome: 'Cavi', icona: 'cable', tinta: 25,
     marche: [
       { marca: 'Prysmian', modelli: 'FS17, FG16OR16 (G16 TOP), FG17, FG16OM16 e gamma CPR completa' },
       { marca: 'La Triveneta Cavi (gruppo Nexans)', modelli: 'FS17, FG16OR16/M16 (gamma Klaro con marcatura colorata), FG18(O)M16, cavo solare NPE SUN H1Z2Z2-K' },
@@ -80,7 +80,7 @@ const REPARTI = [
     </ul>`
   },
   {
-    id: 'fotovoltaico', nome: 'Impianto fotovoltaico', icona: '☀️',
+    id: 'fotovoltaico', nome: 'Impianto fotovoltaico', icona: 'solar_power', tinta: 38,
     marche: [
       { marca: 'Huawei', modelli: 'Inverter SUN2000 (monofase ibrido L1 2–6 kW, trifase), batterie LUNA2000' },
       { marca: 'SMA', modelli: 'Sunny Boy 3.0–6.0 (monofase), Sunny Boy Smart Energy (ibrido), Sunny Tripower (trifase)' },
@@ -101,7 +101,7 @@ const REPARTI = [
     </ul>`
   },
   {
-    id: 'domotica', nome: 'Domotica', icona: '🏠',
+    id: 'domotica', nome: 'Domotica', icona: 'home_iot_device', tinta: 265,
     marche: [
       { marca: 'BTicino', modelli: 'Living Now with Netatmo (radio), MyHome (filare)' },
       { marca: 'Vimar', modelli: 'View Wireless (radio), By-me Plus (filare)' },
@@ -117,7 +117,7 @@ const REPARTI = [
     </ul>`
   },
   {
-    id: 'tubi', nome: 'Corrugati e tubi RK', icona: '🧰',
+    id: 'tubi', nome: 'Corrugati e tubi RK', icona: 'linear_scale', tinta: 150,
     marche: [
       { marca: 'Gewiss', modelli: 'Tubi rigidi RK9 (leggero), RK15 (medio), RKB (pesante), RK9 HF e RKHF (halogen free)', note: 'Diametri 16–63 mm, verghe da 2 e 3 m' },
       { marca: 'Tubifor', modelli: 'Corrugati PVC classe 3321 (con o senza tirafilo, vari colori), corrugati ICTA in polipropilene 3422 halogen free, tubi precablati, tubi rigidi PVC, cavidotti interrati, guaine spiralate, canali portacavi', note: 'Codice corrugato es. TF01032AT025 = Ø32, azzurro (A), con tirafilo (T), rotolo 25 m; TF01025NT050 = Ø25 nero 50 m' },
@@ -135,7 +135,7 @@ const REPARTI = [
     </ul>`
   },
   {
-    id: 'morsetti', nome: 'Morsetti, capicorda e connessioni', icona: '🔩',
+    id: 'morsetti', nome: 'Morsetti, capicorda e connessioni', icona: 'power', tinta: 0,
     marche: [
       { marca: 'Cembre', modelli: 'Capicorda preisolati ANE (PA 6.6), gamme F (PVC) e P (PC); non isolati AM, AP, AU, DIN 46234; giunti LM e LP; tubetti terminali PK; morsetti DIN a vite e push-in; pressacavi; siglatura', note: 'Utensili: pinze Crimpstar (es. HN1 0,25–10 mm²), oleodinamici manuali e a batteria da 15 a 130 kN (es. B500 63 kN)' },
       { marca: 'BM Group (gruppo Beta)', modelli: 'Capicorda ad aggraffatura preisolati e non isolati, capicorda e giunti a compressione, morsettiere, pressacavi, raccordi, nastri isolanti', note: 'Pinze per aggraffatura e presse idrauliche manuali ed elettriche; BM Work Line (utensili e sicurezza)' },
@@ -152,7 +152,7 @@ const REPARTI = [
     </ul>`
   },
   {
-    id: 'raccordi', nome: 'Raccordi, pressacavi e cassette', icona: '🧩',
+    id: 'raccordi', nome: 'Raccordi, pressacavi e cassette', icona: 'settings_input_component', tinta: 175,
     marche: [
       { marca: 'Gewiss — raccordi e pressacavi', modelli: 'Serie RK: manicotti, curve, raccordi tubo-scatola Morbidx IP67 (DX43216–DX43250), tubo-guaina IP65 (DX433..), accessorio universale tubo-tubo; guaine DF con raccordi IP54 diritti o girevoli (passo GAS/PG, DX54..); GW FIT: pressacavi metrici e PG IP68 (GW52..), pressacavi con alloggiamento tubo rigido IP66, raccordi tubo/cassetta IP66 e IP44, passacavi IP55; collari e fissaggi (DX51..)' },
       { marca: 'Gewiss — cassette', modelli: 'Parete: 44 CE in tecnopolimero IP44/IP55/IP56 (es. GW44024 100×100×70 IP55, GW44206 150×110×70 IP56, GW44209 300×220×120), GW Connect in metallo. Incasso: serie 48 (GW48001 92×92×45, GW48002 118×96×50, fino a 479×154×70), scatole 24 SC per serie civili (GW24203 3 moduli, GW24403/24404/24406), Green Wall per cartongesso (scatole, cassette 48 PTDIN con guida DIN, cassette prese interbloccate 44IB/67IB), torrette a pavimento' },
@@ -174,7 +174,7 @@ const REPARTI = [
     </ul>`
   },
   {
-    id: 'citofonia', nome: 'Citofonia e videosorveglianza', icona: '📹',
+    id: 'citofonia', nome: 'Citofonia e videosorveglianza', icona: 'videocam', tinta: 235,
     marche: [
       { marca: 'Urmet', modelli: 'Sistemi 2Voice, IPerCom; monitor Aiko, Folio, Signo; pulsantiere Sinthesi, Sinthesi S2, Sinthesi Steel, Alpha', note: 'Aiko con Nea Expì, Folio con Nea Kàdra, Signo con Nea Flexa' },
       { marca: 'Comelit', modelli: 'Sistemi Simplebus 1, Simplebus 2 (2 fili), ViP (IP); monitor Maxi 7", Icona 4,3", Mini, Mini Handsfree, Mini Wi-Fi; pulsantiere Ultra, 3One6, Switch, Vandalcom', note: 'Mini Wi-Fi sostituisce un vecchio monitor Simplebus 2 senza modifiche' },
@@ -212,14 +212,14 @@ const RepartiUI = {
       const trovate = q ? tutte.filter(m => this.n(`${m.marca} ${m.modelli} ${m.note || ''}`).includes(q)) : [];
       if (q && !trovate.length && !this.n(r.nome).includes(q)) return '';
       const sotto = q && trovate.length ? trovate.map(m => m.marca).join(', ') : `${tutte.length} marche`;
-      return `<button class="tile" data-rep="${r.id}"><span class="tile-ico">${r.icona}</span><span class="tile-t">${this.esc(r.nome)}</span><span class="tile-s">${this.esc(sotto)}</span></button>`;
+      return `<button class="tile" data-rep="${r.id}" style="--h:${r.tinta}"><span class="tile-ico"><span class="msr" aria-hidden="true">${r.icona}</span></span><span class="tile-t">${this.esc(r.nome)}</span><span class="tile-s">${this.esc(sotto)}</span></button>`;
     }).join('');
     box.innerHTML = tiles || '<p class="hint">Nessun reparto trovato.</p>';
   },
   apri(id) {
     const r = REPARTI.find(x => x.id === id); if (!r) return;
     this.aperto = id;
-    document.getElementById('repTitolo').textContent = `${r.icona} ${r.nome}`;
+    document.getElementById('repTitolo').textContent = r.nome;
     const tutte = this.marche(r);
     const tri = m => (typeof Codici !== 'undefined' && Codici.tripla(m.marca)) ? ` <span class="codice">${this.esc(Codici.tripla(m.marca))}</span>` : '';
     const lista = tutte.length ? tutte.map(m => `<div class="item"><div class="t">${this.esc(m.marca)}${tri(m)}${m.mia != null ? ` <span class="chip">aggiunta da te</span> <button class="btn-mini" data-del="${r.id}:${m.mia}" aria-label="Elimina ${this.esc(m.marca)}">✕</button>` : ''}</div>${m.modelli ? `<div class="m">${this.esc(m.modelli)}</div>` : ''}${m.note ? `<div class="m">${this.esc(m.note)}</div>` : ''}</div>`).join('')
