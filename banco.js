@@ -344,6 +344,32 @@ const Banco = (() => {
   }
 
 
+
+  /* ---------- Foto della lista (scritta a mano, stampata o computo) → righe del preventivo ---------- */
+  let fotoLista = [], righeLista = [];
+  function disegnaLista() {
+    $('#listaThumbs').innerHTML = fotoLista.map((d, i) => `<div class="thumb"><img src="${d}" alt="Pagina ${i + 1}"><button data-lista-del="${i}" aria-label="Togli foto"><span class="msr" aria-hidden="true">close</span></button></div>`).join('');
+    $('#btnLeggiLista').disabled = !fotoLista.length;
+    $('#listaConta').textContent = fotoLista.length ? `${fotoLista.length} di 4 pagine.` : 'Fotografa la lista del cliente: foglio scritto a mano, computo dell\'elettricista o elenco stampato. Fino a 4 pagine.';
+    $('#listaRighe').innerHTML = righeLista.length ? righeLista.map((x, i) => `<label class="asc-riga"><input type="checkbox" data-lista="${i}" ${x.ok ? 'checked' : ''}><span>${esc(x.desc)}${x.cod ? ` <span class="small">cod. ${esc(x.cod)}</span>` : ''}</span><strong>${x.qta ? qtaTxt(x.qta) + ' ' + esc(x.um) : '? ' + esc(x.um)}</strong></label>`).join('') : '';
+    $('#listaAggiungi').hidden = !righeLista.length;
+  }
+  async function leggiLista() {
+    if (!geminiPronto()) { $('#listaStato').textContent = 'Per leggere la lista serve la connessione a internet.'; return; }
+    $('#listaStato').textContent = 'Leggo la lista…'; const t0 = Date.now();
+    try {
+      const r = await chiediGemini('Sei un banconista di materiale elettrico in Italia. Le foto sono pagine di una lista di materiale (scritta a mano, stampata o computo metrico di un elettricista). Leggi ogni riga e trasformala in un articolo. Correggi le abbreviazioni da banco (es. "fg16 3x2,5" = cavo FG16OR16 3G2,5; "503" = scatola da incasso 503; "corr 20" = corrugato Ø20). Se la quantità manca metti 0. Rispondi solo con JSON: [{"desc":"descrizione tecnica breve in italiano","qta":numero,"um":"pz|m|conf","cod":"codice articolo se scritto, altrimenti vuoto"}].', fotoLista.map(d => d.split(',')[1]));
+      const lista = JSON.parse(r.match(/\[[\s\S]*\]/)[0]);
+      righeLista = lista.filter(x => x && x.desc).map(x => ({ desc: String(x.desc), qta: +x.qta || 0, um: ['pz', 'm', 'conf'].includes(x.um) ? x.um : 'pz', cod: String(x.cod || ''), ok: true }));
+      $('#listaStato').textContent = righeLista.length ? `Ho letto ${righeLista.length} righe: togli la spunta a quelle sbagliate.` : 'Non ho trovato materiali nella foto. Riprova con più luce, inquadrando tutto il foglio.';
+      Report.log('lista-foto', { ok: true, pagine: fotoLista.length, righe: righeLista.length, ms: Date.now() - t0 });
+    } catch (e) {
+      $('#listaStato').textContent = 'Non sono riuscito a leggere la lista: ' + (e.message || e);
+      Report.log('lista-foto', { ok: false, msg: String(e.message || e) });
+    }
+    disegnaLista();
+  }
+
   /* ---------- Assistente (capisce le domande libere, tramite il ricevitore con Gemini) ---------- */
   const cacheAss = new Map(); let tAss, attivo = true;
   const testo = h => String(h || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -392,6 +418,7 @@ const Banco = (() => {
   /* ---------- Storico e preferiti ---------- */
   function registraRicerca(q) {
     q = String(q || '').trim(); if (q.length < 3) return;
+    if (typeof Report !== 'undefined') Report.log('domanda', { testo: q.slice(0, 120) });
     const st = LS.get('ab_storico', {});
     const k = q.toLowerCase();
     st[k] = { q, n: (st[k]?.n || 0) + 1, t: Date.now() };
@@ -475,10 +502,17 @@ const Banco = (() => {
     });
     $('#snackbar button').addEventListener('click', () => { if (annulla) annulla(); annulla = null; $('#snackbar').hidden = true; });
     // Pannelli: uno alla volta
-    const apri = id => ['ascoltoBox', 'fotoBox', 'kitBox'].forEach(x => { $('#' + x).hidden = x === id ? !$('#' + x).hidden : true; });
-    $('#btnAscolto').addEventListener('click', () => { if (ascoltando) fermaAscolto(); else { ['fotoBox', 'kitBox'].forEach(x => { $('#' + x).hidden = true; }); avviaAscolto(); } });
+    const apri = id => ['ascoltoBox', 'fotoBox', 'kitBox', 'listaBox'].forEach(x => { $('#' + x).hidden = x === id ? !$('#' + x).hidden : true; });
+    $('#btnAscolto').addEventListener('click', () => { if (ascoltando) fermaAscolto(); else { ['fotoBox', 'kitBox', 'listaBox'].forEach(x => { $('#' + x).hidden = true; }); avviaAscolto(); } });
     $('#btnFoto').addEventListener('click', () => apri('fotoBox'));
     $('#btnKit').addEventListener('click', () => apri('kitBox'));
+    $('#btnLista').addEventListener('click', () => apri('listaBox'));
+    $('#listaInput').addEventListener('change', async e => { for (const file of [...e.target.files].slice(0, 4 - fotoLista.length)) { try { fotoLista.push(await riduci(file)); } catch {} } e.target.value = ''; disegnaLista(); });
+    $('#listaThumbs').addEventListener('click', e => { const b = e.target.closest('[data-lista-del]'); if (b) { fotoLista.splice(+b.dataset.listaDel, 1); disegnaLista(); } });
+    $('#btnLeggiLista').addEventListener('click', leggiLista);
+    $('#listaRighe').addEventListener('change', e => { const i = e.target.dataset.lista; if (i != null) righeLista[+i].ok = e.target.checked; });
+    $('#listaAggiungi').addEventListener('click', () => { const sel = righeLista.filter(x => x.ok); aggiungi(sel, 'lista-foto'); righeLista = []; fotoLista = []; $('#listaStato').textContent = ''; disegnaLista(); $('#listaBox').hidden = true; snack(`${sel.length} righe aggiunte al preventivo`, null); });
+    disegnaLista();
     $('#ascoltoLista').addEventListener('change', e => { const i = e.target.dataset.asc; if (i != null) trovati[+i].ok = e.target.checked; });
     $('#ascoltoAggiungi').addEventListener('click', () => { const sel = trovati.filter(x => x.ok); aggiungi(sel, 'ascolto'); trovati = []; disegnaAscolto(); $('#ascoltoBox').hidden = true; snack(`${sel.length} materiali aggiunti al preventivo`, null); });
     // Kit
@@ -522,7 +556,7 @@ const Banco = (() => {
     disegna();
   }
 
-  return { init, assistente, estrai, aggiungi, kitRighe, suggerimenti, registraRicerca, homeHtml, prefHtml, KIT, get preventivo() { return prev; } };
+  return { init, assistente, estrai, aggiungi, snack, kitRighe, suggerimenti, registraRicerca, homeHtml, prefHtml, KIT, get preventivo() { return prev; } };
 })();
 
 Banco.init();

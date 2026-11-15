@@ -252,7 +252,7 @@ const Domande = (() => {
     if (!q || q.trim().length < 3) return '';
     const d = leggi(q);
     const t = d.t;
-    let r = rGlossario(d);
+    let r = (typeof Guida !== 'undefined' && Guida.rispondi(q)) || rGlossario(d);
     if (!r && /pressacav|passacav/.test(t)) r = rPressacavo(d);
     if (!r && /capocord|capicord|terminal[ei] ad occhiello/.test(t)) r = rCapocorda(d);
     if (!r && /aspirator|ventilator|ventol|estrattor/.test(t) && !/soffitto|piantana|colonna/.test(t)) r = rAspiratore(d);
@@ -262,6 +262,11 @@ const Domande = (() => {
     if (!r && /contatore/.test(t)) r = rContatore(d);
     if (!r && /lumen|quanta luce|quante lampad/.test(t)) r = rLumen(d);
     if (!r && /quant\w*\s+(amp|a\b|kw|kilowatt|watt|w\b)/.test(t)) r = rConv(d);
+    // Più apparecchi nella stessa domanda (es. forno e induzione): una linea per ciascuno
+    if (!r && d.kW == null && d.A == null && /magnetotermic|interruttor|salvavit|differenzial|\bcav[oi]\b|\blinea\b|quadro/.test(t)) {
+      const tutti = CARICHI.filter(c => c[0].test(t) && !['luce', 'prese'].includes(c[1]));
+      if (tutti.length > 1) r = `<p class="hint">Sono ${tutti.length} apparecchi: ognuno va su una linea sua, con il suo interruttore.</p>` + tutti.map(c => rCavo({ ...d, t: c[3] })).filter(Boolean).join('');
+    }
     if (!r && /magnetotermic|interruttore (automatic|per)|\bautomatico\b|salvavit|differenzial/.test(t) && (d.kW != null || d.A != null || carico(t))) r = rInterruttore(d);
     if (!r && /\bcav[oi]\b|\bfil[oi]\b|sezione|\blinea\b/.test(t) && (d.kW != null || d.A != null || carico(t))) r = rCavo(d);
     if (!r && (d.kW != null || d.A != null) && carico(t)) r = rCavo(d);

@@ -10,6 +10,9 @@ App web installabile (PWA) per il banco di un grossista di materiale elettrico. 
 - **Equivalenze tra marche**: automatiche, in base alle caratteristiche lette dalla descrizione (A, poli, curva, mA, kA, tipo, mm²). Con la colonna `gruppo` si forzano a mano.
 - **Scanner** di codici a barre con la fotocamera.
 - **Strumenti**: conversioni kW/A/CV/kVA, contatore, tubi e corrugati, illuminazione, promemoria tecnico.
+- **Assistente**: capisce le domande in parole normali (anche dei privati) tramite il ricevitore con Gemini; risposte calcolate in locale se offline.
+- **Preventivo**: Ascolto (solo materiali, mai l'audio), kit pronti, foto del pezzo, **foto della lista** del cliente, condivisione e stampa.
+- **Guide**: schemi di collegamento con disegno, punti per stanza CEI 64-8 (livelli 1-3), lampadine (attacchi, lumen, colore), equivalenze serie civili Vimar/BTicino/Gewiss.
 - Novità e aggiornamento dall'app, rapporti cifrati.
 
 ## Installazione
@@ -20,6 +23,14 @@ App web installabile (PWA) per il banco di un grossista di materiale elettrico. 
 I calcoli sono indicativi (IEC 60364-5-52, CEI-UNEL 35024/1, CEI 64-8). Il dimensionamento definitivo spetta all'installatore o al progettista.
 
 ## Novità
+### 1.14.0 — 15/11/2026
+- Foto lista: dalla foto del foglio o del computo alle righe del preventivo.
+- Schemi di collegamento, punti per stanza (CEI 64-8), guida lampadine, equivalenze serie civili.
+- Più apparecchi nella stessa domanda: una linea per ciascuno.
+
+### 1.13.x — 15/11/2026
+- Assistente con Gemini lato server; foto del pezzo e Ascolto senza chiave nell'app; pulsante Aggiorna sistemato.
+
 ### 1.12.0 — 15/11/2026
 - Scheda Preventivo: righe con quantità, condivisione, stampa/PDF con logo, annulla.
 - Ascolto (riconoscimento vocale del browser): estrae solo materiali e quantità, l'audio non viene salvato.

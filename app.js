@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.13.3';
+const VERSION = '1.14.0';
 const CHANGELOG = [
+  { v: '1.14.0', data: '15/11/2026', voci: ['Foto lista: fotografi il foglio del cliente o il computo dell\'elettricista e le righe vanno nel preventivo.', 'Schemi di collegamento con disegno: interruttore, deviatori, invertitore, relè passo-passo.', 'Punti per stanza secondo la CEI 64-8 (livelli 1, 2, 3), con aggiunta al preventivo.', 'Lampadine: attacchi, watt e lumen, colore della luce, neon e faretti.', 'Equivalenze tra serie civili Vimar, BTicino e Gewiss.', 'Più apparecchi nella stessa domanda (es. forno e induzione): una linea per ciascuno.'] },
   { v: '1.13.3', data: '15/11/2026', voci: ['Il pulsante Aggiorna funziona di nuovo (prima ricaricava la versione vecchia).'] },
   { v: '1.13.2', data: '15/11/2026', voci: ['Pressacavi: l\'elenco per marca ora si legge bene sul telefono (prima il nome della marca andava a capo lettera per lettera).', 'Assistente più veloce; se non risponde entro 30 secondi smette di aspettare.'] },
   { v: '1.13.1', data: '15/11/2026', voci: ['Assistente acceso per tutti.', 'Foto del pezzo e Ascolto funzionano senza inserire nessuna chiave.'] },
@@ -559,6 +560,7 @@ $('#btnClearCat').addEventListener('click', async () => {
 });
 
 RepartiUI.init((t, d) => Report.log(t, d), apriVista);
+if (typeof Guida !== 'undefined') Guida.init((t, d) => Report.log(t, d));
 
 /* ============ SCANNER ============ */
 let stream = null, scanAttivo = false, zxReader = null;

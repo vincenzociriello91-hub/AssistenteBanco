@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=ac_unit,add,add_a_photo,arrow_back,auto_awesome,barcode_scanner,bolt,cable,calculate,check_circle,checklist,close,delete,electric_meter,electrical_services,error,format_size,forum,garage,handyman,home_iot_device,info,inventory_2,lightbulb,linear_scale,mic,mode_fan,photo_camera,power,print,receipt_long,remove,search,security,sell,settings_input_component,share,shield,solar_power,star,stop_circle,storefront,sync_alt,table_rows,videocam,visibility,wifi_off&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=ac_unit,account_tree,add,add_a_photo,arrow_back,auto_awesome,barcode_scanner,bolt,cable,calculate,check_circle,checklist,close,compare_arrows,delete,document_scanner,electric_meter,electrical_services,error,format_size,forum,garage,handyman,home_iot_device,info,inventory_2,lightbulb,linear_scale,meeting_room,mic,mode_fan,photo_camera,power,print,receipt_long,remove,search,security,sell,settings_input_component,share,shield,solar_power,star,stop_circle,storefront,sync_alt,table_rows,videocam,visibility,wifi_off&display=block">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -74,6 +74,7 @@
     <div class="azioni-lato">
       <button id="btnKit" class="btn tonal big"><span class="msr" aria-hidden="true">inventory_2</span> Kit pronti</button>
       <button id="btnFoto" class="btn tonal big"><span class="msr" aria-hidden="true">photo_camera</span> Foto pezzo</button>
+      <button id="btnLista" class="btn tonal big"><span class="msr" aria-hidden="true">document_scanner</span> Foto lista</button>
     </div>
   </div>
   <p class="small">Prima di premere Ascolto dì al cliente: <em>«mi segno il materiale, va bene?»</em>. L'audio non viene salvato: restano solo materiali e quantità.</p>
@@ -91,6 +92,17 @@
     </div>
     <div id="kitAnteprima"></div>
     <button id="kitAggiungi" class="btn filled">Aggiungi al preventivo</button>
+  </div>
+  <div id="listaBox" class="card" hidden>
+    <p id="listaConta" class="small"></p>
+    <div id="listaThumbs" class="thumbs"></div>
+    <div class="row">
+      <label class="btn tonal file-btn"><span class="msr" aria-hidden="true">add_a_photo</span> Aggiungi pagina<input id="listaInput" type="file" accept="image/*" capture="environment" multiple hidden></label>
+      <button id="btnLeggiLista" class="btn filled" disabled>Leggi lista</button>
+    </div>
+    <p id="listaStato" class="hint" aria-live="polite"></p>
+    <div id="listaRighe"></div>
+    <button id="listaAggiungi" class="btn filled" hidden>Aggiungi al preventivo</button>
   </div>
   <div id="fotoBox" class="card" hidden>
     <p id="fotoConta" class="small"></p>
@@ -133,6 +145,10 @@
       <button class="tile" data-open="luce" style="--h:45"><span class="tile-ico"><span class="msr" aria-hidden="true">lightbulb</span></span><span class="tile-t">Illuminazione</span><span class="tile-s">Quanta luce serve</span></button>
       <button class="tile" data-open="conv" style="--h:265"><span class="tile-ico"><span class="msr" aria-hidden="true">sync_alt</span></span><span class="tile-t">Conversioni</span><span class="tile-s">Da kW ad ampere e viceversa</span></button>
       <button class="tile" data-open="contatore" style="--h:25"><span class="tile-ico"><span class="msr" aria-hidden="true">electric_meter</span></span><span class="tile-t">Contatore</span><span class="tile-s">Quando salta la corrente</span></button>
+      <button class="tile" data-open="schemi" style="--h:20"><span class="tile-ico"><span class="msr" aria-hidden="true">account_tree</span></span><span class="tile-t">Schemi</span><span class="tile-s">Come si collega deviatore, invertitore, relè</span></button>
+      <button class="tile" data-open="stanze" style="--h:95"><span class="tile-ico"><span class="msr" aria-hidden="true">meeting_room</span></span><span class="tile-t">Punti per stanza</span><span class="tile-s">Quante prese e luci a norma</span></button>
+      <button class="tile" data-open="lampade" style="--h:55"><span class="tile-ico"><span class="msr" aria-hidden="true">lightbulb</span></span><span class="tile-t">Lampadine</span><span class="tile-s">Attacchi, watt e lumen, colore</span></button>
+      <button class="tile" data-open="serie" style="--h:240"><span class="tile-ico"><span class="msr" aria-hidden="true">compare_arrows</span></span><span class="tile-t">Equivalenze serie</span><span class="tile-s">Stesso frutto in un'altra marca</span></button>
       <button class="tile" data-open="codici" style="--h:330"><span class="tile-ico"><span class="msr" aria-hidden="true">sell</span></span><span class="tile-t">Codici gestionale</span><span class="tile-s">Triple fornitori e famiglie</span></button>
       <button class="tile" data-open="promemoria" style="--h:215"><span class="tile-ico"><span class="msr" aria-hidden="true">checklist</span></span><span class="tile-t">Parole semplici</span><span class="tile-s">Cosa vuol dire salvavita, mm², IP…</span></button>
     </div>
@@ -269,6 +285,26 @@
     </div>
   </div>
 
+  <div class="view" data-view="schemi" hidden>
+    <div class="viewhead"><button class="back" aria-label="Indietro"><span class="msr" aria-hidden="true">arrow_back</span></button><h1>Schemi di collegamento</h1></div>
+    <div id="guidaSchemi"></div>
+  </div>
+
+  <div class="view" data-view="stanze" hidden>
+    <div class="viewhead"><button class="back" aria-label="Indietro"><span class="msr" aria-hidden="true">arrow_back</span></button><h1>Punti per stanza</h1></div>
+    <div id="guidaStanze"></div>
+  </div>
+
+  <div class="view" data-view="lampade" hidden>
+    <div class="viewhead"><button class="back" aria-label="Indietro"><span class="msr" aria-hidden="true">arrow_back</span></button><h1>Lampadine</h1></div>
+    <div id="guidaLampade"></div>
+  </div>
+
+  <div class="view" data-view="serie" hidden>
+    <div class="viewhead"><button class="back" aria-label="Indietro"><span class="msr" aria-hidden="true">arrow_back</span></button><h1>Equivalenze serie civili</h1></div>
+    <div id="guidaSerie"></div>
+  </div>
+
   <div class="view" data-view="promemoria" hidden>
     <div class="viewhead"><button class="back" aria-label="Indietro"><span class="msr" aria-hidden="true">arrow_back</span></button><h1>Promemoria e parole semplici</h1></div>
     <div class="card"><div id="promemoria"></div></div>
@@ -313,7 +349,7 @@
   <details class="card"><summary>Schermo rilevato</summary><p class="small" id="schermoInfo"></p></details>
   <details class="card" open>
     <summary>Rapporti</summary>
-    <p class="small">L'app registra cosa succede (errori compresi) in rapporti cifrati: solo lo sviluppatore può leggerli. Non contengono il tuo listino.</p>
+    <p class="small">L'app registra cosa succede (errori compresi) in rapporti cifrati: solo lo sviluppatore può leggerli. Contengono anche le domande scritte nella ricerca, per migliorare le risposte. Non contengono il tuo listino né l'audio.</p>
     <div class="row"><button id="btnInviaOra" class="btn filled">Invia ora</button><button id="btnReport" class="btn">Salva rapporto</button><span id="repInfo" class="small"></span></div>
   </details>
   <p class="small disclaimer">I calcoli sono indicativi (IEC 60364-5-52, CEI-UNEL 35024/1, CEI 64-8) e servono per orientare il cliente. Il dimensionamento definitivo spetta all'installatore o al progettista.</p>
@@ -335,6 +371,7 @@
 <script src="schede.js"></script>
 <script src="codici.js"></script>
 <script src="domande.js"></script>
+<script src="guida.js"></script>
 <script src="app.js"></script>
 <script src="banco.js"></script>
 </body>

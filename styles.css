@@ -410,3 +410,16 @@ html.banco .chip-btn, html.banco .btn { min-height: 3.2rem; }
 .lm-art { overflow-wrap: anywhere; }
 .risp, .risp-corpo { min-width: 0; overflow-wrap: anywhere; }
 .tab-risp td:first-child { min-width: 7em; }
+
+/* 1.14.0 guide: schemi, tabelle larghe */
+.schema { width: 100%; max-width: 520px; height: auto; display: block; margin: .6rem auto; color: var(--on-surface, currentColor); }
+.schema text { font-family: inherit; }
+.schema-card summary { font-weight: 600; }
+.legenda { line-height: 1.6; }
+.tab-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tab-serie td, .tab-serie th { white-space: nowrap; text-align: left !important; }
+.tab-serie td:first-child { min-width: 6.5em; white-space: normal; }
+.testo-a-capo { white-space: normal !important; text-align: left !important; }
+/* I contenuti portati in vista non finiscono sotto la barra in basso */
+html { scroll-padding-bottom: 6.5rem; scroll-padding-top: 1rem; }
+@media (min-width: 900px) { html { scroll-padding-bottom: 1rem; } }
