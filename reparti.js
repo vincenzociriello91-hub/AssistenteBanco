@@ -8,8 +8,9 @@ const REPARTI = [
     marche: [
       { marca: 'BTicino', modelli: 'Living Now, Matix, Matix GO, Axolute' },
       { marca: 'Vimar', modelli: 'Plana, Arké, Eikon, Linea, Neve Up' },
-      { marca: 'Gewiss', modelli: 'Chorus' },
+      { marca: 'Gewiss', modelli: 'Chorus (bianco lucido, nero satinato, titanio), ChoruSmart (bianco, nero, titanio, beige naturale satinato)' },
       { marca: 'Schneider Electric', modelli: 'Unica' },
+      { marca: 'AVE', modelli: 'Sistema 44: Domus (bianco lucido, anche antibatterica), Whitek (bianco opaco), Tekla (grigio opaco), Class (avorio), Life (nero lucido), Allumia (grigio tech); Smart 44 (connessa)', note: 'Placche Zama 44, Vera 44, Young 44, Personal 44, New Style e England Style; supporto unico per tutte le serie 44' },
       { marca: 'Master', modelli: 'Modo' },
       { marca: 'Simon Urmet', modelli: 'Nea (estetiche Kàdra, Expì, Flexa)' }
     ],
@@ -50,7 +51,7 @@ const REPARTI = [
       { marca: 'Samsung', modelli: 'WindFree Elite S2, WindFree Comfort S2, Luzon S2, AR30 Malibu', note: 'Pompe di calore EHS (Mono, Split, TDM Plus, ClimateHub)' },
       { marca: 'Haier', modelli: 'Expert, Flexis / Flexis Plus, Pearl Premium, Revive Plus, Serene', note: 'Multisplit fino a 5 interne; app hOn' },
       { marca: 'Clivet', modelli: 'Cervino (monosplit R290)', note: 'Pompe di calore Sphera EVO 2.0, Edge / Edge Pro, Hydro-Split' },
-      { marca: 'Aermec', modelli: 'Climatizzatori split', note: 'VRF MVA, pompe di calore, ventilconvettori' }
+      { marca: 'Aermec', modelli: 'SLG (monosplit R32, interne SLG200W–SLG700W), SE (monosplit), SPG', note: 'Multisplit MLG (es. MLG520, MLG630) e MPG; sistemi VRF, pompe di calore, ventilconvettori' }
     ],
     guida: `<ul class="ref">
       <li>Interna ed esterna vanno abbinate come dice il costruttore (es. Daikin Stylish con RXA, Emura con RXJ, Perfera con RXM).</li>
@@ -65,7 +66,9 @@ const REPARTI = [
       { marca: 'Prysmian', modelli: 'FS17, FG16OR16 (G16 TOP), FG17, FG16OM16 e gamma CPR completa' },
       { marca: 'La Triveneta Cavi (gruppo Nexans)', modelli: 'FS17, FG16OR16/M16 (gamma Klaro con marcatura colorata), FG18(O)M16, cavo solare NPE SUN H1Z2Z2-K' },
       { marca: 'Baldassari Cavi', modelli: 'Cavi BT per impianti civili e industriali (FS17, FG17, FG16OR16)' },
-      { marca: 'Icel', modelli: 'Cavi BT per impianti civili e industriali (FS17, FG17, FG16OR16)' }
+      { marca: 'Icel', modelli: 'Cavi BT per impianti civili e industriali (FS17, FG17, FG16OR16)' },
+      { marca: 'Beta Cavi', modelli: 'Cavi dati UTP, cavi RS485, cavi per antifurto e segnale' },
+      { marca: 'ITC (Industria Tecnica Cavi)', modelli: 'Cavi elettrici (produttore italiano, socio AICE)' }
     ],
     guida: `<ul class="ref">
       <li><strong>FS17</strong> 450/750 V, PVC, unipolare: dentro tubi e canaline (ha sostituito N07V-K).</li>
@@ -183,6 +186,100 @@ const REPARTI = [
     guida: `<ul class="ref">
       <li>Monitor e pulsantiera devono essere dello stesso sistema.</li>
       <li>Telecamere Turbo HD su DVR, telecamere IP su NVR: non si mischiano, salvo DVR ibridi.</li>
+    </ul>`
+  },
+  {
+    id: 'protezioni', nome: 'Protezioni e quadri', icona: 'shield', tinta: 5,
+    marche: [
+      { marca: 'Siemens', modelli: 'SENTRON: magnetotermici 5SY, 5SL, 5SP4; differenziali puri 5SV3 e 5SV4; magnetotermici differenziali 5SU1 e 5SV1 (1P+N in 1 modulo)', note: 'Antincendio d\'arco (AFDD) 5SV6 e 5SM6; sezionatori 5TE2, 5TL1' },
+      { marca: 'Schneider Electric', modelli: 'Acti9: magnetotermici iC60N/H, differenziali iID, blocchi Vigi iC60, magnetotermici differenziali iCV40; Resi9 (gamma per la casa: MCB, RCCB, RCBO tipo AC/A/F)', note: 'AFDD ARC iC40 / iC60; protezioni dalle sovratensioni' },
+      { marca: 'ABB', modelli: 'System pro M compact: magnetotermici S200, S800, SN201; differenziali F200; magnetotermici differenziali DS201, DS202C, DS9', note: 'Blocchi differenziali DDA200 e DDA800' },
+      { marca: 'Hager', modelli: 'Magnetotermici differenziali ADA… (1P+N 2 moduli), ADM… e AFM… (4P 4 moduli), barrette di cablaggio KDN / KB', note: 'Bobine e contatti ausiliari MZ2xx' },
+      { marca: 'BTicino', modelli: 'BTDIN 45 / 60 / 100 (4,5 / 6 / 10 kA), BTDIN-RS per centralino, BTDIN 160 / 250 / 500 (16 / 25 / 50 kA)', note: 'Magnetotermici differenziali GA88… (Btdin45) e GN88… (Btdin60); Btdin Stop Arc' },
+      { marca: 'Legrand', modelli: 'DX³ magnetotermici e magnetotermici differenziali, TX³ differenziali' },
+      { marca: 'Lovato Electric', modelli: 'Salvamotori SM1 (fino a 40 A), contattori BF, relè termici RF / RFN', note: 'Anche soft starter, inverter, pulsanti, multimetri, scaricatori' },
+      { marca: 'Finder', modelli: 'Contattori modulari serie 22 (25–63 A), relè passo-passo 20 / 26 / 27, crepuscolari 10 e 11, orologi serie 12', note: 'Temporizzatori 80 / 83, luce scale 14, interfacce a relè 39 / 48 / 4C, rilevatori di movimento 18' }
+    ],
+    guida: `<ul class="ref">
+      <li><strong>Magnetotermico</strong> (MCB): protegge il cavo da sovraccarico e cortocircuito. Si sceglie per corrente (A), curva (C per la casa) e potere di interruzione (4,5 / 6 / 10 kA).</li>
+      <li><strong>Differenziale puro</strong> (RCCB, "salvavita"): protegge le persone dalle scosse ma non il cavo. Va sempre messo con un magnetotermico.</li>
+      <li><strong>Magnetotermico differenziale</strong> (RCBO): fa entrambe le cose in un solo pezzo. Ottimo per una linea alla volta.</li>
+      <li><strong>Tipo:</strong> AC solo carichi semplici; A per la casa di oggi; F per lavatrici e condizionatori con inverter; B per wallbox e fotovoltaico se richiesto.</li>
+      <li><strong>Contattore modulare:</strong> accende carichi grossi con un comando piccolo (scaldabagno, pompe, luci esterne). <strong>Relè passo-passo:</strong> luci comandate da più pulsanti.</li>
+      <li><strong>Salvamotore:</strong> protegge un motore trifase; si regola sulla corrente di targa del motore.</li>
+    </ul>`
+  },
+  {
+    id: 'cancelli', nome: 'Automazione cancelli', icona: 'garage', tinta: 95,
+    marche: [
+      { marca: 'FAAC', modelli: 'Scorrevoli: 740 / 741 (230 V, fino a 500 / 900 kg), 746, 748 Compact, 844 (fino a 1800 kg), 860, C720 / C721 (24 V)', note: 'Battenti: 391 (24 V), S418, oleodinamici; kit Delta Perfect; telecomandi XT4' },
+      { marca: 'BFT', modelli: 'Scorrevoli: Deimos AC A / BT A / Ultra BT A, Ares BT A / Ultra BT A (fino a 1500 kg), Icaro, SP3500', note: 'Battenti: Phobos AC A / BT A, Virgo Smart BT A, Giuno Ultra BT A (oleodinamico), Eli 250; telecomandi Mitto' },
+      { marca: 'CAME', modelli: 'Scorrevoli: BX, BXL, BXV, BK, BKV (fino a 2500 kg), BY-3500T', note: 'Battenti: ATI, AXO, AXI, AXL, ATS, Krono, Stylo, FTL, FTX, Fast 70, Ferni, Frog e Frog Plus (interrati)' },
+      { marca: 'Nice', modelli: 'Scorrevoli: Robus 400 / 600 / 800 e HS, Run (uso intensivo, fino a 1500 kg)', note: 'Battenti: Wingo (anta fino a 3,5 m), Toona (fino a 7 m), Hyke, Hopp, Walky (pedonali), Fab (interrato); app MyNice' }
+    ],
+    guida: `<ul class="ref">
+      <li><strong>Scorrevole:</strong> serve il <strong>peso</strong> del cancello (kg) e quante aperture al giorno. Si monta con la cremagliera.</li>
+      <li><strong>A battente:</strong> serve la <strong>lunghezza di ogni anta</strong> (m) e il peso. Oltre 2–2,5 m di anta conviene l'elettroserratura.</li>
+      <li><strong>230 V o 24 V:</strong> il 24 V è più dolce, ha l'encoder e può avere la batteria tampone per aprire senza corrente.</li>
+      <li><strong>Kit:</strong> di solito motore, centrale, fotocellule, lampeggiante e telecomandi. Per la sicurezza servono sempre le fotocellule.</li>
+    </ul>`
+  },
+  {
+    id: 'ventilazione', nome: 'Ventilazione e aspiratori', icona: 'mode_fan', tinta: 200,
+    marche: [
+      { marca: 'Vortice', modelli: 'Aspiratori a muro: Punto, Punto Evo (anche ES, Gold, Flexo), Punto Filo, Punto Four, Vario; da condotto: Punto Ghost, Ariett, Vort Press, Vort Quadro, Vort Quadro Evo, Quadro Micro 80, Lineo', note: 'Recuperatori di calore Vort HRW e HRI Flat; ventilatori da soffitto Nordik; termoventilatori Scaldatutto' }
+    ],
+    guida: `<ul class="ref">
+      <li><strong>Diametro del foro:</strong> 90, 100, 120 o 150 mm. Misura il buco nel muro prima di scegliere.</li>
+      <li><strong>Bagno cieco:</strong> serve il <strong>timer</strong> (si accende con la luce e resta acceso qualche minuto) o il sensore di umidità.</li>
+      <li><strong>Elicoidale</strong> (Punto): per tubo corto, da parete a esterno. <strong>Centrifugo</strong> (Vort Quadro, Vort Press): per condotti lunghi o con curve.</li>
+      <li><strong>Portata:</strong> bagno circa 60–100 m³/h, cucina di più. Guarda anche i dB se il bagno è vicino alla camera.</li>
+    </ul>`
+  },
+  {
+    id: 'sicurezza', nome: 'Antifurto e antincendio', icona: 'security', tinta: 340,
+    marche: [
+      { marca: 'Bentel Security', modelli: 'Centrali Absoluta e Absoluta Plus (cablate o ibride), Kyo32 / Kyo320, BW30 e BW64 (via radio PowerG)', note: 'Tastiere BKB-LCD, Absoluta T-Line; espansioni M-IN/OUT; moduli ABS-IP, ABS-GSM, BW-COM; barriere RAY' },
+      { marca: 'Notifier (Honeywell)', modelli: 'Rivelazione incendio: centrali AM-8200N, Inspire; rivelatori puntiformi, pulsanti manuali, sirene e targhe', note: 'Sistema integrato Euronet; sistemi ad aspirazione; diffusione di emergenza PAVA' },
+      { marca: 'Urmet', modelli: 'Antifurto (centrali e inseritori, es. serie 1068)' }
+    ],
+    guida: `<ul class="ref">
+      <li><strong>Cablato o via radio?</strong> Cablato per case in costruzione; via radio per case già finite, senza tracce nei muri.</li>
+      <li><strong>Zone:</strong> conta porte, finestre e stanze da proteggere. La centrale deve avere almeno quelle zone.</li>
+      <li>Accessori tipici: tastiera, sirena interna ed esterna, contatti magnetici, rilevatori (PIR), modulo GSM o IP per l'app.</li>
+      <li><strong>Antincendio</strong> negli edifici pubblici e nelle aziende: va progettato e installato da un tecnico abilitato.</li>
+    </ul>`
+  },
+  {
+    id: 'canali', nome: 'Canali e passerelle', icona: 'table_rows', tinta: 120,
+    marche: [
+      { marca: 'Arnocanali', modelli: 'Canali in PVC Kappa, Space, Wing (battiscopa e cornice), Corner; minicanali Minikappa; canali in alluminio Aluspace; Kablo (cablaggio quadri)', note: 'Scatole autoportanti Mirror e mostrine Quick per serie Living e Light' },
+      { marca: 'Bocchiotti (Hager)', modelli: 'Minicanali TMC / TMU, canali Design 32 e 34 (cornice)', note: 'Angoli, derivazioni, giunti e scatole dedicati' },
+      { marca: 'Legrand', modelli: 'Passerelle e canali metallici P31+ (altezze 25, 50, 75 e 100 mm)' },
+      { marca: 'Canalplast', modelli: 'Canali portautenze Dominio, canali industriali tipo G, minicanali' }
+    ],
+    guida: `<ul class="ref">
+      <li><strong>Minicanale:</strong> pochi fili a vista, ad esempio per aggiungere una presa. <strong>Canale portautenze:</strong> ci monti dentro prese e interruttori.</li>
+      <li><strong>Battiscopa e cornice:</strong> per uffici e case dove non si vogliono tracce nei muri.</li>
+      <li><strong>Passerella metallica:</strong> per tanti cavi in industria, magazzini e controsoffitti.</li>
+      <li>Scegli la misura col 50% di spazio libero in più: i cavi non vanno schiacciati.</li>
+    </ul>`
+  },
+  {
+    id: 'consumo', nome: 'Nastri, giunzioni, fissaggi e attrezzi', icona: 'handyman', tinta: 60,
+    marche: [
+      { marca: '3M (Scotch)', modelli: 'Nastro isolante Scotch Super 33+, nastri 24 (schermatura) e 45; connettori Scotchlok; giunti in resina Scotchcast; giunti QS2000 (media tensione)', note: 'Spray Scotch: silicone 1609, deumidificante 1605, sgrassante 1626, zinco 1617' },
+      { marca: 'Cellpack', modelli: 'Giunti e terminali termorestringenti (es. CHESK), connettori per conduttori, giunzioni bassa e media tensione' },
+      { marca: 'Etelec', modelli: 'Giunzioni con isolamento in gel per bassa e media tensione' },
+      { marca: 'Intercable', modelli: 'Capicorda e connettori a compressione, attrezzi e pinze' },
+      { marca: 'Panduit', modelli: 'Capicorda preisolati (nylon PN, vinile PV) e in rame / alluminio, fascette, identificazione cavi' },
+      { marca: 'Fischer', modelli: 'Tasselli SX e DuoPower, kit per impiantisti' }
+    ],
+    guida: `<ul class="ref">
+      <li><strong>Nastro isolante:</strong> il PVC tipo Super 33+ va bene anche al freddo. Per la giunzione interrata serve un giunto in resina o in gel.</li>
+      <li><strong>Giunto interrato:</strong> si sceglie per numero di cavi e sezione (mm²). Chiedi sempre "quanti fili e di che sezione".</li>
+      <li><strong>Capocorda:</strong> si sceglie per sezione del cavo e diametro del foro (vite M6, M8…). Si pressa con la pinza giusta.</li>
+      <li><strong>Tassello:</strong> si sceglie per il muro (pieno, forato, cartongesso) e per il peso da appendere.</li>
     </ul>`
   }
 ];
