@@ -20,5 +20,11 @@ App web installabile (PWA) per il banco di un grossista di materiale elettrico. 
 I calcoli sono indicativi (IEC 60364-5-52, CEI-UNEL 35024/1, CEI 64-8). Il dimensionamento definitivo spetta all'installatore o al progettista.
 
 ## Novità
+### 1.0.2 — 15/11/2026
+Aggiunte Master (Modo) e Simon Urmet (Nea), promemoria videocitofonia Urmet.
+
+### 1.0.1 — 15/11/2026
+Testo più grande, pulsante Aa.
+
 ### 1.0.0 — 15/11/2026
 Prima versione.

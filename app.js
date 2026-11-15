@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.0.1';
+const VERSION = '1.0.2';
 const CHANGELOG = [
+  { v: '1.0.2', data: '15/11/2026', voci: ['Aggiunte Master (serie Modo) e Simon Urmet (serie Nea) alle serie civili.', 'Promemoria videocitofonia Urmet: sistemi, monitor e pulsantiere abbinate.'] },
   { v: '1.0.1', data: '15/11/2026', voci: ['Testo e pulsanti più grandi sul telefono.', 'Nuovo pulsante Aa in alto: cambia la dimensione del testo (4 livelli), la scelta resta salvata.'] },
   { v: '1.0.0', data: '15/11/2026', voci: [
     'Prima versione: dimensionamento linea (sezione, interruttore, curva, differenziale, caduta di tensione).',
@@ -370,7 +371,10 @@ $('#serieCivili').innerHTML = `
 <tr><td>Vimar</td><td>Plana, Arké, Eikon, Linea, Neve Up</td></tr>
 <tr><td>Gewiss</td><td>Chorus</td></tr>
 <tr><td>Schneider Electric</td><td>Unica</td></tr>
-</tbody></table>`;
+<tr><td>Master</td><td>Modo</td></tr>
+<tr><td>Simon Urmet</td><td>Nea (estetiche Kàdra, Expì, Flexa)</td></tr>
+</tbody></table>
+<p class="small" style="margin-top:12px"><strong>Videocitofonia Urmet</strong>: sistemi digitali 2Voice e IPerCom; monitor Aiko (abbinato a Nea Expì), Folio (Nea Kàdra), Signo (Nea Flexa); pulsantiere Sinthesi, Sinthesi S2, Sinthesi Steel, Alpha. Pulsantiere e monitor vanno scelti dello stesso sistema.</p>`;
 
 /* ============ SCANNER ============ */
 let stream = null, scanAttivo = false, zxReader = null;

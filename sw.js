@@ -1,5 +1,5 @@
 // Service worker: funziona offline, aggiornamento su richiesta dell'utente.
-const CACHE = 'assistentebanco-1.0.1';
+const CACHE = 'assistentebanco-1.0.2';
 const FILES = ['./', 'index.html', 'styles.css', 'calc.js', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png'];
 const CDN = ['cdn.jsdelivr.net', 'unpkg.com'];
 
