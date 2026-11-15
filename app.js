@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.0.2';
+const VERSION = '1.0.3';
 const CHANGELOG = [
+  { v: '1.0.3', data: '15/11/2026', voci: ['Aggiornamento dall\'app riparato: l\'app controlla sempre la versione online e installa i file nuovi con un tocco.', '"Cerca aggiornamenti" ora dice se sei già all\'ultima versione.'] },
   { v: '1.0.2', data: '15/11/2026', voci: ['Aggiunte Master (serie Modo) e Simon Urmet (serie Nea) alle serie civili.', 'Promemoria videocitofonia Urmet: sistemi, monitor e pulsantiere abbinate.'] },
   { v: '1.0.1', data: '15/11/2026', voci: ['Testo e pulsanti più grandi sul telefono.', 'Nuovo pulsante Aa in alto: cambia la dimensione del testo (4 livelli), la scelta resta salvata.'] },
   { v: '1.0.0', data: '15/11/2026', voci: [
@@ -427,21 +428,37 @@ let promptInstall = null;
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); promptInstall = e; $('#btnInstall').hidden = false; });
 $('#btnInstall').addEventListener('click', async () => { if (!promptInstall) return; promptInstall.prompt(); const r = await promptInstall.userChoice; Report.log('installazione', { esito: r.outcome }); promptInstall = null; $('#btnInstall').hidden = true; });
 
-if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-  navigator.serviceWorker.register('sw.js').then(reg => {
-    const mostra = w => {
+/* Aggiornamenti: confronta version.json (sempre dalla rete) con la versione in uso */
+let swReg = null;
+const confrontaVersioni = (a, b) => { const x = a.split('.').map(Number), y = b.split('.').map(Number); for (let i = 0; i < 3; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) - (y[i] || 0); return 0; };
+async function installaAggiornamento() {
+  $('#btnUpdate').textContent = 'Aggiorno…';
+  Report.log('aggiornamento', { da: VERSION });
+  await Report.chiudi('aggiornamento');
+  try { await swReg?.update(); } catch {}
+  try { for (const k of await caches.keys()) await caches.delete(k); } catch {}
+  location.replace(location.pathname + '?v=' + Date.now());
+}
+async function cercaAggiornamenti(manuale) {
+  try {
+    const j = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' }).then(r => r.json());
+    if (confrontaVersioni(j.versione, VERSION) > 0) {
       $('#updatebar').hidden = false;
-      fetch('version.json', { cache: 'no-store' }).then(r => r.json()).then(j => { $('#updatenotes').textContent = (j.novita || []).join(' · '); }).catch(() => {});
-      $('#btnUpdate').onclick = () => { Report.log('aggiornamento', { da: VERSION }); w.postMessage('skipWaiting'); };
-    };
-    if (reg.waiting) mostra(reg.waiting);
-    reg.addEventListener('updatefound', () => {
-      const w = reg.installing;
-      w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) mostra(w); });
-    });
-    $('#btnCheck').onclick = () => { reg.update(); $('#btnCheck').textContent = 'Controllo…'; setTimeout(() => $('#btnCheck').textContent = 'Cerca aggiornamenti', 2500); };
-    setInterval(() => reg.update(), 60 * 60 * 1000);
-  });
+      $('#updatenotes').textContent = `Versione ${j.versione}: ${(j.novita || []).join(' · ')}`;
+      $('#btnUpdate').onclick = installaAggiornamento;
+      if (manuale) $('#btnCheck').textContent = 'Nuova versione trovata';
+    } else if (manuale) $('#btnCheck').textContent = 'Sei all\'ultima versione';
+  } catch { if (manuale) $('#btnCheck').textContent = 'Nessuna connessione'; }
+  if (manuale) setTimeout(() => $('#btnCheck').textContent = 'Cerca aggiornamenti', 3000);
+}
+$('#btnCheck').onclick = () => { $('#btnCheck').textContent = 'Controllo…'; swReg?.update().catch(() => {}); cercaAggiornamenti(true); };
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') cercaAggiornamenti(false); });
+setInterval(() => cercaAggiornamenti(false), 30 * 60 * 1000);
+cercaAggiornamenti(false);
+if (location.search.includes('v=')) history.replaceState(null, '', location.pathname);
+
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => { swReg = reg; reg.update().catch(() => {}); }).catch(() => {});
   let ricaricato = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => { if (!ricaricato) { ricaricato = true; location.reload(); } });
 }

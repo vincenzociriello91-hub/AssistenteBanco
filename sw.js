@@ -1,20 +1,29 @@
-// Service worker: funziona offline, aggiornamento su richiesta dell'utente.
-const CACHE = 'assistentebanco-1.0.2';
+// Service worker: prima la rete (sempre l'ultima versione), cache solo se offline.
+const CACHE = 'assistentebanco-1.0.3';
 const FILES = ['./', 'index.html', 'styles.css', 'calc.js', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png'];
 const CDN = ['cdn.jsdelivr.net', 'unpkg.com'];
 
-self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))));
+self.addEventListener('install', e => {
+  // cache: 'reload' salta la cache HTTP di GitHub Pages (10 minuti) e scarica i file nuovi
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting()));
+});
 self.addEventListener('activate', e => e.waitUntil(
   caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())
 ));
 self.addEventListener('message', e => { if (e.data === 'skipWaiting') self.skipWaiting(); });
 self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
-  if (e.request.method !== 'GET') return;
-  if (url.pathname.endsWith('version.json')) return; // sempre dalla rete
-  if (url.origin === location.origin || CDN.includes(url.hostname)) {
-    e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
-      if (res.ok) { const copia = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copia)); }
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (url.origin === location.origin) {
+    if (url.pathname.endsWith('version.json')) return; // sempre dalla rete
+    e.respondWith(fetch(req, { cache: 'no-cache' }).then(res => {
+      if (res.ok) { const copia = res.clone(); caches.open(CACHE).then(c => c.put(req, copia)); }
+      return res;
+    }).catch(() => caches.match(req, { ignoreSearch: true }).then(hit => hit || caches.match('index.html'))));
+  } else if (CDN.includes(url.hostname)) {
+    e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(res => {
+      if (res.ok) { const copia = res.clone(); caches.open(CACHE).then(c => c.put(req, copia)); }
       return res;
     })));
   }
