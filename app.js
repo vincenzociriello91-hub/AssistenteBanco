@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.13.2';
+const VERSION = '1.13.3';
 const CHANGELOG = [
+  { v: '1.13.3', data: '15/11/2026', voci: ['Il pulsante Aggiorna funziona di nuovo (prima ricaricava la versione vecchia).'] },
   { v: '1.13.2', data: '15/11/2026', voci: ['Pressacavi: l\'elenco per marca ora si legge bene sul telefono (prima il nome della marca andava a capo lettera per lettera).', 'Assistente più veloce; se non risponde entro 30 secondi smette di aspettare.'] },
   { v: '1.13.1', data: '15/11/2026', voci: ['Assistente acceso per tutti.', 'Foto del pezzo e Ascolto funzionano senza inserire nessuna chiave.'] },
   { v: '1.13.0', data: '15/11/2026', voci: ['Assistente: capisce qualsiasi domanda scritta in parole normali, anche da chi non è del mestiere, e risponde con cosa serve e quanto. Premi Invio o aspetta un attimo dopo aver scritto.', 'I prodotti suggeriti dall\'assistente vanno nel preventivo con un tocco.'] },
@@ -624,6 +625,8 @@ async function installaAggiornamento() {
   await Report.chiudi('aggiornamento');
   try { await swReg?.update(); } catch {}
   try { for (const k of await caches.keys()) await caches.delete(k); } catch {}
+  // Rinfresca anche la cache del browser (GitHub Pages la tiene 10 minuti), così al riavvio arrivano i file nuovi
+  try { await Promise.all(['./', 'index.html', 'styles.css', 'calc.js', 'reparti.js', 'schede.js', 'codici.js', 'domande.js', 'app.js', 'banco.js', 'sw.js'].map(f => fetch(f, { cache: 'reload' }))); } catch {}
   location.replace(location.pathname + '?v=' + Date.now());
 }
 async function cercaAggiornamenti(manuale) {
