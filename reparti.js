@@ -22,7 +22,16 @@ const REPARTI = [
   },
   {
     id: 'illuminazione', nome: 'Illuminazione', icona: '💡',
-    marche: [],
+    marche: [
+      { marca: 'Philips (Signify)', modelli: 'Lampade e apparecchi LED professionali, Philips Hue (smart), Interact (illuminazione connessa)' },
+      { marca: 'Ledvance (Osram)', modelli: 'Lampadine LED, proiettori LED Performance, strisce LED, alimentatori e controlli' },
+      { marca: 'Beghelli', modelli: 'Illuminazione di emergenza, lampade Saving LED ed Eco LED, apparecchi tecnici' },
+      { marca: 'Disano', modelli: 'Apparecchi tecnici per interni ed esterni, industriali, urbani e stradali' },
+      { marca: 'Fosnova (gruppo Disano)', modelli: 'Apparecchi per interni di pregio e di design' },
+      { marca: '3F Filippi', modelli: 'Illuminazione tecnica professionale e industriale' },
+      { marca: 'Performance in Lighting', modelli: 'Illuminazione LED per interni ed esterni' },
+      { marca: 'iGuzzini', modelli: 'Illuminazione architetturale' }
+    ],
     guida: `<ul class="ref">
       <li><strong>Temperatura colore:</strong> 2700–3000 K luce calda (casa), 4000 K neutra (cucina, bagno, ufficio), 5000–6500 K fredda (garage, magazzino).</li>
       <li><strong>Resa cromatica:</strong> CRI ≥ 80 uso generale, ≥ 90 negozi, cucine, trucco.</li>
@@ -52,7 +61,12 @@ const REPARTI = [
   },
   {
     id: 'cavi', nome: 'Cavi', icona: '🧵',
-    marche: [],
+    marche: [
+      { marca: 'Prysmian', modelli: 'FS17, FG16OR16 (G16 TOP), FG17, FG16OM16 e gamma CPR completa' },
+      { marca: 'La Triveneta Cavi (gruppo Nexans)', modelli: 'FS17, FG16OR16/M16 (gamma Klaro con marcatura colorata), FG18(O)M16, cavo solare NPE SUN H1Z2Z2-K' },
+      { marca: 'Baldassari Cavi', modelli: 'Cavi BT per impianti civili e industriali (FS17, FG17, FG16OR16)' },
+      { marca: 'Icel', modelli: 'Cavi BT per impianti civili e industriali (FS17, FG17, FG16OR16)' }
+    ],
     guida: `<ul class="ref">
       <li><strong>FS17</strong> 450/750 V, PVC, unipolare: dentro tubi e canaline (ha sostituito N07V-K).</li>
       <li><strong>FG16OR16</strong> 0,6/1 kV, multipolare con guaina: esterno, interrato in tubo, linee di alimentazione.</li>
@@ -67,7 +81,17 @@ const REPARTI = [
   },
   {
     id: 'fotovoltaico', nome: 'Impianto fotovoltaico', icona: '☀️',
-    marche: [],
+    marche: [
+      { marca: 'Huawei', modelli: 'Inverter SUN2000 (monofase ibrido L1 2–6 kW, trifase), batterie LUNA2000' },
+      { marca: 'SMA', modelli: 'Sunny Boy 3.0–6.0 (monofase), Sunny Boy Smart Energy (ibrido), Sunny Tripower (trifase)' },
+      { marca: 'Fronius', modelli: 'Primo GEN24 / GEN24 Plus (monofase 3–6 kW, ibrido con backup), Symo GEN24 (trifase)' },
+      { marca: 'SolarEdge', modelli: 'Inverter HD-Wave con ottimizzatori per modulo, Home Hub, batterie' },
+      { marca: 'ZCS Azzurro', modelli: 'Inverter ibridi HYD monofase e trifase, batterie, wallbox (marchio italiano)' },
+      { marca: 'Sungrow', modelli: 'Inverter residenziali e commerciali, batterie' },
+      { marca: 'Kostal / GoodWe', modelli: 'Inverter residenziali, ibridi e retrofit' },
+      { marca: 'BYD', modelli: 'Batterie di accumulo' },
+      { marca: 'Moduli', modelli: 'Jinko Solar, JA Solar, Trina Solar, Peimar, Sunerg', note: 'Controlla che i moduli siano compatibili con tensione e corrente dell\'inverter' }
+    ],
     guida: `<ul class="ref">
       <li><strong>Componenti:</strong> moduli, inverter (di stringa o ibrido con batteria), eventuali ottimizzatori, batteria di accumulo, quadro lato DC, quadro lato AC.</li>
       <li><strong>Lato DC:</strong> cavo solare H1Z2Z2-K 4/6 mm², connettori MC4 (maschio e femmina della stessa marca e modello), sezionatore DC, scaricatore SPD per corrente continua, fusibili di stringa se richiesti.</li>
@@ -80,7 +104,10 @@ const REPARTI = [
     id: 'domotica', nome: 'Domotica', icona: '🏠',
     marche: [
       { marca: 'BTicino', modelli: 'Living Now with Netatmo (radio), MyHome (filare)' },
-      { marca: 'Vimar', modelli: 'View Wireless (radio), By-me Plus (filare)' }
+      { marca: 'Vimar', modelli: 'View Wireless (radio), By-me Plus (filare)' },
+      { marca: 'Gewiss', modelli: 'ChoruSmart: Connected Smart Home (Wi-Fi/Zigbee) e Home & Building PRO (KNX); app Home Gateway' },
+      { marca: 'ABB', modelli: 'free@home (bus filare e wireless, senza software di programmazione), KNX' },
+      { marca: 'Schneider Electric', modelli: 'Wiser, KNX' }
     ],
     guida: `<ul class="ref">
       <li><strong>Filare (bus):</strong> cavo dedicato, più affidabile, va previsto in fase di impianto. KNX è lo standard aperto multi-marca; MyHome e By-me sono sistemi delle singole marche.</li>
@@ -94,6 +121,9 @@ const REPARTI = [
     marche: [
       { marca: 'Gewiss', modelli: 'Tubi rigidi RK9 (leggero), RK15 (medio), RKB (pesante), RK9 HF e RKHF (halogen free)', note: 'Diametri 16–63 mm, verghe da 2 e 3 m' },
       { marca: 'Tubifor', modelli: 'Corrugati PVC classe 3321 (con o senza tirafilo, vari colori), corrugati ICTA in polipropilene 3422 halogen free, tubi precablati, tubi rigidi PVC, cavidotti interrati, guaine spiralate, canali portacavi', note: 'Codice corrugato es. TF01032AT025 = Ø32, azzurro (A), con tirafilo (T), rotolo 25 m; TF01025NT050 = Ø25 nero 50 m' },
+      { marca: 'Gewiss (cassette)', modelli: 'Cassette di derivazione stagne da parete serie 44 CE: IP44, IP55, IP56, pareti lisce o passacavi rapidi', note: 'Es. GW44206 IP56 interne 150×110×70 mm' },
+      { marca: 'Bocchiotti (Hager)', modelli: 'Cassette Pico IP56 (chiusura ¼ di giro o viti inox, GWT 650/960 °C), centralini Pablo IP65' },
+      { marca: 'Scame', modelli: 'Cassette Scabox IP56 halogen free, IK08' },
       { marca: 'Inset (Hager Bocchiotti)', modelli: 'Corrugati pieghevoli FMP 3321 (Ø16–50): FMP nero, FMPA azzurro, FMPB bianco, FMPL lilla, FMPM marrone, FMPV verde; tubi rigidi GRI 3321 e RFG 4321; guaine GHF halogen free', note: 'Accessori: manicotto MFL IP64, raccordo tubo-scatola PREG IP64-67, raccordo rigido-scatola RSTN IP67, sonde tirafili STC. Ora nella stessa gamma Pmflex' }
     ],
     guida: `<ul class="ref">

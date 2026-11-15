@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.0.9';
+const VERSION = '1.1.0';
 const CHANGELOG = [
+  { v: '1.1.0', data: '15/11/2026', voci: ['Marche aggiunte: illuminazione (Philips, Ledvance, Beghelli, Disano, Fosnova, 3F Filippi, Performance in Lighting, iGuzzini).', 'Cavi (Prysmian, La Triveneta Cavi, Baldassari, Icel); fotovoltaico (Huawei, SMA, Fronius, SolarEdge, ZCS Azzurro, Sungrow, Kostal, GoodWe, BYD, moduli).', 'Domotica (Gewiss, ABB, Schneider); cassette (Gewiss 44 CE, Bocchiotti Pico, Scame Scabox).'] },
   { v: '1.0.9', data: '15/11/2026', voci: ['Reparto corrugati: aggiunte Tubifor e Inset con serie, colori, codici e accessori.', 'Equivalenze automatiche anche per corrugati e tubi rigidi (stesso diametro e stessa classificazione, es. 3321).'] },
   { v: '1.0.8', data: '15/11/2026', voci: ['Adattamento automatico a ogni schermo: telefoni, tablet, pieghevoli, monitor fino al 4K e oltre.', 'Schermi HDR e a colori ampi (P3/Rec.2020) riconosciuti: colori più ricchi, sfondo meno abbagliante.', 'Tema scuro con nero puro: meno consumo su OLED/AMOLED.', 'Mouse o touch riconosciuti; contrasto elevato e colori forzati del sistema rispettati.'] },
   { v: '1.0.7', data: '15/11/2026', voci: ['Grafica rifatta: testo, campi e pulsanti si adattano alla risoluzione dello schermo (telefono piccolo, Pixel, tablet, PC).', 'Nuovo carattere Roboto Flex in stile Pixel, funziona anche offline.', 'Telefono in orizzontale e tablet/PC con menu laterale.', 'In Info si vede lo schermo rilevato.'] },

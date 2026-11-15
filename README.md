@@ -20,6 +20,9 @@ App web installabile (PWA) per il banco di un grossista di materiale elettrico. 
 I calcoli sono indicativi (IEC 60364-5-52, CEI-UNEL 35024/1, CEI 64-8). Il dimensionamento definitivo spetta all'installatore o al progettista.
 
 ## Novità
+### 1.1.0 — 15/11/2026
+Marche per illuminazione, cavi, fotovoltaico, domotica e cassette.
+
 ### 1.0.9 — 15/11/2026
 Tubifor e Inset; equivalenze per corrugati e tubi rigidi.
 
