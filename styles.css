@@ -322,3 +322,9 @@ details.dettagli { margin-top: .75rem; }
 .risposta .chip-btn { background: var(--surface); color: var(--on-surface); }
 .risp-guida { background: var(--surface-c, var(--surface)); border-radius: 1.25rem; padding: .85rem 1.1rem; margin-bottom: .75rem; }
 .risp-guida summary { cursor: pointer; font-weight: 600; min-height: 2.75rem; display: flex; align-items: center; }
+
+/* 1.10.0 schede */
+.tab-risp th { text-align: left; font-weight: 600; padding: .35rem .25rem; font-size: .9rem; opacity: .8; }
+.tab-tit { font-size: 1rem; margin: .9rem 0 .3rem; }
+.tab-marca { margin: .35rem 0; }
+.tab-marca summary { cursor: pointer; min-height: 2.5rem; display: flex; align-items: center; font-weight: 500; }

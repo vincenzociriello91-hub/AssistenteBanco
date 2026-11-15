@@ -19,6 +19,9 @@ const Domande = (() => {
     const xs = t.match(/\b(\d{1,2})\s*[xg]\s*(\d+(?:[.,]\d+)?)\b/);
     if (xs) { d.nCavi = +xs[1]; d.S = num(xs[2]); }
     d.S ??= m(NUM + '\\s*(?:mm2|mmq)\\b');
+    d.S ??= m('sezione\\s*(?:da\\s*|di\\s*)?' + NUM);
+    d.Dcavo = m('(?:diametro|diam\\.?|ø)\\s*(?:esterno\\s*)?(?:da\\s*|di\\s*)?' + NUM) ?? m(NUM + '\\s*mm\\s*di\\s*diametro');
+    d.vite = m('\\b(?:m|vite\\s*m?|foro\\s*(?:da\\s*)?m?)\\s?(\\d{1,2})\\b(?!\\s*(?:mm2|mmq|x|g))');
     // "cavo/cavi/filo (da) 50 mm" = sezione; "corrugato/tubo (da) 25 (mm)" = diametro del tubo
     const vicino = (parole, dopo) => { const r = t.match(new RegExp('\\b(?:' + parole + ')\\w*\\s+(?:da\\s+|di\\s+|per\\s+)?' + NUM + dopo)); return r ? num(r[1]) : null; };
     const sCavo = vicino('cav|fil|condutt', '(?:\\s*mm)?\\b(?!\\s*(?:kw|w\\b|a\\b|metri|m\\b|mq))');
@@ -76,6 +79,39 @@ const Domande = (() => {
     const righe = [[1, '1 cavo'], [3, '3 cavi (fase, neutro, terra)'], [4, '4 cavi'], [5, '5 cavi (trifase con neutro e terra)']]
       .map(([k, l]) => { const tb = tubo(d.S, k); return `<tr><td>${l}</td><td><strong>${tb ? 'Ø ' + tb.est + ' mm' : 'oltre Ø 63'}</strong></td></tr>`; }).join('');
     return box(`Corrugato per cavi da ${f(d.S)} mm²`, `<p>Dipende da quanti cavi ci passano dentro (cavi unipolari tipo FS17):</p><table class="tab-risp">${righe}</table>${TIPO_TUBO}<p class="small">Se è un solo cavo multipolare (es. FG16OR16), misura il diametro esterno: il tubo deve essere almeno 1,3 volte più grande.</p>`, az);
+  }
+
+
+  function rPressacavo(d) {
+    if (d.S == null && !d.Dcavo) { const r = d.t.match(/\b(?:per|da|di)\s+(\d+(?:[.,]\d+)?)\b(?!\s*(?:mm\b|m\b|kw|a\b))/); if (r && Calc.SEZIONI.includes(num(r[1]))) d.S = num(r[1]); }
+    const az = vaiRep('raccordi', 'Reparto pressacavi');
+    const lista = (dMin, dMax) => {
+      const l = Schede.pressacaviPer(dMin, dMax);
+      if (!l.length) return '<p>Nessun pressacavo standard lo stringe bene: serve una misura più grande (M75 o oltre) o un pressacavo speciale.</p>';
+      const tip = Schede.misuraTipica(l);
+      const per = {}; l.forEach(x => { (per[x.marca + ' · ' + x.serie] ||= []).push(x); });
+      return `<p>Pressacavo <strong>${tip}</strong>.</p><table class="tab-risp">${Object.entries(per).map(([k, v]) => `<tr><td>${esc(k)}</td><td><strong>${v.map(x => esc(x.mis + (x.cod ? ' ' + x.cod : '')) + ` <span class="small">(${f(x.a)}–${f(x.b)})</span>`).join('<br>')}</strong></td></tr>`).join('')}</table>`;
+    };
+    if (d.Dcavo) return box(`Pressacavo per cavo Ø ${f(d.Dcavo)} mm`, lista(d.Dcavo, d.Dcavo), az);
+    if (d.S != null) {
+      const cand = d.nCavi ? [Schede.diametroCavo(d.nCavi, d.S)] : ['5', '4', '3', '2'].map(k => Schede.diametroCavo(+k, d.S)).filter(Boolean);
+      const ok = cand.filter(Boolean);
+      if (!ok.length) return box(`Pressacavo per cavo da ${f(d.S)} mm²`, '<p>Non ho il diametro di questo cavo: misuralo con il calibro e scrivimi per esempio <em>pressacavo diametro 30</em>.</p>', az);
+      const corpo = ok.map(c => `<h3 class="tab-tit">FG16OR16 ${c.sigla.replace('.', ',')} · Ø ${c.d[0] === c.d[1] ? f(c.d[0]) : f(c.d[0]) + '–' + f(c.d[1])} mm</h3>${lista(c.d[0], c.d[1])}`).join('');
+      return box(`Pressacavo per cavo da ${f(d.S)} mm²`, corpo + '<p class="small">Diametri indicativi dei cavi FG16OR16: altre marche e altri tipi di cavo possono cambiare di 1–3 mm. Nel dubbio misura il cavo.</p>', az);
+    }
+    return box('Che pressacavo serve?', '<p>Dimmi il cavo (es. <em>pressacavo per 5G16</em>) o il suo diametro (es. <em>pressacavo diametro 22</em>).</p>', az);
+  }
+
+  function rCapocorda(d) {
+    if (d.S == null) { const r = d.t.match(/\b(?:per|da|di)\s+(\d+(?:[.,]\d+)?)\b(?!\s*(?:mm\b|m\b|kw|a\b))/); if (r && Calc.SEZIONI.concat([150, 185, 240, 300]).includes(num(r[1]))) d.S = num(r[1]); }
+    const az = vaiRep('morsetti', 'Reparto capicorda');
+    if (d.S == null) return box('Che capocorda serve?', '<p>Dimmi la sezione del cavo e la vite, per esempio: <em>capocorda 50 mm² foro M8</em>.</p>', az);
+    if (d.S < 6) return box(`Capocorda per ${f(d.S)} mm²`, `<p>Usa un capocorda <strong>preisolato ${d.S <= 1.5 ? 'rosso (0,5–1,5 mm²)' : d.S <= 2.5 ? 'blu (1,5–2,5 mm²)' : 'giallo (4–6 mm²)'}</strong>, a occhiello o a forcella secondo il morsetto.</p>`, az);
+    const c = Schede.capocorda(d.S);
+    if (!c) return box(`Capocorda per ${f(d.S)} mm²`, '<p>Sezione non standard: scegli la sezione commerciale superiore.</p>', az);
+    const cod = d.vite ? `${c[1]}-M${d.vite}` : `${c[1]}-M…`;
+    return box(`Capocorda per ${f(d.S)} mm²`, `<p>Cembre <strong>${cod}</strong> (tubolare in rame${d.vite ? '' : `, fori da ${c[2]}`}).</p><p class="small">Il numero dopo la M è il diametro della vite. Si pressa con la matrice per ${c[0]} mm².</p>`, az);
   }
 
   function rCavo(d) {
@@ -196,6 +232,8 @@ const Domande = (() => {
     const d = leggi(q);
     const t = d.t;
     let r = rGlossario(d);
+    if (!r && /pressacav|passacav/.test(t)) r = rPressacavo(d);
+    if (!r && /capocord|capicord|terminal[ei] ad occhiello/.test(t)) r = rCapocorda(d);
     if (!r && /strisc|led strip/.test(t)) r = rStriscia(d);
     if (!r && /corrugat|\btub[oi]\b|guain|cavidott|\brk\b|quanti cavi/.test(t)) r = rTubo(d);
     if (!r && /condizionat|climatizz|\bsplit\b|\bbtu\b/.test(t) && !/\bcav|interrutt|magnetot|\blinea\b/.test(t)) r = rBtu(d);

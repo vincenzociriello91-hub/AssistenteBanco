@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.9.0';
+const VERSION = '1.10.0';
 const CHANGELOG = [
+  { v: '1.10.0', data: '15/11/2026', voci: ['Pressacavi con i modelli veri: Gewiss GW FIT, Cembre 1900 e 7900, Legrand/BTicino, HellermannTyton NGM, Fibox, BM Group, con il diametro di cavo che stringono.', 'Chiedi "pressacavo per cavo da 50 mm²", "pressacavo per 5G16" o "pressacavo diametro 22" e ti dice misura e codici di ogni marca.', 'Diametro esterno dei cavi FG16OR16 e capicorda Cembre A-M: chiedi "capocorda 50 mm² foro M8" → A10-M8.'] },
   { v: '1.9.0', data: '15/11/2026', voci: ['Puoi fare domande come a un collega: "corrugato per cavo 50 mm", "che cavo per il forno a 20 metri", "condizionatore per 30 mq", "quanti ampere sono 3 kW", "cos\'è un deviatore".', 'La risposta arriva subito, anche senza internet, con il pulsante per aprire lo strumento o il reparto giusto.', 'Ricerca nei reparti più furba: trova le marche anche se scrivi la frase intera.'] },
   { v: '1.8.1', data: '15/11/2026', voci: ['Elettrico civile completo: tutte le serie attuali di BTicino (Light Now, Livinglight, Classia…), Vimar (Eikon Exé/Tactil, Arké Fit, Plana Up, Idea…), Gewiss (placche ONE, GEO, LUX, ICE, System Pura), Schneider (Unica Pro, Studio, Pure), Master (Mix, Steel), Simon Urmet (Expì Touch, Flexa, Kàdra).'] },
   { v: '1.8.0', data: '15/11/2026', voci: ['6 nuovi reparti: Protezioni e quadri, Automazione cancelli, Ventilazione e aspiratori, Antifurto e antincendio, Canali e passerelle, Nastri giunzioni fissaggi e attrezzi.', 'Nuove marche: Siemens, ABB, Hager, Legrand, Lovato, Finder, FAAC, BFT, CAME, Nice, Vortice, Bentel, Notifier, Arnocanali, 3M, Cellpack, Etelec, Intercable, Panduit, Fischer, AVE, Beta Cavi, ITC.', 'Serie complete per Gewiss (Chorus, ChoruSmart) e Aermec (SLG, SE, multisplit MLG).'] },
@@ -418,7 +419,7 @@ async function caricaCatalogo() {
 }
 
 function suggerimenti() {
-  const es = ['corrugato per cavo 50 mm', 'che cavo per il forno a 20 metri', 'condizionatore per 30 mq', 'quanti ampere sono 3 kW', "cos'è un deviatore", 'magnetotermico 16A', 'Daikin'];
+  const es = ['corrugato per cavo 50 mm', 'che cavo per il forno a 20 metri', 'pressacavo per cavo da 50 mm²', 'condizionatore per 30 mq', 'quanti ampere sono 3 kW', "cos'è un deviatore", 'magnetotermico 16A', 'Daikin'];
   return `<h2 class="sezione">Prova a chiedere</h2><div class="chips">${es.map(x => `<button class="chip-btn" data-sugg="${esc(x)}">${esc(x)}</button>`).join('')}</div>`;
 }
 function cerca(q) {
