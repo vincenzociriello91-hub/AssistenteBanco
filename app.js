@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.3.0';
+const VERSION = '1.3.1';
 const CHANGELOG = [
+  { v: '1.3.1', data: '15/11/2026', voci: ['Controllo completo dell\'app: 50 verifiche automatiche su calcoli, ricerca, reparti, codici, catalogo, rapporti e 7 risoluzioni.', 'Numeri scritti tutti allo stesso modo (es. 7.000 BTU, 1.500 lumen).'] },
   { v: '1.3.0', data: '15/11/2026', voci: ['Nuovo strumento Codici gestionale: triple dei fornitori e codici di ricerca (Siemens, Schneider, Ledvance, cavi e rame).', 'Cerca trova anche i codici (es. "salvamotore" → SIE RV, SNR GV) e nei reparti compare la tripla accanto alla marca.', 'I codici aziendali restano solo sul dispositivo: si importano da file.'] },
   { v: '1.2.0', data: '15/11/2026', voci: ['App riordinata in 4 schede: Cerca, Strumenti, Reparti, Info.', 'Strumenti e reparti come riquadri uguali: tocchi e si apre la pagina, freccia o tasto indietro per tornare.', 'Cerca trova insieme articoli del catalogo, marche nei reparti e ricerca online.', 'Dimensiona linea più semplice: opzioni avanzate nascoste finché non servono.'] },
   { v: '1.1.0', data: '15/11/2026', voci: ['Marche aggiunte: illuminazione (Philips, Ledvance, Beghelli, Disano, Fosnova, 3F Filippi, Performance in Lighting, iGuzzini).', 'Cavi (Prysmian, La Triveneta Cavi, Baldassari, Icel); fotovoltaico (Huawei, SMA, Fronius, SolarEdge, ZCS Azzurro, Sungrow, Kostal, GoodWe, BYD, moduli).', 'Domotica (Gewiss, ABB, Schneider); cassette (Gewiss 44 CE, Bocchiotti Pico, Scame Scabox).'] },
@@ -31,7 +32,7 @@ const REPORT_PUBKEY = {"kty":"RSA","n":"oCNcABFJ7_E4lAKCBgC2JztOZE1gOaf4dJe2VbTo
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-const fmt = (n, d = 1) => Number.isFinite(n) ? n.toLocaleString('it-IT', { maximumFractionDigits: d, minimumFractionDigits: 0 }) : '—';
+const fmt = (n, d = 1) => Number.isFinite(n) ? n.toLocaleString('it-IT', { maximumFractionDigits: d, minimumFractionDigits: 0, useGrouping: 'always' }) : '—';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const norm = s => String(s ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
@@ -235,7 +236,7 @@ function calcolaBtu() {
   const mq = parseFloat($('#btuMq').value) || 0, h = parseFloat($('#btuH').value) || 2.7, k = parseFloat($('#btuEsp').value) || 1;
   const btu = mq * 340 * (h / 2.7) * k;
   const taglia = TAGLIE_BTU.find(t => t >= btu * 0.95);
-  $('#btuOut').innerHTML = mq ? `${taglia ? taglia.toLocaleString('it-IT') + ' BTU/h' : 'oltre 24.000 BTU: dividi su più split'} <span class="small">(stima ${fmt(btu, 0)} BTU/h ≈ ${fmt(btu / 3412, 1)} kW)</span>` : '<span class="hint">Inserisci i m².</span>';
+  $('#btuOut').innerHTML = mq ? `${taglia ? fmt(taglia, 0) + ' BTU/h' : 'oltre 24.000 BTU: dividi su più split'} <span class="small">(stima ${fmt(btu, 0)} BTU/h ≈ ${fmt(btu / 3412, 1)} kW)</span>` : '<span class="hint">Inserisci i m².</span>';
 }
 ['#btuMq', '#btuH', '#btuEsp'].forEach(s => $(s).addEventListener('input', calcolaBtu)); calcolaBtu();
 
