@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.3.1';
+const VERSION = '1.3.2';
 const CHANGELOG = [
+  { v: '1.3.2', data: '15/11/2026', voci: ['Codici gestionale Elettrocampania già inseriti nell\'app: niente da importare.'] },
   { v: '1.3.1', data: '15/11/2026', voci: ['Controllo completo dell\'app: 50 verifiche automatiche su calcoli, ricerca, reparti, codici, catalogo, rapporti e 7 risoluzioni.', 'Numeri scritti tutti allo stesso modo (es. 7.000 BTU, 1.500 lumen).'] },
   { v: '1.3.0', data: '15/11/2026', voci: ['Nuovo strumento Codici gestionale: triple dei fornitori e codici di ricerca (Siemens, Schneider, Ledvance, cavi e rame).', 'Cerca trova anche i codici (es. "salvamotore" → SIE RV, SNR GV) e nei reparti compare la tripla accanto alla marca.', 'I codici aziendali restano solo sul dispositivo: si importano da file.'] },
   { v: '1.2.0', data: '15/11/2026', voci: ['App riordinata in 4 schede: Cerca, Strumenti, Reparti, Info.', 'Strumenti e reparti come riquadri uguali: tocchi e si apre la pagina, freccia o tasto indietro per tornare.', 'Cerca trova insieme articoli del catalogo, marche nei reparti e ricerca online.', 'Dimensiona linea più semplice: opzioni avanzate nascoste finché non servono.'] },
@@ -253,7 +254,7 @@ $('#promemoria').innerHTML = `
 /* ============ CODICI GESTIONALE (dati aziendali: solo sul dispositivo) ============ */
 const Codici = {
   dati: null,
-  carica() { try { this.dati = JSON.parse(localStorage.getItem('ab_codici') || 'null'); } catch { this.dati = null; } return this.dati; },
+  carica() { try { this.dati = JSON.parse(localStorage.getItem('ab_codici') || 'null'); } catch { this.dati = null; } if (!this.dati && typeof CODICI_DEFAULT !== 'undefined') this.dati = CODICI_DEFAULT; return this.dati; },
   salva(d) { localStorage.setItem('ab_codici', JSON.stringify(d)); this.dati = d; },
   valida(d) { return d && d.tipo === 'codici-gestionale' && Array.isArray(d.fornitori); },
   // Tripla del fornitore partendo dal nome marca (con alias: Hager, Hikvision, Panduit…)
@@ -303,7 +304,7 @@ const Codici = {
 Codici.carica();
 $('#codImport').addEventListener('change', e => { const f = e.target.files[0]; if (f) Codici.importa(f, $('#codMsg')); e.target.value = ''; });
 $('#codImport2').addEventListener('change', e => { const f = e.target.files[0]; if (f) Codici.importa(f, null); e.target.value = ''; });
-$('#codClear').addEventListener('click', () => { localStorage.removeItem('ab_codici'); Codici.dati = null; Codici.renderVista(); Report.log('codici-eliminati', {}); });
+$('#codClear').addEventListener('click', () => { localStorage.removeItem('ab_codici'); Codici.carica(); Codici.renderVista(); RepartiUI.render(); Report.log('codici-predefiniti', {}); });
 $('#codQ').addEventListener('input', () => Codici.renderVista());
 Codici.renderVista();
 

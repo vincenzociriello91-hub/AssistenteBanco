@@ -172,7 +172,7 @@
 
   <div class="view" data-view="codici" hidden>
     <div class="viewhead"><button class="back" aria-label="Indietro">←</button><h1>Codici gestionale</h1></div>
-    <p class="hint">Triple dei fornitori e codici di ricerca del gestionale. Restano solo su questo dispositivo.</p>
+    <p class="hint">Triple dei fornitori e codici di ricerca del gestionale Elettrocampania.</p>
     <div class="card" id="codNoData">
       <p>Nessun codice caricato. Importa il file <code>codici-elettrocampania.json</code>.</p>
       <input id="codImport" type="file" accept=".json,application/json" aria-label="Importa codici">
@@ -181,9 +181,9 @@
     <div id="codData" hidden>
       <div class="card"><input id="codQ" type="search" placeholder="Filtra (es. Siemens, SIE, salvamotore)" aria-label="Filtra codici"></div>
       <div id="codLista"></div>
-      <details class="card"><summary>Sostituisci o elimina i codici</summary>
+      <details class="card"><summary>Aggiorna i codici da file</summary>
         <input id="codImport2" type="file" accept=".json,application/json" aria-label="Sostituisci codici">
-        <div class="row"><button id="codClear" class="btn danger">Elimina codici da questo dispositivo</button></div>
+        <div class="row"><button id="codClear" class="btn">Torna ai codici predefiniti</button></div>
       </details>
     </div>
   </div>
@@ -236,6 +236,7 @@
 
 <script src="calc.js"></script>
 <script src="reparti.js"></script>
+<script src="codici.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
