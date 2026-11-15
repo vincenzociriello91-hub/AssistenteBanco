@@ -310,3 +310,15 @@ summary { flex-wrap: nowrap; }
 .result .hero .kpi:first-child .v, .result .hero .kpi:first-child .l { color: var(--on-primary-c); }
 details.dettagli { margin-top: .75rem; }
 .benvenuto { background: linear-gradient(150deg, var(--primary-c), var(--surface-c) 75%); }
+
+/* 1.9.0 domande */
+.risposta .risp { flex: 1; min-width: 0; }
+.risp-corpo p { margin: .35rem 0; }
+.risp-corpo .small { font-size: .9rem; opacity: .85; }
+.tab-risp { width: 100%; border-collapse: collapse; margin: .4rem 0; }
+.tab-risp td { padding: .35rem .25rem; border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent); }
+.tab-risp td:last-child { text-align: right; white-space: nowrap; }
+.risp-azioni { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .6rem; }
+.risposta .chip-btn { background: var(--surface); color: var(--on-surface); }
+.risp-guida { background: var(--surface-c, var(--surface)); border-radius: 1.25rem; padding: .85rem 1.1rem; margin-bottom: .75rem; }
+.risp-guida summary { cursor: pointer; font-weight: 600; min-height: 2.75rem; display: flex; align-items: center; }

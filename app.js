@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.8.1';
+const VERSION = '1.9.0';
 const CHANGELOG = [
+  { v: '1.9.0', data: '15/11/2026', voci: ['Puoi fare domande come a un collega: "corrugato per cavo 50 mm", "che cavo per il forno a 20 metri", "condizionatore per 30 mq", "quanti ampere sono 3 kW", "cos\'è un deviatore".', 'La risposta arriva subito, anche senza internet, con il pulsante per aprire lo strumento o il reparto giusto.', 'Ricerca nei reparti più furba: trova le marche anche se scrivi la frase intera.'] },
   { v: '1.8.1', data: '15/11/2026', voci: ['Elettrico civile completo: tutte le serie attuali di BTicino (Light Now, Livinglight, Classia…), Vimar (Eikon Exé/Tactil, Arké Fit, Plana Up, Idea…), Gewiss (placche ONE, GEO, LUX, ICE, System Pura), Schneider (Unica Pro, Studio, Pure), Master (Mix, Steel), Simon Urmet (Expì Touch, Flexa, Kàdra).'] },
   { v: '1.8.0', data: '15/11/2026', voci: ['6 nuovi reparti: Protezioni e quadri, Automazione cancelli, Ventilazione e aspiratori, Antifurto e antincendio, Canali e passerelle, Nastri giunzioni fissaggi e attrezzi.', 'Nuove marche: Siemens, ABB, Hager, Legrand, Lovato, Finder, FAAC, BFT, CAME, Nice, Vortice, Bentel, Notifier, Arnocanali, 3M, Cellpack, Etelec, Intercable, Panduit, Fischer, AVE, Beta Cavi, ITC.', 'Serie complete per Gewiss (Chorus, ChoruSmart) e Aermec (SLG, SE, multisplit MLG).'] },
   { v: '1.7.0', data: '15/11/2026', voci: ['App più semplice anche per chi non è del mestiere: risposte scritte in parole semplici.', 'Dimensiona linea: scegli l\'apparecchio (forno, piano a induzione, condizionatore, auto elettrica…) e la risposta arriva da sola.', 'Benvenuto alla prima apertura, suggerimenti di ricerca, glossario "Parole semplici".'] },
@@ -417,8 +418,8 @@ async function caricaCatalogo() {
 }
 
 function suggerimenti() {
-  const es = ['salvavita', 'magnetotermico 16A', 'corrugato 25', 'cavo 2,5', 'Daikin', 'pressacavi', 'scatola 503'];
-  return `<h2 class="sezione">Prova a cercare</h2><div class="chips">${es.map(x => `<button class="chip-btn" data-sugg="${esc(x)}">${esc(x)}</button>`).join('')}</div>`;
+  const es = ['corrugato per cavo 50 mm', 'che cavo per il forno a 20 metri', 'condizionatore per 30 mq', 'quanti ampere sono 3 kW', "cos'è un deviatore", 'magnetotermico 16A', 'Daikin'];
+  return `<h2 class="sezione">Prova a chiedere</h2><div class="chips">${es.map(x => `<button class="chip-btn" data-sugg="${esc(x)}">${esc(x)}</button>`).join('')}</div>`;
 }
 function cerca(q) {
   const out = $('#results');
@@ -438,8 +439,9 @@ function cerca(q) {
   const cod = Codici.cerca(q);
   const codHtml = Codici.dati && (cod.famiglie.length || cod.fornitori.length) && cod.fornitori.length < Codici.dati.fornitori.length ? `<h2 class="sezione">Codici gestionale</h2>${Codici.html(cod, 6)}` : '';
   const rep = RepartiUI.cerca(q).slice(0, 6);
-  const repHtml = codHtml + (rep.length ? `<h2 class="sezione">Nei reparti</h2>${rep.map(x => `<button class="item item-link" data-goto-rep="${x.reparto.id}"><div class="t">${esc(x.marca.marca)}${Codici.tripla(x.marca.marca) ? ` <span class="codice">${esc(Codici.tripla(x.marca.marca))}</span>` : ''} <span class="chip">${esc(x.reparto.nome)}</span></div><div class="m">${esc(x.marca.modelli)}</div></button>`).join('')}` : '');
-  if (!lista.length) { out.innerHTML = repHtml + (CATALOGO.length ? '<h2 class="sezione">Catalogo</h2><p class="hint">Nessun articolo nel catalogo.</p>' : '') + '<h2 class="sezione">Online</h2>' + web; return; }
+  const domanda = Domande.rispondi(q);
+  const repHtml = domanda + codHtml + (rep.length ? `<h2 class="sezione">Nei reparti</h2>${rep.map(x => `<button class="item item-link" data-goto-rep="${x.reparto.id}"><div class="t">${esc(x.marca.marca)}${Codici.tripla(x.marca.marca) ? ` <span class="codice">${esc(Codici.tripla(x.marca.marca))}</span>` : ''} <span class="chip">${esc(x.reparto.nome)}</span></div><div class="m">${esc(x.marca.modelli)}</div></button>`).join('')}` : '');
+  if (!lista.length) { Report.log('ricerca', { lunghezza: q.length, risultati: 0, risposta: !!domanda }); out.innerHTML = repHtml + (CATALOGO.length ? '<h2 class="sezione">Catalogo</h2><p class="hint">Nessun articolo nel catalogo.</p>' : '') + '<h2 class="sezione">Online</h2>' + web; return; }
   const etichetta = (k, v) => ({ curva: 'curva ' + String(v).toUpperCase(), tipo: 'tipo ' + String(v).toUpperCase(), poli: v + 'P', polin: String(v).toUpperCase(), IP: 'IP' + v }[k] ?? `${v} ${k}`);
   out.innerHTML = repHtml + '<h2 class="sezione">Catalogo</h2>' + lista.map(a => {
     const eq = equivalenti(a).slice(0, 6);
@@ -451,9 +453,10 @@ function cerca(q) {
       ${eq.length ? `<div class="eq"><strong>Equivalenti:</strong><br>${eq.map(b => `${esc(b.marca)} <strong>${esc(b.codice)}</strong> — ${esc(b.descrizione)}${b.prezzo ? ' · € ' + esc(b.prezzo) : ''}`).join('<br>')}</div>` : ''}
     </div>`;
   }).join('') + '<h2 class="sezione">Online</h2>' + web;
-  Report.log('ricerca', { lunghezza: q.length, risultati: lista.length });
+  Report.log('ricerca', { lunghezza: q.length, risultati: lista.length, risposta: !!domanda });
 }
 $('#results').addEventListener('click', e => { const sg = e.target.closest('[data-sugg]'); if (sg) { $('#q').value = sg.dataset.sugg; cerca(sg.dataset.sugg); return; } });
+$('#results').addEventListener('click', e => { const b = e.target.closest('[data-goto-tool]'); if (!b) return; apriVista('strumenti', b.dataset.gotoTool); Report.log('domanda-vai', { tool: b.dataset.gotoTool }); });
 $('#results').addEventListener('click', e => { const b = e.target.closest('[data-goto-rep]'); if (!b) return; RepartiUI.apri(b.dataset.gotoRep); apriVista('reparti', 'reparto'); history.replaceState({ tab: 'reparti', vista: 'reparto', rep: b.dataset.gotoRep }, ''); });
 let tQ; $('#q').addEventListener('input', e => { clearTimeout(tQ); tQ = setTimeout(() => cerca(e.target.value), 150); });
 

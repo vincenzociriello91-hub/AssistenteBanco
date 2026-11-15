@@ -298,7 +298,18 @@ const RepartiUI = {
     for (const r of REPARTI) for (const m of this.marche(r)) {
       if (this.n(`${m.marca} ${m.modelli} ${m.note || ''}`).includes(q)) out.push({ reparto: r, marca: m });
     }
-    return out;
+    if (out.length) return out;
+    // Frase intera: cerca parola per parola (senza parole vuote) e tiene le marche più pertinenti
+    const VUOTE = new Set(['per', 'con', 'che', 'del', 'della', 'dei', 'delle', 'una', 'uno', 'serve', 'servono', 'quale', 'quali', 'come', 'dove', 'cosa', 'sono', 'mi', 'il', 'lo', 'la', 'le', 'gli', 'un', 'di', 'da', 'in', 'su', 'a', 'e', 'o', 'cavo', 'cavi']);
+    const parole = q.split(/[^a-z0-9]+/).filter(p => p.length >= 3 && !VUOTE.has(p) && !/^\d/.test(p)).map(p => p.length > 5 ? p.slice(0, p.length - 2) : p);
+    if (!parole.length) return out;
+    let best = 0; const punti = [];
+    for (const r of REPARTI) for (const m of this.marche(r)) {
+      const testo = this.n(`${r.nome} ${m.marca} ${m.modelli} ${m.note || ''}`);
+      const s = parole.filter(p => testo.includes(p)).length;
+      if (s) { punti.push({ s, reparto: r, marca: m }); best = Math.max(best, s); }
+    }
+    return punti.filter(x => x.s === best).map(({ reparto, marca }) => ({ reparto, marca }));
   },
   render() {
     const box = document.getElementById('repartiLista');
