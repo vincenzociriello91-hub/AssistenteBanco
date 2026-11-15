@@ -1,0 +1,24 @@
+# Assistente Banco
+
+App web installabile (PWA) per il banco di un grossista di materiale elettrico. Funziona su Android e PC, anche offline.
+
+**Apri l'app:** https://vincenzociriello91-hub.github.io/AssistenteBanco/
+
+## Funzioni
+- **Dimensiona linea**: corrente d'impiego, interruttore (taglia e curva), differenziale (tipo e Idn), sezione del cavo, caduta di tensione. Tiene conto di posa, isolante, temperatura e circuiti raggruppati.
+- **Catalogo**: importa listini Excel/CSV (restano solo sul dispositivo), ricerca per codice, EAN o descrizione.
+- **Equivalenze tra marche**: automatiche, in base alle caratteristiche lette dalla descrizione (A, poli, curva, mA, kA, tipo, mm²). Con la colonna `gruppo` si forzano a mano.
+- **Scanner** di codici a barre con la fotocamera.
+- **Strumenti**: conversioni kW/A/CV/kVA, contatore, tubi e corrugati, illuminazione, promemoria tecnico.
+- Novità e aggiornamento dall'app, rapporti cifrati.
+
+## Installazione
+- Android: apri il link in Chrome → menu → *Installa app*.
+- PC: apri il link in Chrome o Edge → icona di installazione nella barra degli indirizzi.
+
+## Note
+I calcoli sono indicativi (IEC 60364-5-52, CEI-UNEL 35024/1, CEI 64-8). Il dimensionamento definitivo spetta all'installatore o al progettista.
+
+## Novità
+### 1.0.0 — 15/11/2026
+Prima versione.
