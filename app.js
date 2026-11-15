@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.10.1';
+const VERSION = '1.11.0';
 const CHANGELOG = [
+  { v: '1.11.0', data: '15/11/2026', voci: ['I rapporti cifrati partono da soli verso il ricevitore appena è attivo: non serve più salvarli a mano.', 'Se manca la rete restano in coda e partono appena torna.'] },
   { v: '1.10.1', data: '15/11/2026', voci: ['Pressacavi completi: BM Group 4912–4963 con campi di serraggio, Gewiss anche M12, M50, M63 e serie passo PG.', 'Diametri di tutti i cavi FG16OR16 e FG16R16 dal catalogo Prysmian: unipolari, 2–5 conduttori, 3x+1 e multipolari fino a 24 anime.', 'Chiedi anche "pressacavo per cavo unipolare 50", "pressacavo 3x50", "corrugato per FG16OR16 5G16".'] },
   { v: '1.10.0', data: '15/11/2026', voci: ['Pressacavi con i modelli veri: Gewiss GW FIT, Cembre 1900 e 7900, Legrand/BTicino, HellermannTyton NGM, Fibox, BM Group, con il diametro di cavo che stringono.', 'Chiedi "pressacavo per cavo da 50 mm²", "pressacavo per 5G16" o "pressacavo diametro 22" e ti dice misura e codici di ogni marca.', 'Diametro esterno dei cavi FG16OR16 e capicorda Cembre A-M: chiedi "capocorda 50 mm² foro M8" → A10-M8.'] },
   { v: '1.9.0', data: '15/11/2026', voci: ['Puoi fare domande come a un collega: "corrugato per cavo 50 mm", "che cavo per il forno a 20 metri", "condizionatore per 30 mq", "quanti ampere sono 3 kW", "cos\'è un deviatore".', 'La risposta arriva subito, anche senza internet, con il pulsante per aprire lo strumento o il reparto giusto.', 'Ricerca nei reparti più furba: trova le marche anche se scrivi la frase intera.'] },
@@ -38,7 +39,8 @@ const CHANGELOG = [
 ];
 
 // Endpoint di invio rapporti: vuoto finché non viene attivato. I rapporti restano in coda.
-const REPORT_URL = '';
+// Indirizzo del ricevitore: arriva da version.json (campo "rapporti"), così si cambia senza nuova versione
+let REPORT_URL = localStorage.getItem('ab_report_url') || '';
 const REPORT_PUBKEY = {"kty":"RSA","n":"oCNcABFJ7_E4lAKCBgC2JztOZE1gOaf4dJe2VbTomIEixSa3l4v7pqoy_cOu-PuCaAUv9vdbTp1liSa2_QyB_VHulyVQiQsd3BbmSnYiUP7rFoGx69KmjLT1ko91PtRvQsN4vPRv9xZzXs3uf7ED1-6eRoM1GiNDHPB8UM9xK-TKpPWDlMyktQdBemPp00vYZexgQvt3pMHfYif0z_jvA7WfZLDxfaCzZ0RlAHtDKUsKKhZs-mvwakgLKGDZYbV7qSaDV5urtxswUHO749SidqjHJoQkIs6wZLf8RSyc6OxAMFuena7LGELwDk5B8kcqpqxx_PEbcgvNVBaNqsaBYrEhR-X6xd0kT517Dv2vBY1Yns5EplfpPa88TSw53ISMsfLxi2mS5fogax64e-yHtfh9ePsNTGNl8fCx6xblDjw3eDeNhsMmSXCPmNgqj564kLRup5XT-O3esSY8Qp1fkzNr6w72qSEp2gI8LDVbcNPqg9UJOijU0bqN60NjvxWh","e":"AQAB","alg":"RSA-OAEP-256","ext":true};
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -82,8 +84,16 @@ const Report = {
     if (!REPORT_URL || !navigator.onLine) return;
     const coda = JSON.parse(localStorage.getItem('ab_rapporti') || '[]');
     if (!coda.length) return;
-    const ok = navigator.sendBeacon(REPORT_URL, new Blob([JSON.stringify(coda)], { type: 'application/json' }));
-    if (ok) localStorage.setItem('ab_rapporti', '[]');
+    const url = REPORT_URL.replace(/\/$/, '') + '/r/AssistenteBanco';
+    const corpo = JSON.stringify(coda);
+    // text/plain = nessuna richiesta preliminare CORS, funziona anche alla chiusura dell'app
+    if (document.visibilityState === 'hidden') {
+      if (navigator.sendBeacon(url, new Blob([corpo], { type: 'text/plain' }))) localStorage.setItem('ab_rapporti', '[]');
+      return;
+    }
+    fetch(url, { method: 'POST', body: corpo, headers: { 'Content-Type': 'text/plain' }, keepalive: corpo.length < 60000 })
+      .then(r => { if (r.ok) { const ora = JSON.parse(localStorage.getItem('ab_rapporti') || '[]'); localStorage.setItem('ab_rapporti', JSON.stringify(ora.slice(coda.length))); } })
+      .catch(() => {});
   },
   async salvaFile() {
     await this.chiudi('salvataggio manuale');
@@ -597,6 +607,7 @@ async function installaAggiornamento() {
 async function cercaAggiornamenti(manuale) {
   try {
     const j = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' }).then(r => r.json());
+    if (typeof j.rapporti === 'string' && j.rapporti !== REPORT_URL) { REPORT_URL = j.rapporti; localStorage.setItem('ab_report_url', REPORT_URL); Report.invia(); }
     if (confrontaVersioni(j.versione, VERSION) > 0) {
       $('#updatebar').hidden = false;
       $('#updatenotes').textContent = `Versione ${j.versione}: ${(j.novita || []).join(' · ')}`;
