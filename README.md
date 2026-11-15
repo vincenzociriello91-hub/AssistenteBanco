@@ -20,6 +20,9 @@ App web installabile (PWA) per il banco di un grossista di materiale elettrico. 
 I calcoli sono indicativi (IEC 60364-5-52, CEI-UNEL 35024/1, CEI 64-8). Il dimensionamento definitivo spetta all'installatore o al progettista.
 
 ## Novità
+### 1.0.5 — 15/11/2026
+Climatizzazione (Daikin, Mitsubishi Electric, Samsung, Haier, Clivet, Aermec) e stima BTU.
+
 ### 1.0.4 — 15/11/2026
 Videocitofonia Urmet e Comelit, videosorveglianza Hikvision.
 

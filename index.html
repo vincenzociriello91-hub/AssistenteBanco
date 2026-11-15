@@ -86,7 +86,7 @@
     <div id="importMsg" class="small"></div>
   </details>
   <details class="card">
-    <summary>Serie civili, citofonia e videosorveglianza</summary>
+    <summary>Marche: serie civili, citofonia, TVCC, clima</summary>
     <div id="serieCivili"></div>
   </details>
 </section>
@@ -119,6 +119,17 @@
     <p class="small">Cavi unipolari FS17 / H07V-K. Regola CEI 64-8: diametro interno ≥ 1,3 × diametro del fascio.</p>
     <div id="tuboRows" class="grid"></div>
     <div id="tuboOut" class="big"></div>
+  </div>
+
+  <div class="card">
+    <h2>Climatizzatore: quanti BTU</h2>
+    <div class="grid">
+      <label>Superficie (m²)<input id="btuMq" type="number" inputmode="decimal" value="20"></label>
+      <label>Altezza soffitto (m)<input id="btuH" type="number" inputmode="decimal" step="0.1" value="2.7"></label>
+      <label>Esposizione<select id="btuEsp"><option value="0.9">Poco soleggiata / nord</option><option value="1" selected>Normale</option><option value="1.2">Molto soleggiata / ultimo piano</option><option value="1.3">Ultimo piano al sole, tante vetrate</option></select></label>
+    </div>
+    <div id="btuOut" class="big"></div>
+    <p class="small">Stima rapida per orientare il cliente (circa 340 BTU/h per m² con soffitto a 2,7 m). Per ambienti particolari serve il calcolo del tecnico.</p>
   </div>
 
   <div class="card">

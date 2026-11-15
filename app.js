@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.0.4';
+const VERSION = '1.0.5';
 const CHANGELOG = [
+  { v: '1.0.5', data: '15/11/2026', voci: ['Nuova tabella climatizzazione: Daikin, Mitsubishi Electric, Samsung, Haier, Clivet, Aermec.', 'Nuovo strumento: stima dei BTU del climatizzatore per stanza.'] },
   { v: '1.0.4', data: '15/11/2026', voci: ['Nuove tabelle: videocitofonia Urmet e Comelit (sistemi, monitor, pulsantiere).', 'Videosorveglianza e antintrusione Hikvision (Turbo HD, IP, AcuSense, AX PRO).'] },
   { v: '1.0.3', data: '15/11/2026', voci: ['Aggiornamento dall\'app riparato: l\'app controlla sempre la versione online e installa i file nuovi con un tocco.', '"Cerca aggiornamenti" ora dice se sei già all\'ultima versione.'] },
   { v: '1.0.2', data: '15/11/2026', voci: ['Aggiunte Master (serie Modo) e Simon Urmet (serie Nea) alle serie civili.', 'Promemoria videocitofonia Urmet: sistemi, monitor e pulsantiere abbinate.'] },
@@ -184,6 +185,16 @@ function calcolaLux() {
   $('#luxOut').innerHTML = `${fmt(lm, 0)} lumen <span class="small">≈ ${fmt(w, 0)} W di LED totali</span>`;
 }
 ['#luxRoom', '#luxMq', '#luxEff'].forEach(s => $(s).addEventListener('input', calcolaLux)); calcolaLux();
+
+/* Climatizzatore: stima BTU */
+const TAGLIE_BTU = [7000, 9000, 12000, 15000, 18000, 24000];
+function calcolaBtu() {
+  const mq = parseFloat($('#btuMq').value) || 0, h = parseFloat($('#btuH').value) || 2.7, k = parseFloat($('#btuEsp').value) || 1;
+  const btu = mq * 340 * (h / 2.7) * k;
+  const taglia = TAGLIE_BTU.find(t => t >= btu * 0.95);
+  $('#btuOut').innerHTML = mq ? `${taglia ? taglia.toLocaleString('it-IT') + ' BTU/h' : 'oltre 24.000 BTU: dividi su più split'} <span class="small">(stima ${fmt(btu, 0)} BTU/h ≈ ${fmt(btu / 3412, 1)} kW)</span>` : '<span class="hint">Inserisci i m².</span>';
+}
+['#btuMq', '#btuH', '#btuEsp'].forEach(s => $(s).addEventListener('input', calcolaBtu)); calcolaBtu();
 
 $('#promemoria').innerHTML = `
 <ul class="ref">
@@ -386,7 +397,17 @@ $('#serieCivili').innerHTML = `
 <table><thead><tr><th>Marca</th><th>Gamme</th></tr></thead><tbody>
 <tr><td>Hikvision</td><td>Turbo HD (analogico su coassiale, con DVR); IP (con NVR); AcuSense (riconosce persone e veicoli, meno falsi allarmi); ColorVu; linee ProExpert e HiWatch; antintrusione AX PRO</td></tr>
 </tbody></table>
-<p class="small">Telecamere Turbo HD vanno su DVR, telecamere IP su NVR: non si mischiano (salvo DVR ibridi che accettano anche qualche IP).</p>`;
+<p class="small">Telecamere Turbo HD vanno su DVR, telecamere IP su NVR: non si mischiano (salvo DVR ibridi che accettano anche qualche IP).</p>
+<h2 style="margin-top:16px">Climatizzazione e pompe di calore</h2>
+<table><thead><tr><th>Marca</th><th>Split a parete</th><th>Altro</th></tr></thead><tbody>
+<tr><td>Daikin</td><td>Ururu Sarara (FTXZ), Emura (FTXJ), Stylish (FTXA), Perfera (FTXM), Comfora (FTXP), Sensira (FTXF)</td><td>Esterne mono RXZ, RXJ, RXA, RXM, RXP; multisplit 2MXM–5MXM; pompe di calore Altherma</td></tr>
+<tr><td>Mitsubishi Electric</td><td>Kirigamine Style (MSZ-LN), Kirigamine Zen (MSZ-EF), Linea Plus (MSZ-AP), Linea Smart (MSZ-HR, MSZ-DW)</td><td>Esterne mono MUZ; multisplit MXZ; pompe di calore Ecodan</td></tr>
+<tr><td>Samsung</td><td>WindFree Elite S2, WindFree Comfort S2, Luzon S2, AR30 Malibu</td><td>Pompe di calore EHS (Mono, Split, TDM Plus, ClimateHub)</td></tr>
+<tr><td>Haier</td><td>Expert, Flexis / Flexis Plus, Pearl Premium, Revive Plus, Serene</td><td>Multisplit fino a 5 interne; app hOn</td></tr>
+<tr><td>Clivet</td><td>Cervino (monosplit R290)</td><td>Pompe di calore Sphera EVO 2.0 (splittata), Edge / Edge Pro (monoblocco), Hydro-Split</td></tr>
+<tr><td>Aermec</td><td>Climatizzatori split</td><td>VRF MVA, pompe di calore, ventilconvettori</td></tr>
+</tbody></table>
+<p class="small">Interna ed esterna vanno abbinate come indica il costruttore (es. Daikin Stylish con esterna RXA, Emura con RXJ, Perfera con RXM). In multisplit controlla che l'interna sia compatibile con quell'esterna. Il climatizzatore va su linea dedicata con magnetotermico: taglia e sezione dalla corrente massima scritta sulla scheda dell'esterna.</p>`;
 
 /* ============ SCANNER ============ */
 let stream = null, scanAttivo = false, zxReader = null;
