@@ -43,15 +43,16 @@ const Schede = (() => {
     const out = [];
     for (const p of PRESSACAVI) for (const [mis, a, b, cod] of p.righe) {
       if (a == null) continue;
-      if (a <= dMin && b >= dMax) out.push({ marca: p.marca, serie: p.serie, mis, a, b, cod });
+      // va bene se stringe il diametro nominale; se il massimo del cavo supera il campo, lo segnalo
+      if (a <= dMin && b >= dMin) out.push({ marca: p.marca, serie: p.serie, mis, a, b, cod, limite: b < dMax });
     }
     const k = m => (m.startsWith('PG') ? 1000 : 0) + parseFloat(m.replace(/[^\d.]/g, ''));
     return out.sort((x, y) => k(x.mis) - k(y.mis));
   }
   function misuraTipica(lista) {
-    const c = {}; lista.filter(x => x.mis.startsWith('M')).forEach(x => { c[x.mis] = (c[x.mis] || 0) + 1; });
+    const c = {}; lista.filter(x => x.mis.startsWith('M') && !x.limite).forEach(x => { c[x.mis] = (c[x.mis] || 0) + 1; });
     const mis = Object.keys(c).sort((a, b) => +a.slice(1) - +b.slice(1));
-    return mis.find(m => c[m] >= 2) || mis[0];
+    return mis.find(m => c[m] >= 2) || mis[0] || lista.find(x => x.mis.startsWith('M'))?.mis;
   }
   function diametroCavo(nCond, S) {
     const keys = nCond ? [`${nCond}G${S}`, `${nCond}X${S}`] : [`5G${S}`, `4G${S}`, `3G${S}`, `3X${S}`, `2X${S}`, `1X${S}`];

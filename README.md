@@ -20,6 +20,13 @@ App web installabile (PWA) per il banco di un grossista di materiale elettrico. 
 I calcoli sono indicativi (IEC 60364-5-52, CEI-UNEL 35024/1, CEI 64-8). Il dimensionamento definitivo spetta all'installatore o al progettista.
 
 ## Novità
+### 1.12.0 — 15/11/2026
+- Scheda Preventivo: righe con quantità, condivisione, stampa/PDF con logo, annulla.
+- Ascolto (riconoscimento vocale del browser): estrae solo materiali e quantità, l'audio non viene salvato.
+- Kit pronti, suggerimenti automatici, "Ho dimenticato qualcosa?".
+- Foto del pezzo con Gemini (chiave salvata solo sul dispositivo).
+- Ricerca vocale, ultime ricerche, più chieste, preferiti; modalità banco.
+
 ### 1.11.0 — 15/11/2026
 - Invio automatico dei rapporti cifrati al ricevitore (cartella `ricevitore/`, Cloudflare Worker); indirizzo letto da `version.json`.
 

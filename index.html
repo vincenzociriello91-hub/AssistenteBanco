@@ -12,13 +12,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=ac_unit,arrow_back,barcode_scanner,bolt,cable,calculate,check_circle,checklist,electric_meter,electrical_services,error,format_size,forum,garage,handyman,home_iot_device,info,lightbulb,linear_scale,mode_fan,power,search,security,sell,settings_input_component,shield,solar_power,storefront,sync_alt,table_rows,videocam,wifi_off&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=ac_unit,add,add_a_photo,arrow_back,auto_awesome,barcode_scanner,bolt,cable,calculate,check_circle,checklist,close,delete,electric_meter,electrical_services,error,format_size,forum,garage,handyman,home_iot_device,info,inventory_2,lightbulb,linear_scale,mic,mode_fan,photo_camera,power,print,receipt_long,remove,search,security,sell,settings_input_component,share,shield,solar_power,star,stop_circle,storefront,sync_alt,table_rows,videocam,visibility,wifi_off&display=block">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header class="topbar">
   <div class="brand"><img src="icon.svg" alt=""><span>Assistente Banco</span></div>
-  <div class="row" style="margin:0"><span id="netstate" class="chip" hidden><span class="msr" aria-hidden="true">wifi_off</span> Offline</span><button id="btnAa" class="btn-aa" title="Dimensione testo" aria-label="Dimensione testo"><span class="msr" aria-hidden="true">format_size</span></button></div>
+  <div class="row" style="margin:0"><span id="netstate" class="chip" hidden><span class="msr" aria-hidden="true">wifi_off</span> Offline</span><button id="btnBanco" class="btn-aa" title="Modalità banco: testo grande e contrasto forte" aria-label="Modalità banco" aria-pressed="false"><span class="msr" aria-hidden="true">visibility</span></button><button id="btnAa" class="btn-aa" title="Dimensione testo" aria-label="Dimensione testo"><span class="msr" aria-hidden="true">format_size</span></button></div>
 </header>
 
 <div id="updatebar" class="updatebar" hidden>
@@ -37,6 +37,7 @@
     <div class="searchrow">
       <span class="msr searchico" aria-hidden="true">search</span>
       <input id="q" type="search" placeholder="Cerca o fai una domanda: es. corrugato per 3 cavi da 2,5" enterkeyhint="search" aria-label="Cerca">
+      <button id="btnVoce" class="btn tonal" title="Cerca a voce" aria-label="Cerca a voce"><span class="msr" aria-hidden="true">mic</span></button>
       <button id="btnScan" class="btn tonal" title="Scansiona codice a barre" aria-label="Scansiona codice a barre"><span class="msr" aria-hidden="true">barcode_scanner</span></button>
     </div>
   </div>
@@ -45,6 +46,7 @@
     <h2 style="margin-bottom:.4rem">Benvenuto 👋</h2>
     <ul class="ref">
       <li><strong>Cerca</strong>: scrivi un codice o cosa ti serve, oppure inquadra il codice a barre.</li>
+      <li><strong>Preventivo</strong>: premi Ascolto e l'app scrive da sola i materiali che chiede il cliente.</li>
       <li><strong>Strumenti</strong>: calcoli pronti, ad esempio che cavo serve per un forno.</li>
       <li><strong>Reparti</strong>: marche e consigli per ogni tipo di prodotto.</li>
     </ul>
@@ -62,6 +64,61 @@
     <div class="row"><button id="btnTemplate" class="btn">Scarica modello CSV</button><button id="btnClearCat" class="btn danger">Svuota catalogo</button></div>
     <div id="importMsg" class="small"></div>
   </details>
+</section>
+
+<!-- ================= PREVENTIVO ================= -->
+<section id="tab-preventivo" class="tab" aria-label="Preventivo">
+  <h1>Preventivo</h1>
+  <div class="azioni-banco">
+    <button id="btnAscolto" class="btn-ascolto"><span class="msr" aria-hidden="true">mic</span><span class="lbl">Ascolto</span></button>
+    <div class="azioni-lato">
+      <button id="btnKit" class="btn tonal big"><span class="msr" aria-hidden="true">inventory_2</span> Kit pronti</button>
+      <button id="btnFoto" class="btn tonal big"><span class="msr" aria-hidden="true">photo_camera</span> Foto pezzo</button>
+    </div>
+  </div>
+  <p class="small">Prima di premere Ascolto dì al cliente: <em>«mi segno il materiale, va bene?»</em>. L'audio non viene salvato: restano solo materiali e quantità.</p>
+  <div id="ascoltoBox" class="card" hidden>
+    <p id="ascoltoStato" class="hint"></p>
+    <div id="ascoltoLista"></div>
+    <button id="ascoltoAggiungi" class="btn filled" hidden>Aggiungi al preventivo</button>
+  </div>
+  <div id="kitBox" class="card" hidden>
+    <div class="grid2">
+      <label>Cosa deve fare<select id="kitSel"></select></label>
+      <label>Serie civile<select id="kitSerie"></select></label>
+      <label>Quanti punti<input id="kitPunti" type="number" min="1" value="1" inputmode="numeric"></label>
+      <label>Distanza media dal quadro (m)<input id="kitDist" type="number" min="0" value="8" inputmode="decimal"></label>
+    </div>
+    <div id="kitAnteprima"></div>
+    <button id="kitAggiungi" class="btn filled">Aggiungi al preventivo</button>
+  </div>
+  <div id="fotoBox" class="card" hidden>
+    <p id="fotoConta" class="small"></p>
+    <div id="fotoThumbs" class="thumbs"></div>
+    <div class="row">
+      <label class="btn tonal file-btn"><span class="msr" aria-hidden="true">add_a_photo</span> Aggiungi foto<input id="fotoInput" type="file" accept="image/*" capture="environment" multiple hidden></label>
+      <button id="btnRiconosci" class="btn filled" disabled>Riconosci</button>
+    </div>
+    <div id="fotoRisultato"></div>
+  </div>
+  <div class="card">
+    <label>Cliente (facoltativo)<input id="prevCliente" placeholder="Nome o cantiere" autocomplete="off"></label>
+    <form id="formRiga" class="riga-form">
+      <input name="desc" placeholder="Articolo, es. 3 prese schuko" aria-label="Articolo" autocomplete="off">
+      <input name="qta" inputmode="decimal" placeholder="Q.tà" aria-label="Quantità">
+      <select name="um" aria-label="Unità"><option value="">u.m.</option><option value="pz">pz</option><option value="m">m</option><option value="conf">conf</option></select>
+      <button class="btn filled" aria-label="Aggiungi"><span class="msr" aria-hidden="true">add</span></button>
+    </form>
+  </div>
+  <div id="prevLista"></div>
+  <div id="prevSugg"></div>
+  <div id="dimenticato" hidden></div>
+  <div class="azioni-prev">
+    <button id="btnDimenticato" class="btn tonal"><span class="msr" aria-hidden="true">checklist</span> Ho dimenticato qualcosa?</button>
+    <button id="btnCondividi" class="btn tonal"><span class="msr" aria-hidden="true">share</span> Condividi</button>
+    <button id="btnStampa" class="btn tonal"><span class="msr" aria-hidden="true">print</span> Stampa / PDF</button>
+    <button id="btnSvuota" class="btn"><span class="msr" aria-hidden="true">delete</span> Svuota</button>
+  </div>
 </section>
 
 <!-- ================= STRUMENTI ================= -->
@@ -240,6 +297,18 @@
     <button id="btnInstall" class="btn filled" hidden style="margin-top:.6rem">Installa l'app</button>
     <p class="small">Su Android: menu di Chrome → <em>Installa app</em>. Su PC: icona di installazione nella barra degli indirizzi.</p>
   </div>
+  <div class="card">
+    <label class="switch-row"><span><strong>Modalità banco</strong><br><span class="small">Testo più grande e contrasto forte, leggibile anche girando lo schermo verso il cliente.</span></span><input id="togBanco" type="checkbox" role="switch"></label>
+  </div>
+  <details class="card">
+    <summary>Foto del pezzo (Gemini)</summary>
+    <p class="small">Serve una chiave Gemini gratuita, da creare qui: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>. Resta solo su questo dispositivo. La stessa chiave migliora anche l'elenco di Ascolto.</p>
+    <form id="formGemini" class="grid2">
+      <label>Chiave Gemini<input id="gemKey" type="password" autocomplete="off" placeholder="AIza…"></label>
+      <label>Modello<input id="gemModello" placeholder="gemini-flash-latest" autocomplete="off"></label>
+      <button class="btn filled">Salva</button><span id="gemMsg" class="small"></span>
+    </form>
+  </details>
   <details class="card"><summary>Novità</summary><div id="changelog"></div></details>
   <details class="card"><summary>Schermo rilevato</summary><p class="small" id="schermoInfo"></p></details>
   <details class="card">
@@ -253,10 +322,13 @@
 
 <nav class="bottombar" role="tablist">
   <button data-tab="cerca" class="active" role="tab"><span class="ico"><span class="msr" aria-hidden="true">search</span></span><span>Cerca</span></button>
+  <button data-tab="preventivo" role="tab"><span class="ico"><span class="msr" aria-hidden="true">receipt_long</span><span class="badge" hidden></span></span><span>Preventivo</span></button>
   <button data-tab="strumenti" role="tab"><span class="ico"><span class="msr" aria-hidden="true">calculate</span></span><span>Strumenti</span></button>
   <button data-tab="reparti" role="tab"><span class="ico"><span class="msr" aria-hidden="true">storefront</span></span><span>Reparti</span></button>
   <button data-tab="info" role="tab"><span class="ico"><span class="msr" aria-hidden="true">info</span></span><span>Info</span></button>
 </nav>
+<div id="snackbar" class="snackbar" role="status" hidden><span></span><button class="btn">Annulla</button></div>
+<div id="stampa" class="solo-stampa" aria-hidden="true"></div>
 
 <script src="calc.js"></script>
 <script src="reparti.js"></script>
@@ -264,5 +336,6 @@
 <script src="codici.js"></script>
 <script src="domande.js"></script>
 <script src="app.js"></script>
+<script src="banco.js"></script>
 </body>
 </html>

@@ -96,15 +96,15 @@ const Domande = (() => {
       if (!l.length) return '<p>Nessun pressacavo standard lo stringe bene: serve una misura più grande (M75 o oltre) o un pressacavo speciale.</p>';
       const tip = Schede.misuraTipica(l);
       const per = {}; l.forEach(x => { (per[x.marca + ' · ' + x.serie] ||= []).push(x); });
-      return `<p>Pressacavo <strong>${tip}</strong>.</p><table class="tab-risp">${Object.entries(per).map(([k, v]) => `<tr><td>${esc(k)}</td><td><strong>${v.map(x => esc(x.mis + (x.cod ? ' ' + x.cod : '')) + ` <span class="small">(${f(x.a)}–${f(x.b)})</span>`).join('<br>')}</strong></td></tr>`).join('')}</table>`;
+      return `<p>Pressacavo <strong>${tip}</strong>.</p><table class="tab-risp">${Object.entries(per).map(([k, v]) => `<tr><td>${esc(k)}</td><td><strong>${v.map(x => esc(x.mis + (x.cod ? ' ' + x.cod : '')) + ` <span class="small">(${f(x.a)}–${f(x.b)})${x.limite ? ' ⚠ al limite: misura il cavo' : ''}</span>`).join('<br>')}</strong></td></tr>`).join('')}</table>`;
     };
     if (d.Dcavo) return box(`Pressacavo per cavo Ø ${f(d.Dcavo)} mm`, lista(d.Dcavo, d.Dcavo), az);
     if (d.S != null) {
-      const cand = d.unip ? [Schede.diametroCavo(1, d.S)] : d.nCavi ? [Schede.diametroCavo(d.nCavi, d.S)] : [5, 4, 3, 2].map(k => Schede.diametroCavo(k, d.S)).filter(Boolean);
+      const cand = d.unip ? [Schede.diametroCavo(1, d.S)] : d.nCavi ? [Schede.diametroCavo(d.nCavi, d.S)] : [1, 2, 3, 4, 5].map(k => Schede.diametroCavo(k, d.S)).filter(Boolean);
       const ok = cand.filter(Boolean);
       if (!ok.length) return box(`Pressacavo per cavo da ${f(d.S)} mm²`, '<p>Non ho il diametro di questo cavo: misuralo con il calibro e scrivimi per esempio <em>pressacavo diametro 30</em>.</p>', az);
       const corpo = ok.map(c => `<h3 class="tab-tit">${c.sigla.startsWith('1X') ? 'FG16R16' : 'FG16OR16'} ${c.sigla.replace(/\./g, ',')} · Ø ${c.d[0] === c.d[1] ? f(c.d[0]) : f(c.d[0]) + '–' + f(c.d[1])} mm</h3>${lista(c.d[0], c.d[1])}`).join('');
-      return box(`Pressacavo per cavo da ${f(d.S)} mm²`, corpo + '<p class="small">Diametri dal catalogo Prysmian (nominale–massimo): altre marche possono cambiare di 1–3 mm. Nel dubbio misura il cavo.</p>', az);
+      return box(`Pressacavo per cavo da ${f(d.S)} mm²`, (d.nCavi || d.unip ? '' : '<p>Non mi hai detto quanti conduttori: ti mostro unipolare e multipolari. Scrivi per esempio <em>1x50</em> o <em>5G50</em> per avere solo quello.</p>') + corpo + '<p class="small">Diametri dal catalogo Prysmian (nominale–massimo): altre marche possono cambiare di 1–3 mm. Nel dubbio misura il cavo.</p>', az);
     }
     return box('Che pressacavo serve?', '<p>Dimmi il cavo (es. <em>pressacavo per 5G16</em>) o il suo diametro (es. <em>pressacavo diametro 22</em>).</p>', az);
   }

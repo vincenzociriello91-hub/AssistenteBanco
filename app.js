@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.11.0';
+const VERSION = '1.12.0';
 const CHANGELOG = [
+  { v: '1.12.0', data: '15/11/2026', voci: ['Nuova scheda Preventivo: aggiungi articoli, quantità con + e −, condividi o stampa in PDF con il logo.', 'Ascolto: premi il pulsante, il cliente parla e l\'app scrive da sola l\'elenco dei materiali con le quantità. L\'audio non viene mai salvato.', 'Kit pronti: punto luce, deviata, invertita, prese, punto TV, quadretto, linea forno e condizionatore, luce esterna. Calcola cavo, corrugato, scatole e placche.', 'Suggerimenti automatici e pulsante "Ho dimenticato qualcosa?".', 'Foto del pezzo: fino a 4 foto da angolazioni diverse e Gemini lo riconosce.', 'Ricerca a voce, ultime ricerche, più chieste e preferiti nella pagina Cerca.', 'Modalità banco (occhio in alto): testo grande e contrasto forte.', 'Annulla dopo ogni eliminazione.', 'Pressacavi: se scrivi solo la sezione considera anche l\'unipolare; BM compare anche quando il cavo è al limite, con avviso.'] },
   { v: '1.11.0', data: '15/11/2026', voci: ['I rapporti cifrati partono da soli verso il ricevitore appena è attivo: non serve più salvarli a mano.', 'Se manca la rete restano in coda e partono appena torna.'] },
   { v: '1.10.1', data: '15/11/2026', voci: ['Pressacavi completi: BM Group 4912–4963 con campi di serraggio, Gewiss anche M12, M50, M63 e serie passo PG.', 'Diametri di tutti i cavi FG16OR16 e FG16R16 dal catalogo Prysmian: unipolari, 2–5 conduttori, 3x+1 e multipolari fino a 24 anime.', 'Chiedi anche "pressacavo per cavo unipolare 50", "pressacavo 3x50", "corrugato per FG16OR16 5G16".'] },
   { v: '1.10.0', data: '15/11/2026', voci: ['Pressacavi con i modelli veri: Gewiss GW FIT, Cembre 1900 e 7900, Legrand/BTicino, HellermannTyton NGM, Fibox, BM Group, con il diametro di cavo che stringono.', 'Chiedi "pressacavo per cavo da 50 mm²", "pressacavo per 5G16" o "pressacavo diametro 22" e ti dice misura e codici di ogni marca.', 'Diametro esterno dei cavi FG16OR16 e capicorda Cembre A-M: chiedi "capocorda 50 mm² foro M8" → A10-M8.'] },
@@ -156,7 +157,7 @@ document.addEventListener('click', e => { if (e.target.closest('.back')) history
 // Tasto indietro di Android: chiude la vista aperta, poi torna alla scheda precedente
 history.replaceState({ tab: 'cerca' }, '');
 const hashIniziale = location.hash.slice(1);
-if (['strumenti', 'reparti', 'info'].includes(hashIniziale)) setTimeout(() => apriTab(hashIniziale, false), 0);
+if (['preventivo', 'strumenti', 'reparti', 'info'].includes(hashIniziale)) setTimeout(() => apriTab(hashIniziale, false), 0);
 else if (hashIniziale.startsWith('s-')) setTimeout(() => apriVista('strumenti', hashIniziale.slice(2), false), 0);
 else if (hashIniziale.startsWith('r-')) setTimeout(() => { RepartiUI.apri(hashIniziale.slice(2)); apriVista('reparti', 'reparto', false); }, 0);
 window.addEventListener('popstate', e => {
@@ -436,7 +437,9 @@ function suggerimenti() {
 function cerca(q) {
   const out = $('#results');
   q = q.trim();
-  if (!q) { out.innerHTML = suggerimenti(); return; }
+  if (!q) { out.innerHTML = (typeof Banco !== 'undefined' ? Banco.homeHtml() : '') + suggerimenti(); return; }
+  clearTimeout(cerca._t); cerca._t = setTimeout(() => { if (typeof Banco !== 'undefined') Banco.registraRicerca(q); }, 2500);
+  const pref = typeof Banco !== 'undefined' ? Banco.prefHtml(q) : '';
   const parole = norm(q).split(/\s+/).filter(Boolean);
   const esatto = CATALOGO.filter(a => norm(a.codice) === norm(q) || String(a.ean) === q);
   const altri = CATALOGO.filter(a => !esatto.includes(a)).filter(a => {
@@ -452,7 +455,7 @@ function cerca(q) {
   const codHtml = Codici.dati && (cod.famiglie.length || cod.fornitori.length) && cod.fornitori.length < Codici.dati.fornitori.length ? `<h2 class="sezione">Codici gestionale</h2>${Codici.html(cod, 6)}` : '';
   const rep = RepartiUI.cerca(q).slice(0, 6);
   const domanda = Domande.rispondi(q);
-  const repHtml = domanda + codHtml + (rep.length ? `<h2 class="sezione">Nei reparti</h2>${rep.map(x => `<button class="item item-link" data-goto-rep="${x.reparto.id}"><div class="t">${esc(x.marca.marca)}${Codici.tripla(x.marca.marca) ? ` <span class="codice">${esc(Codici.tripla(x.marca.marca))}</span>` : ''} <span class="chip">${esc(x.reparto.nome)}</span></div><div class="m">${esc(x.marca.modelli)}</div></button>`).join('')}` : '');
+  const repHtml = pref + domanda + codHtml + (rep.length ? `<h2 class="sezione">Nei reparti</h2>${rep.map(x => `<button class="item item-link" data-goto-rep="${x.reparto.id}"><div class="t">${esc(x.marca.marca)}${Codici.tripla(x.marca.marca) ? ` <span class="codice">${esc(Codici.tripla(x.marca.marca))}</span>` : ''} <span class="chip">${esc(x.reparto.nome)}</span></div><div class="m">${esc(x.marca.modelli)}</div></button>`).join('')}` : '');
   if (!lista.length) { Report.log('ricerca', { lunghezza: q.length, risultati: 0, risposta: !!domanda }); out.innerHTML = repHtml + (CATALOGO.length ? '<h2 class="sezione">Catalogo</h2><p class="hint">Nessun articolo nel catalogo.</p>' : '') + '<h2 class="sezione">Online</h2>' + web; return; }
   const etichetta = (k, v) => ({ curva: 'curva ' + String(v).toUpperCase(), tipo: 'tipo ' + String(v).toUpperCase(), poli: v + 'P', polin: String(v).toUpperCase(), IP: 'IP' + v }[k] ?? `${v} ${k}`);
   out.innerHTML = repHtml + '<h2 class="sezione">Catalogo</h2>' + lista.map(a => {
@@ -463,6 +466,7 @@ function cerca(q) {
       <div class="m">${esc(a.marca || '')} · cod. <strong>${esc(a.codice)}</strong>${a.ean ? ' · EAN ' + esc(a.ean) : ''}${a.prezzo ? ' · € ' + esc(a.prezzo) : ''}</div>
       ${tag ? `<div class="m">${tag}</div>` : ''}
       ${eq.length ? `<div class="eq"><strong>Equivalenti:</strong><br>${eq.map(b => `${esc(b.marca)} <strong>${esc(b.codice)}</strong> — ${esc(b.descrizione)}${b.prezzo ? ' · € ' + esc(b.prezzo) : ''}`).join('<br>')}</div>` : ''}
+      <div class="risp-azioni"><button class="chip-btn" data-add-prev="${esc(((a.marca || '') + ' ' + (a.descrizione || a.codice)).trim())}" data-cod="${esc(a.codice)}" data-prezzo="${esc(a.prezzo || '')}"><span class="msr" aria-hidden="true">add</span> Preventivo</button></div>
     </div>`;
   }).join('') + '<h2 class="sezione">Online</h2>' + web;
   Report.log('ricerca', { lunghezza: q.length, risultati: lista.length, risposta: !!domanda });
