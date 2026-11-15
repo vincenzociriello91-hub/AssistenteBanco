@@ -145,3 +145,43 @@ video { width: 100%; max-height: 50vh; border-radius: .9rem; background: #000; }
   .bottombar .ico { width: 3.5rem; }
 }
 select { padding-left: .6em; padding-right: .3em; }
+
+/* ===== Adattamento automatico a ogni schermo (1.0.8) ===== */
+/* Monitor grandi: testo e contenuto crescono con lo schermo, senza righe troppo lunghe */
+@media (min-width: 1600px) { html { font-size: calc(clamp(19px, .55vw + 10px, 22px) * var(--scala, 1)); } main { max-width: 72rem; } }
+@media (min-width: 2400px) { main { max-width: 80rem; } }
+/* Mouse/trackpad: elementi un po' più compatti ed effetti al passaggio; touch: aree di tocco ampie */
+@media (pointer: fine) {
+  .btn, input, select { min-height: 2.6rem; }
+  .btn:hover, .bottombar button:hover .ico { filter: brightness(.95); }
+  .item:hover { background: var(--surface-ch); }
+}
+@media (pointer: coarse) { .btn, input, select { min-height: 3rem; } }
+/* Schermi con gamma colore ampia (P3, Rec.2020: molti OLED/AMOLED, monitor HDR) */
+@media (color-gamut: p3) {
+  :root { --primary: color(display-p3 .09 .43 .24); --primary-c: color(display-p3 .68 .96 .74); }
+}
+@media (color-gamut: p3) and (prefers-color-scheme: dark) {
+  :root { --primary: color(display-p3 .55 .86 .63); --primary-c: color(display-p3 .02 .33 .17); }
+}
+/* HDR: niente bianco pieno abbagliante sulle superfici grandi */
+@media (dynamic-range: high) and (prefers-color-scheme: light) {
+  :root { --surface: #f2f7ef; }
+}
+/* Tema scuro: sfondo nero puro (pixel spenti su OLED/AMOLED = meno consumo, ottimo anche su LCD) */
+@media (prefers-color-scheme: dark) {
+  :root { --surface: #000; --surface-lo: #0a0d0b; --surface-c: #141a15; --surface-ch: #1f261f; }
+}
+/* Contrasto elevato richiesto dal sistema */
+@media (prefers-contrast: more) {
+  :root { --outline: currentColor; --muted: var(--on-surface); }
+  .card, .item, .kpi { border: 1px solid var(--outline); }
+}
+@media (forced-colors: active) {
+  .bottombar button.active .ico, .btn.filled, .btn.tonal { forced-color-adjust: none; border: 2px solid CanvasText; }
+}
+@media (prefers-reduced-transparency: reduce) { .topbar, .bottombar { backdrop-filter: none; } }
+/* Pieghevoli aperti (due schermi affiancati): il contenuto evita la piega */
+@media (horizontal-viewport-segments: 2) {
+  main { max-width: none; padding-left: calc(env(viewport-segment-right 0 0, 50vw) - env(viewport-segment-left 0 0, 0px) + var(--pad)); }
+}

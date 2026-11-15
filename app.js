@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.0.7';
+const VERSION = '1.0.8';
 const CHANGELOG = [
+  { v: '1.0.8', data: '15/11/2026', voci: ['Adattamento automatico a ogni schermo: telefoni, tablet, pieghevoli, monitor fino al 4K e oltre.', 'Schermi HDR e a colori ampi (P3/Rec.2020) riconosciuti: colori più ricchi, sfondo meno abbagliante.', 'Tema scuro con nero puro: meno consumo su OLED/AMOLED.', 'Mouse o touch riconosciuti; contrasto elevato e colori forzati del sistema rispettati.'] },
   { v: '1.0.7', data: '15/11/2026', voci: ['Grafica rifatta: testo, campi e pulsanti si adattano alla risoluzione dello schermo (telefono piccolo, Pixel, tablet, PC).', 'Nuovo carattere Roboto Flex in stile Pixel, funziona anche offline.', 'Telefono in orizzontale e tablet/PC con menu laterale.', 'In Info si vede lo schermo rilevato.'] },
   { v: '1.0.6', data: '15/11/2026', voci: ['Nuova sezione Reparti: elettrico civile, illuminazione, condizionatori, cavi, fotovoltaico, domotica, corrugati/cassette/tubi RK, citofonia e TVCC.', 'Ogni reparto ha le sue marche e modelli, una guida rapida e il pulsante per aggiungere le marche che vendete.'] },
   { v: '1.0.5', data: '15/11/2026', voci: ['Nuova tabella climatizzazione: Daikin, Mitsubishi Electric, Samsung, Haier, Clivet, Aermec.', 'Nuovo strumento: stima dei BTU del climatizzatore per stanza.'] },
@@ -478,9 +479,16 @@ function rilevaSchermo() {
   const layout = w < 600 ? 'telefono' : w < 840 ? 'tablet verticale' : 'tablet orizzontale / PC';
   document.documentElement.dataset.layout = layout;
   const base = parseFloat(getComputedStyle(document.documentElement).fontSize);
-  $('#schermoInfo').textContent = `Schermo rilevato: ${w}×${h} px (${Math.round(screen.width * dpr)}×${Math.round(screen.height * dpr)} reali, densità ${fmt(dpr, 2)}x) · layout ${layout} · testo ${fmt(base, 1)} px`;
-  return { w, h, dpr, layout, base };
+  const mq = q => matchMedia(q).matches;
+  const hdr = mq('(dynamic-range: high)');
+  const gamma = mq('(color-gamut: rec2020)') ? 'Rec.2020' : mq('(color-gamut: p3)') ? 'P3 (ampia)' : 'sRGB';
+  const input = mq('(pointer: coarse)') ? 'touch' : mq('(pointer: fine)') ? 'mouse/trackpad' : 'altro';
+  const tema = mq('(prefers-color-scheme: dark)') ? 'scuro (nero puro)' : 'chiaro';
+  const contrasto = mq('(prefers-contrast: more)') ? ' · contrasto elevato' : '';
+  $('#schermoInfo').textContent = `Schermo rilevato: ${w}×${h} px (${Math.round(screen.width * dpr)}×${Math.round(screen.height * dpr)} reali, densità ${fmt(dpr, 2)}x) · layout ${layout} · testo ${fmt(base, 1)} px · HDR ${hdr ? 'sì' : 'no'} · colori ${gamma} · ${input} · tema ${tema}${contrasto}`;
+  return { w, h, dpr, layout, base, hdr, gamma, input, tema };
 }
+['(prefers-color-scheme: dark)', '(dynamic-range: high)', '(prefers-contrast: more)', '(pointer: fine)'].forEach(q => matchMedia(q).addEventListener?.('change', () => rilevaSchermo()));
 let tSchermo; window.addEventListener('resize', () => { clearTimeout(tSchermo); tSchermo = setTimeout(rilevaSchermo, 150); });
 Report.log('schermo', rilevaSchermo());
 $('#btnAa').addEventListener('click', () => setTimeout(rilevaSchermo, 50));
