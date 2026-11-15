@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.12.0';
+const VERSION = '1.12.1';
 const CHANGELOG = [
+  { v: '1.12.1', data: '15/11/2026', voci: ['Info → Rapporti: pulsante "Invia ora" ed esito dell\'ultimo invio.'] },
   { v: '1.12.0', data: '15/11/2026', voci: ['Nuova scheda Preventivo: aggiungi articoli, quantità con + e −, condividi o stampa in PDF con il logo.', 'Ascolto: premi il pulsante, il cliente parla e l\'app scrive da sola l\'elenco dei materiali con le quantità. L\'audio non viene mai salvato.', 'Kit pronti: punto luce, deviata, invertita, prese, punto TV, quadretto, linea forno e condizionatore, luce esterna. Calcola cavo, corrugato, scatole e placche.', 'Suggerimenti automatici e pulsante "Ho dimenticato qualcosa?".', 'Foto del pezzo: fino a 4 foto da angolazioni diverse e Gemini lo riconosce.', 'Ricerca a voce, ultime ricerche, più chieste e preferiti nella pagina Cerca.', 'Modalità banco (occhio in alto): testo grande e contrasto forte.', 'Annulla dopo ogni eliminazione.', 'Pressacavi: se scrivi solo la sezione considera anche l\'unipolare; BM compare anche quando il cavo è al limite, con avviso.'] },
   { v: '1.11.0', data: '15/11/2026', voci: ['I rapporti cifrati partono da soli verso il ricevitore appena è attivo: non serve più salvarli a mano.', 'Se manca la rete restano in coda e partono appena torna.'] },
   { v: '1.10.1', data: '15/11/2026', voci: ['Pressacavi completi: BM Group 4912–4963 con campi di serraggio, Gewiss anche M12, M50, M63 e serie passo PG.', 'Diametri di tutti i cavi FG16OR16 e FG16R16 dal catalogo Prysmian: unipolari, 2–5 conduttori, 3x+1 e multipolari fino a 24 anime.', 'Chiedi anche "pressacavo per cavo unipolare 50", "pressacavo 3x50", "corrugato per FG16OR16 5G16".'] },
@@ -92,9 +93,10 @@ const Report = {
       if (navigator.sendBeacon(url, new Blob([corpo], { type: 'text/plain' }))) localStorage.setItem('ab_rapporti', '[]');
       return;
     }
-    fetch(url, { method: 'POST', body: corpo, headers: { 'Content-Type': 'text/plain' }, keepalive: corpo.length < 60000 })
-      .then(r => { if (r.ok) { const ora = JSON.parse(localStorage.getItem('ab_rapporti') || '[]'); localStorage.setItem('ab_rapporti', JSON.stringify(ora.slice(coda.length))); } })
-      .catch(() => {});
+    const esito = (stato, testo) => localStorage.setItem('ab_report_esito', JSON.stringify({ t: new Date().toLocaleString('it-IT'), stato, testo: String(testo).slice(0, 200), n: coda.length }));
+    return fetch(url, { method: 'POST', body: corpo, headers: { 'Content-Type': 'text/plain' }, keepalive: corpo.length < 60000 })
+      .then(async r => { const t = await r.text().catch(() => ''); esito(r.status, t); if (r.ok) { const ora = JSON.parse(localStorage.getItem('ab_rapporti') || '[]'); localStorage.setItem('ab_rapporti', JSON.stringify(ora.slice(coda.length))); } })
+      .catch(e => esito(0, e.message || e));
   },
   async salvaFile() {
     await this.chiudi('salvataggio manuale');
@@ -589,8 +591,13 @@ $('#btnStopScan').addEventListener('click', fermaScanner);
 /* ============ INFO, INSTALLAZIONE, AGGIORNAMENTI ============ */
 $('#ver').textContent = VERSION;
 $('#changelog').innerHTML = CHANGELOG.map(c => `<p><strong>${c.v}</strong> <span class="small">${c.data}</span></p><ul class="ref">${c.voci.map(v => `<li>${esc(v)}</li>`).join('')}</ul>`).join('');
+$('#btnInviaOra').onclick = async () => { $('#btnInviaOra').textContent = 'Invio…'; await Report.chiudi('invio manuale'); Report.eventi = []; Report.log('ripresa', {}); await Report.invia(); setTimeout(() => { aggiornaRepInfo(); $('#btnInviaOra').textContent = 'Invia ora'; }, 1500); };
 $('#btnReport').addEventListener('click', () => Report.salvaFile());
-const aggiornaRepInfo = () => { const n = JSON.parse(localStorage.getItem('ab_rapporti') || '[]').length; $('#repInfo').textContent = n ? `${n} in coda` : ''; };
+const aggiornaRepInfo = () => {
+  const n = JSON.parse(localStorage.getItem('ab_rapporti') || '[]').length;
+  let e = null; try { e = JSON.parse(localStorage.getItem('ab_report_esito')); } catch {}
+  $('#repInfo').textContent = (n ? `${n} in coda. ` : 'Nessun rapporto in coda. ') + (REPORT_URL ? '' : 'Ricevitore non ancora collegato. ') + (e ? `Ultimo invio ${e.t}: ${e.stato >= 200 && e.stato < 300 ? 'OK' : 'errore ' + e.stato + ' ' + e.testo}` : '');
+};
 aggiornaRepInfo(); setInterval(aggiornaRepInfo, 10000);
 
 let promptInstall = null;
