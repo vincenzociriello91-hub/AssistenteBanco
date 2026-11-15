@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.12.1';
+const VERSION = '1.12.2';
 const CHANGELOG = [
+  { v: '1.12.2', data: '15/11/2026', voci: ['Rapporti: un invio alla volta, niente più errore 409.'] },
   { v: '1.12.1', data: '15/11/2026', voci: ['Info → Rapporti: pulsante "Invia ora" ed esito dell\'ultimo invio.'] },
   { v: '1.12.0', data: '15/11/2026', voci: ['Nuova scheda Preventivo: aggiungi articoli, quantità con + e −, condividi o stampa in PDF con il logo.', 'Ascolto: premi il pulsante, il cliente parla e l\'app scrive da sola l\'elenco dei materiali con le quantità. L\'audio non viene mai salvato.', 'Kit pronti: punto luce, deviata, invertita, prese, punto TV, quadretto, linea forno e condizionatore, luce esterna. Calcola cavo, corrugato, scatole e placche.', 'Suggerimenti automatici e pulsante "Ho dimenticato qualcosa?".', 'Foto del pezzo: fino a 4 foto da angolazioni diverse e Gemini lo riconosce.', 'Ricerca a voce, ultime ricerche, più chieste e preferiti nella pagina Cerca.', 'Modalità banco (occhio in alto): testo grande e contrasto forte.', 'Annulla dopo ogni eliminazione.', 'Pressacavi: se scrivi solo la sezione considera anche l\'unipolare; BM compare anche quando il cavo è al limite, con avviso.'] },
   { v: '1.11.0', data: '15/11/2026', voci: ['I rapporti cifrati partono da soli verso il ricevitore appena è attivo: non serve più salvarli a mano.', 'Se manca la rete restano in coda e partono appena torna.'] },
@@ -85,7 +86,7 @@ const Report = {
   invia() {
     if (!REPORT_URL || !navigator.onLine) return;
     const coda = JSON.parse(localStorage.getItem('ab_rapporti') || '[]');
-    if (!coda.length) return;
+    if (!coda.length || this._inVolo) return; // un invio alla volta (evita il conflitto 409 su GitHub)
     const url = REPORT_URL.replace(/\/$/, '') + '/r/AssistenteBanco';
     const corpo = JSON.stringify(coda);
     // text/plain = nessuna richiesta preliminare CORS, funziona anche alla chiusura dell'app
@@ -94,7 +95,9 @@ const Report = {
       return;
     }
     const esito = (stato, testo) => localStorage.setItem('ab_report_esito', JSON.stringify({ t: new Date().toLocaleString('it-IT'), stato, testo: String(testo).slice(0, 200), n: coda.length }));
+    this._inVolo = true;
     return fetch(url, { method: 'POST', body: corpo, headers: { 'Content-Type': 'text/plain' }, keepalive: corpo.length < 60000 })
+      .finally(() => { this._inVolo = false; })
       .then(async r => { const t = await r.text().catch(() => ''); esito(r.status, t); if (r.ok) { const ora = JSON.parse(localStorage.getItem('ab_rapporti') || '[]'); localStorage.setItem('ab_rapporti', JSON.stringify(ora.slice(coda.length))); } })
       .catch(e => esito(0, e.message || e));
   },
