@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.0.0';
+const VERSION = '1.0.1';
 const CHANGELOG = [
+  { v: '1.0.1', data: '15/11/2026', voci: ['Testo e pulsanti più grandi sul telefono.', 'Nuovo pulsante Aa in alto: cambia la dimensione del testo (4 livelli), la scelta resta salvata.'] },
   { v: '1.0.0', data: '15/11/2026', voci: [
     'Prima versione: dimensionamento linea (sezione, interruttore, curva, differenziale, caduta di tensione).',
     'Catalogo importabile da Excel/CSV, ricerca per codice, EAN o descrizione.',
@@ -441,6 +442,11 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   navigator.serviceWorker.addEventListener('controllerchange', () => { if (!ricaricato) { ricaricato = true; location.reload(); } });
 }
 
+const SCALE = [1, 1.15, 1.3, 1.45];
+let scala = 0; try { scala = Number(localStorage.getItem('ab_scala')) || 0; } catch {}
+const applicaScala = () => document.documentElement.style.setProperty('--scala', SCALE[scala]);
+applicaScala();
+$('#btnAa').addEventListener('click', () => { scala = (scala + 1) % SCALE.length; applicaScala(); try { localStorage.setItem('ab_scala', scala); } catch {} Report.log('scala-testo', { scala: SCALE[scala] }); });
 $('#netstate').hidden = navigator.onLine;
 Report.log('avvio', { versione: VERSION });
 caricaCatalogo();

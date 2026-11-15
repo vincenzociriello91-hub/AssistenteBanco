@@ -18,11 +18,12 @@
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
+html { font-size: calc(18px * var(--scala, 1)); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 html, body { margin: 0; }
 body {
   font-family: "Google Sans", Roboto, "Segoe UI", system-ui, sans-serif;
   background: var(--surface); color: var(--on-surface);
-  padding-bottom: calc(84px + env(safe-area-inset-bottom));
+  padding-bottom: calc(6.5rem + env(safe-area-inset-bottom));
   -webkit-tap-highlight-color: transparent;
 }
 .topbar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between;
@@ -36,14 +37,14 @@ h2 { font-size: 1.05rem; font-weight: 500; margin: 0 0 12px; }
 .tab.active { display: block; animation: fade .18s ease-out; }
 @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 .card { background: var(--surface-c); border-radius: var(--radius); padding: 16px; margin: 12px 0; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 12px; }
 .wide { grid-column: 1 / -1; }
 label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; color: var(--muted); }
 input, select { font: inherit; font-size: 1rem; color: var(--on-surface); background: var(--surface);
-  border: 1px solid var(--outline); border-radius: 12px; padding: 11px 12px; min-height: 46px; width: 100%; }
+  border: 1px solid var(--outline); border-radius: 14px; padding: .7em .8em; min-height: 3em; width: 100%; }
 input:focus, select:focus { outline: 2px solid var(--primary); border-color: transparent; }
 .btn { font: inherit; font-weight: 500; border: 1px solid var(--outline); background: transparent; color: var(--primary);
-  border-radius: 100px; padding: 10px 18px; min-height: 42px; cursor: pointer; }
+  border-radius: 100px; padding: .6em 1.1em; min-height: 2.8em; cursor: pointer; }
 .btn.filled { background: var(--primary); color: var(--on-primary); border-color: transparent; }
 .btn.tonal { background: var(--primary-c); color: var(--on-primary-c); border-color: transparent; }
 .btn.danger { color: var(--bad); }
@@ -75,9 +76,9 @@ video { width: 100%; max-height: 50vh; border-radius: 14px; background: #000; }
 ul.ref { margin: 0; padding-left: 18px; line-height: 1.6; }
 .bottombar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: flex; justify-content: space-around;
   background: var(--surface-c); padding: 8px 4px calc(8px + env(safe-area-inset-bottom)); }
-.bottombar button { flex: 1; max-width: 140px; background: none; border: 0; color: var(--muted); font: inherit; font-size: .78rem;
+.bottombar button { flex: 1; max-width: 160px; background: none; border: 0; color: var(--muted); font: inherit; font-size: .8rem;
   display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
-.bottombar .ico { font-size: 1.15rem; width: 60px; height: 32px; display: grid; place-items: center; border-radius: 16px; transition: background .15s; }
+.bottombar .ico { font-size: 1.35rem; width: 3.6em; height: 2em; display: grid; place-items: center; border-radius: 16px; transition: background .15s; }
 .bottombar button.active { color: var(--on-surface); font-weight: 500; }
 .bottombar button.active .ico { background: var(--primary-c); }
 @media (min-width: 900px) {
@@ -86,3 +87,5 @@ ul.ref { margin: 0; padding-left: 18px; line-height: 1.6; }
   .bottombar button { max-width: none; flex: 0; }
   .updatebar { top: 64px; }
 }
+
+.btn-aa { font: inherit; font-weight: 600; border: 0; background: var(--primary-c); color: var(--on-primary-c); border-radius: 100px; padding: .35em .9em; cursor: pointer; }
