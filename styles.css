@@ -281,8 +281,7 @@ details.card > summary { font-weight: 600; }
 @media (min-width: 840px) and (min-height: 481px) { .bottombar { border-top: 0; border-right: 1px solid color-mix(in srgb, var(--outline) 45%, transparent); } }
 
 /* Transizioni tra pagine */
-@view-transition { navigation: auto; }
-::view-transition-old(root), ::view-transition-new(root) { animation-duration: .22s; animation-timing-function: cubic-bezier(.2,.8,.2,1); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .16s; animation-timing-function: cubic-bezier(.2,.8,.2,1); }
 @media (prefers-reduced-motion: reduce) { ::view-transition-old(root), ::view-transition-new(root) { animation: none; } .tile { transition: none; } }
 summary { flex-wrap: nowrap; }
 .kpi .v { font-size: 1.25rem; }
@@ -291,3 +290,6 @@ summary { flex-wrap: nowrap; }
 #tab-reparti [data-list] > .card input { border: 0; background: transparent; }
 #tab-reparti [data-list] > .card:focus-within { outline: 2px solid var(--primary); }
 #tab-reparti [data-list] > .card input:focus { outline: none; }
+.view:not([hidden]), [data-list]:not([hidden]) { animation: entra .22s cubic-bezier(.2,.8,.2,1); }
+@keyframes entra { from { opacity: 0; transform: translateY(8px) scale(.995); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .view:not([hidden]), [data-list]:not([hidden]) { animation: none; } }

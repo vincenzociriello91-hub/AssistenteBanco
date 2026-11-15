@@ -20,6 +20,9 @@ App web installabile (PWA) per il banco di un grossista di materiale elettrico. 
 I calcoli sono indicativi (IEC 60364-5-52, CEI-UNEL 35024/1, CEI 64-8). Il dimensionamento definitivo spetta all'installatore o al progettista.
 
 ## Novità
+### 1.6.1 — 15/11/2026
+Animazioni in CSS (nessun tocco perso), niente ricarica alla prima installazione.
+
 ### 1.6.0 — 15/11/2026
 Grafica modernizzata (Material 3 Expressive), icone Material Symbols, transizioni.
 

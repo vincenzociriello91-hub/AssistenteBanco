@@ -1,9 +1,10 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.6.0';
+const VERSION = '1.6.1';
 const CHANGELOG = [
-  { v: '1.6.0', data: '15/11/2026', voci: ['Grafica modernizzata in stile Pixel (Material 3 Expressive): icone Material al posto delle emoji, colori diversi per ogni reparto e strumento.', 'Ricerca a pillola con titolo grande, barre traslucide, ombre leggere, angoli più morbidi.', 'Animazioni fluide tra le pagine.'] },
+  { v: '1.6.1', data: '15/11/2026', voci: ['Animazioni tra le pagine più leggere: nessun tocco perso.', 'Alla prima apertura l\'app non si ricarica più da sola.'] },
+  { v: '1.6.0', data: '15/11/2026', voci: ['Grafica modernizzata in stile Pixel (Material 3 Expressive): icone Material al posto delle emoji, colori diversi per ogni reparto e strumento.', 'Ricerca a pillola con titolo grande, barre traslucide, ombre leggere, angoli più morbidi.', 'Animazioni fluide tra le pagine, senza perdere nessun tocco.'] },
   { v: '1.5.0', data: '15/11/2026', voci: ['Nuovo reparto Raccordi, pressacavi e cassette: Gewiss, BTicino, Vimar, Bocchiotti/Inset, Cembre, BM Group, Palazzoli, Scame.', 'Cassette da parete e da incasso (muratura e cartongesso) con codici e misure principali.', 'Guida rapida per scegliere pressacavi, raccordi e cassette.'] },
   { v: '1.4.0', data: '15/11/2026', voci: ['Nuovo reparto Morsetti, capicorda e connessioni: Cembre, BM Group, Weidmüller, Cabur, con guida rapida (colori capicorda, vite/molla/push-in, puntali).', 'Triple gestionale anche per Cembre (CEM), BM Group (BMM) e Weidmüller (WEI).'] },
   { v: '1.3.2', data: '15/11/2026', voci: ['Codici gestionale Elettrocampania già inseriti nell\'app: niente da importare.'] },
@@ -103,7 +104,8 @@ function scarica(nome, contenuto, tipo) {
 
 /* ============ NAVIGAZIONE: 4 schede, ognuna con elenco → dettaglio ============ */
 let tabCorrente = 'cerca';
-const transizione = fn => (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) ? document.startViewTransition(fn) : fn();
+// Cambio pagina immediato (l'animazione è in CSS, così nessun tocco va perso)
+const transizione = fn => fn();
 function mostraTab(nome) {
   tabCorrente = nome;
   $$('.tab').forEach(t => t.classList.toggle('active', t.id === 'tab-' + nome));
@@ -131,8 +133,9 @@ function apriTab(nome, push = true) {
   Report.log('tab', { nome });
   if (nome === 'cerca' && matchMedia('(pointer: fine)').matches) setTimeout(() => $('#q').focus(), 50);
 }
-$$('.bottombar button').forEach(b => b.addEventListener('click', () => transizione(() => apriTab(b.dataset.tab))));
-$$('[data-open]').forEach(t => t.addEventListener('click', () => transizione(() => apriVista('strumenti', t.dataset.open))));
+// La cronologia si aggiorna subito; solo il cambio grafico passa dalla transizione
+$$('.bottombar button').forEach(b => b.addEventListener('click', () => { history.pushState({ tab: b.dataset.tab }, ''); transizione(() => apriTab(b.dataset.tab, false)); }));
+$$('[data-open]').forEach(t => t.addEventListener('click', () => { history.pushState({ tab: 'strumenti', vista: t.dataset.open }, ''); transizione(() => apriVista('strumenti', t.dataset.open, false)); }));
 document.addEventListener('click', e => { if (e.target.closest('.back')) history.back(); });
 // Tasto indietro di Android: chiude la vista aperta, poi torna alla scheda precedente
 history.replaceState({ tab: 'cerca' }, '');
@@ -575,8 +578,10 @@ if (location.search.includes('v=')) history.replaceState(null, '', location.path
 
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => { swReg = reg; reg.update().catch(() => {}); }).catch(() => {});
+  // Ricarica solo quando una versione nuova sostituisce quella in uso (non alla prima installazione)
+  const avevaController = !!navigator.serviceWorker.controller;
   let ricaricato = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => { if (!ricaricato) { ricaricato = true; location.reload(); } });
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (avevaController && !ricaricato) { ricaricato = true; location.reload(); } });
 }
 
 const SCALE = [1, 1.15, 1.3, 1.45];
