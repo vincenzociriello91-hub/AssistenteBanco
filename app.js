@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.12.4';
+const VERSION = '1.13.0';
 const CHANGELOG = [
+  { v: '1.13.0', data: '15/11/2026', voci: ['Assistente: capisce qualsiasi domanda scritta in parole normali, anche da chi non è del mestiere, e risponde con cosa serve e quanto. Premi Invio o aspetta un attimo dopo aver scritto.', 'I prodotti suggeriti dall\'assistente vanno nel preventivo con un tocco.'] },
   { v: '1.12.4', data: '15/11/2026', voci: ['Domande sugli aspiratori: "aspiratore bagno 6 mq" o "ventilatore cucina 10 mq" calcolano la portata e propongono il Vortice giusto con codice.'] },
   { v: '1.12.3', data: '15/11/2026', voci: ['Ricerca: premendo Invio la tastiera si chiude e la pagina scorre fino alla risposta.'] },
   { v: '1.12.2', data: '15/11/2026', voci: ['Rapporti: un invio alla volta, niente più errore 409.'] },
@@ -462,8 +463,8 @@ function cerca(q) {
   const codHtml = Codici.dati && (cod.famiglie.length || cod.fornitori.length) && cod.fornitori.length < Codici.dati.fornitori.length ? `<h2 class="sezione">Codici gestionale</h2>${Codici.html(cod, 6)}` : '';
   const rep = RepartiUI.cerca(q).slice(0, 6);
   const domanda = Domande.rispondi(q);
-  const repHtml = pref + domanda + codHtml + (rep.length ? `<h2 class="sezione">Nei reparti</h2>${rep.map(x => `<button class="item item-link" data-goto-rep="${x.reparto.id}"><div class="t">${esc(x.marca.marca)}${Codici.tripla(x.marca.marca) ? ` <span class="codice">${esc(Codici.tripla(x.marca.marca))}</span>` : ''} <span class="chip">${esc(x.reparto.nome)}</span></div><div class="m">${esc(x.marca.modelli)}</div></button>`).join('')}` : '');
-  if (!lista.length) { Report.log('ricerca', { lunghezza: q.length, risultati: 0, risposta: !!domanda }); out.innerHTML = repHtml + (CATALOGO.length ? '<h2 class="sezione">Catalogo</h2><p class="hint">Nessun articolo nel catalogo.</p>' : '') + '<h2 class="sezione">Online</h2>' + web; return; }
+  const repHtml = '<div id="assist"></div>' + pref + domanda + codHtml + (rep.length ? `<h2 class="sezione">Nei reparti</h2>${rep.map(x => `<button class="item item-link" data-goto-rep="${x.reparto.id}"><div class="t">${esc(x.marca.marca)}${Codici.tripla(x.marca.marca) ? ` <span class="codice">${esc(Codici.tripla(x.marca.marca))}</span>` : ''} <span class="chip">${esc(x.reparto.nome)}</span></div><div class="m">${esc(x.marca.modelli)}</div></button>`).join('')}` : '');
+  if (!lista.length) { Report.log('ricerca', { lunghezza: q.length, risultati: 0, risposta: !!domanda }); setTimeout(() => typeof Banco !== 'undefined' && Banco.assistente(q), 0); out.innerHTML = repHtml + (CATALOGO.length ? '<h2 class="sezione">Catalogo</h2><p class="hint">Nessun articolo nel catalogo.</p>' : '') + '<h2 class="sezione">Online</h2>' + web; return; }
   const etichetta = (k, v) => ({ curva: 'curva ' + String(v).toUpperCase(), tipo: 'tipo ' + String(v).toUpperCase(), poli: v + 'P', polin: String(v).toUpperCase(), IP: 'IP' + v }[k] ?? `${v} ${k}`);
   out.innerHTML = repHtml + '<h2 class="sezione">Catalogo</h2>' + lista.map(a => {
     const eq = equivalenti(a).slice(0, 6);
@@ -477,13 +478,14 @@ function cerca(q) {
     </div>`;
   }).join('') + '<h2 class="sezione">Online</h2>' + web;
   Report.log('ricerca', { lunghezza: q.length, risultati: lista.length, risposta: !!domanda });
+  if (typeof Banco !== 'undefined') Banco.assistente(q);
 }
 $('#results').addEventListener('click', e => { const sg = e.target.closest('[data-sugg]'); if (sg) { $('#q').value = sg.dataset.sugg; cerca(sg.dataset.sugg); return; } });
 $('#results').addEventListener('click', e => { const b = e.target.closest('[data-goto-tool]'); if (!b) return; apriVista('strumenti', b.dataset.gotoTool); Report.log('domanda-vai', { tool: b.dataset.gotoTool }); });
 $('#results').addEventListener('click', e => { const b = e.target.closest('[data-goto-rep]'); if (!b) return; RepartiUI.apri(b.dataset.gotoRep); apriVista('reparti', 'reparto'); history.replaceState({ tab: 'reparti', vista: 'reparto', rep: b.dataset.gotoRep }, ''); });
 let tQ; $('#q').addEventListener('input', e => { clearTimeout(tQ); tQ = setTimeout(() => { try { cerca(e.target.value); } catch (err) { Report.log('errore-cerca', { msg: err.message, stack: err.stack }); } }, 150); });
 // Invio sulla tastiera: cerca, chiude la tastiera e porta alla risposta
-$('#q').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); clearTimeout(tQ); try { cerca(e.target.value); } catch (err) { Report.log('errore-cerca', { msg: err.message, stack: err.stack }); } e.target.blur(); setTimeout(() => $('#results').scrollIntoView({ behavior: 'smooth', block: 'start' }), 150); Report.log('cerca-invio', { lunghezza: e.target.value.length }); } });
+$('#q').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); clearTimeout(tQ); try { cerca(e.target.value); } catch (err) { Report.log('errore-cerca', { msg: err.message, stack: err.stack }); } if (typeof Banco !== 'undefined') Banco.assistente(e.target.value, true); e.target.blur(); setTimeout(() => $('#results').scrollIntoView({ behavior: 'smooth', block: 'start' }), 150); Report.log('cerca-invio', { lunghezza: e.target.value.length }); } });
 
 // Import
 const ALIAS = {

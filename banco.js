@@ -337,6 +337,50 @@ const Banco = (() => {
     }
   }
 
+
+  /* ---------- Assistente (capisce le domande libere, tramite il ricevitore con Gemini) ---------- */
+  const cacheAss = new Map(); let tAss, attivo = true;
+  const testo = h => String(h || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  function contesto(q) {
+    let c = '';
+    try { c += 'Risposta calcolata dall\'app: ' + testo(Domande.rispondi(q)).slice(0, 3000) + '\n'; } catch {}
+    try { c += 'Marche e modelli trovati: ' + RepartiUI.cerca(q).slice(0, 8).map(x => `${x.marca.marca} (${x.reparto.nome}): ${x.marca.modelli}`).join(' | ').slice(0, 2500) + '\n'; } catch {}
+    const voci = (typeof CATALOGO !== 'undefined' ? CATALOGO : []).filter(a => n(a.descrizione).includes(n(q).split(' ')[0] || '')).slice(0, 10);
+    if (voci.length) c += 'Articoli nel listino del negozio: ' + voci.map(a => `${a.marca} ${a.codice} ${a.descrizione}`).join(' | ') + '\n';
+    return c;
+  }
+  function boxAss(o) {
+    const prod = (o.prodotti || []).filter(p => p && p.desc);
+    return `<div class="risposta ok assist"><span class="msr" aria-hidden="true">auto_awesome</span><div class="risp"><strong>Assistente</strong>
+      <div class="risp-corpo"><p>${esc(o.risposta).replace(/\n/g, '<br>')}</p>${prod.length ? `<table class="tab-risp">${prod.map(p => `<tr><td>${esc(p.desc)}</td><td><strong>${p.qta ? qtaTxt(p.qta) : ''} ${esc(p.um || '')}</strong></td></tr>`).join('')}</table>` : ''}</div>
+      ${prod.length ? `<div class="risp-azioni"><button class="chip-btn" data-ass-add>Aggiungi al preventivo</button></div>` : ''}</div></div>`;
+  }
+  function assistente(q, subito) {
+    q = String(q || '').trim();
+    clearTimeout(tAss);
+    const box = $('#assist'); if (!box || q.length < 3) return;
+    if (cacheAss.has(q)) { box.innerHTML = boxAss(cacheAss.get(q)); box._o = cacheAss.get(q); return; }
+    if (!REPORT_URL || !attivo || !navigator.onLine) return;
+    if (!subito && q.split(/\s+/).length < 3) return;
+    tAss = setTimeout(async () => {
+      if ($('#q').value.trim() !== q) return;
+      const b = $('#assist'); if (b) b.innerHTML = '<p class="hint assist-attesa"><span class="msr" aria-hidden="true">auto_awesome</span> L\'assistente sta pensando…</p>';
+      const t0 = Date.now();
+      try {
+        const r = await fetch(REPORT_URL.replace(/\/$/, '') + '/chiedi', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ domanda: q, contesto: contesto(q) }) });
+        if (r.status === 503) { attivo = false; if ($('#assist')) $('#assist').innerHTML = ''; Report.log('assistente', { stato: 503 }); return; }
+        const o = await r.json();
+        if (!r.ok || !o.risposta) throw new Error('stato ' + r.status);
+        cacheAss.set(q, o);
+        if ($('#q').value.trim() === q && $('#assist')) { $('#assist').innerHTML = boxAss(o); $('#assist')._o = o; }
+        Report.log('assistente', { ok: true, ms: Date.now() - t0, prodotti: (o.prodotti || []).length });
+      } catch (e) {
+        if ($('#assist')) $('#assist').innerHTML = '';
+        Report.log('assistente', { ok: false, msg: String(e.message || e) });
+      }
+    }, subito ? 0 : 1300);
+  }
+
   /* ---------- Storico e preferiti ---------- */
   function registraRicerca(q) {
     q = String(q || '').trim(); if (q.length < 3) return;
@@ -460,6 +504,7 @@ const Banco = (() => {
       pref = pref.includes(q) ? pref.filter(x => x !== q) : [q, ...pref].slice(0, 12);
       LS.set('ab_preferiti', pref); b.outerHTML = prefBtn(q);
     });
+    $('#results').addEventListener('click', e => { if (!e.target.closest('[data-ass-add]')) return; const o = $('#assist')?._o; if (o) { aggiungi(o.prodotti.filter(p => p && p.desc).map(p => ({ desc: p.desc, qta: +p.qta || 1, um: ['pz', 'm', 'conf'].includes(p.um) ? p.um : 'pz' })), 'assistente'); snack('Aggiunto al preventivo', null); } });
     // Aggiungi al preventivo dagli articoli del catalogo
     $('#results').addEventListener('click', e => {
       const b = e.target.closest('[data-add-prev]'); if (!b) return;
@@ -469,7 +514,7 @@ const Banco = (() => {
     disegna();
   }
 
-  return { init, estrai, aggiungi, kitRighe, suggerimenti, registraRicerca, homeHtml, prefHtml, KIT, get preventivo() { return prev; } };
+  return { init, assistente, estrai, aggiungi, kitRighe, suggerimenti, registraRicerca, homeHtml, prefHtml, KIT, get preventivo() { return prev; } };
 })();
 
 Banco.init();

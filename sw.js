@@ -1,5 +1,5 @@
 // Service worker: prima la rete (sempre l'ultima versione), cache solo se offline.
-const CACHE = 'assistentebanco-1.12.4';
+const CACHE = 'assistentebanco-1.13.0';
 const FILES = ['./', 'index.html', 'styles.css', 'calc.js', 'reparti.js', 'schede.js', 'codici.js', 'domande.js', 'app.js', 'banco.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png'];
 const CDN = ['cdn.jsdelivr.net', 'unpkg.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 

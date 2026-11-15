@@ -396,3 +396,9 @@ html.banco .chip-btn, html.banco .btn { min-height: 3.2rem; }
   .st-nota { font-size: 9pt; color: #555; margin-top: 14pt; }
   @page { margin: 14mm; }
 }
+
+/* 1.13.0 assistente */
+.assist-attesa { display: flex; align-items: center; gap: .5rem; padding: .6rem .2rem; }
+.assist-attesa .msr { animation: pulsaIco 1.2s ease-in-out infinite; color: var(--primary); }
+@keyframes pulsaIco { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .assist-attesa .msr { animation: none; } }
