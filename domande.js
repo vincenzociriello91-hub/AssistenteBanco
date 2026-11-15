@@ -35,6 +35,7 @@ const Domande = (() => {
     d.mq = m(NUM + '\\s*(?:mq|m2)\\b');
     d.L = m(NUM + '\\s*(?:m|mt|mtr|metri|metro)\\b');
     d.Wm = m(NUM + '\\s*w\\s*(?:\\/|al|a|per)\\s*(?:m|metro)\\b');
+    if (/unipolar/.test(t) && !d.nCavi) d.unip = true;
     d.tri = /trifase|400\s*v|380\s*v|\btri\b/.test(t);
     return d;
   }
@@ -66,6 +67,11 @@ const Domande = (() => {
       if (d.Dtubo) return box(`Corrugato da ${f(d.Dtubo, 0)} mm`, '<p>Dimmi anche la sezione dei cavi, per esempio: <em>corrugato 25 quanti cavi da 2,5</em>.</p>' + TIPO_TUBO, az);
       return box('Che corrugato serve?', '<p>Scrivi la sezione e quanti cavi, per esempio: <em>corrugato per 3 cavi da 2,5</em> o <em>tubo per 5x6</em>.</p>' + TIPO_TUBO, az);
     }
+    if ((/fg16|multipolar|\b\d{1,2}\s*g\s*\d/.test(d.t)) && d.nCavi) {
+      const c = Schede.diametroCavo(d.nCavi, d.S);
+      if (c) { const tb = Calc.TUBI.find(x => x.int >= 1.3 * c.d[1]);
+        return box(`Corrugato per un cavo ${c.sigla.replace(/\./g, ',')}`, `<p>Cavo Ø ${f(c.d[0])}–${f(c.d[1])} mm: serve un corrugato da <strong>${tb ? 'Ø ' + tb.est + ' mm' : 'oltre Ø 63'}</strong> (diametro interno almeno 1,3 volte il cavo).</p>${TIPO_TUBO}`, vai('tubo', 'Apri calcolo tubo') + vaiRep('tubi', 'Reparto corrugati')); }
+    }
     if (!Calc.DIAM_CAVO[d.S]) return box(`Cavo da ${f(d.S)} mm²`, '<p>Per questa sezione misura il diametro esterno del cavo: il tubo deve avere un diametro interno almeno 1,3 volte più grande.</p>', vaiRep('tubi', 'Reparto corrugati'));
     if (d.Dtubo && !d.nCavi) {
       let max = 0;
@@ -83,7 +89,7 @@ const Domande = (() => {
 
 
   function rPressacavo(d) {
-    if (d.S == null && !d.Dcavo) { const r = d.t.match(/\b(?:per|da|di)\s+(\d+(?:[.,]\d+)?)\b(?!\s*(?:mm\b|m\b|kw|a\b))/); if (r && Calc.SEZIONI.includes(num(r[1]))) d.S = num(r[1]); }
+    if (d.S == null && !d.Dcavo) { const r = d.t.match(/(?:^|\s)(\d+(?:[.,]\d+)?)(?!\s*(?:mm\b|m\b|kw|a\b|x|g))(?:\s|$)/); if (r && Calc.SEZIONI.includes(num(r[1]))) d.S = num(r[1]); }
     const az = vaiRep('raccordi', 'Reparto pressacavi');
     const lista = (dMin, dMax) => {
       const l = Schede.pressacaviPer(dMin, dMax);
@@ -94,11 +100,11 @@ const Domande = (() => {
     };
     if (d.Dcavo) return box(`Pressacavo per cavo Ø ${f(d.Dcavo)} mm`, lista(d.Dcavo, d.Dcavo), az);
     if (d.S != null) {
-      const cand = d.nCavi ? [Schede.diametroCavo(d.nCavi, d.S)] : ['5', '4', '3', '2'].map(k => Schede.diametroCavo(+k, d.S)).filter(Boolean);
+      const cand = d.unip ? [Schede.diametroCavo(1, d.S)] : d.nCavi ? [Schede.diametroCavo(d.nCavi, d.S)] : [5, 4, 3, 2].map(k => Schede.diametroCavo(k, d.S)).filter(Boolean);
       const ok = cand.filter(Boolean);
       if (!ok.length) return box(`Pressacavo per cavo da ${f(d.S)} mm²`, '<p>Non ho il diametro di questo cavo: misuralo con il calibro e scrivimi per esempio <em>pressacavo diametro 30</em>.</p>', az);
-      const corpo = ok.map(c => `<h3 class="tab-tit">FG16OR16 ${c.sigla.replace('.', ',')} · Ø ${c.d[0] === c.d[1] ? f(c.d[0]) : f(c.d[0]) + '–' + f(c.d[1])} mm</h3>${lista(c.d[0], c.d[1])}`).join('');
-      return box(`Pressacavo per cavo da ${f(d.S)} mm²`, corpo + '<p class="small">Diametri indicativi dei cavi FG16OR16: altre marche e altri tipi di cavo possono cambiare di 1–3 mm. Nel dubbio misura il cavo.</p>', az);
+      const corpo = ok.map(c => `<h3 class="tab-tit">${c.sigla.startsWith('1X') ? 'FG16R16' : 'FG16OR16'} ${c.sigla.replace(/\./g, ',')} · Ø ${c.d[0] === c.d[1] ? f(c.d[0]) : f(c.d[0]) + '–' + f(c.d[1])} mm</h3>${lista(c.d[0], c.d[1])}`).join('');
+      return box(`Pressacavo per cavo da ${f(d.S)} mm²`, corpo + '<p class="small">Diametri dal catalogo Prysmian (nominale–massimo): altre marche possono cambiare di 1–3 mm. Nel dubbio misura il cavo.</p>', az);
     }
     return box('Che pressacavo serve?', '<p>Dimmi il cavo (es. <em>pressacavo per 5G16</em>) o il suo diametro (es. <em>pressacavo diametro 22</em>).</p>', az);
   }

@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.10.0';
+const VERSION = '1.10.1';
 const CHANGELOG = [
+  { v: '1.10.1', data: '15/11/2026', voci: ['Pressacavi completi: BM Group 4912–4963 con campi di serraggio, Gewiss anche M12, M50, M63 e serie passo PG.', 'Diametri di tutti i cavi FG16OR16 e FG16R16 dal catalogo Prysmian: unipolari, 2–5 conduttori, 3x+1 e multipolari fino a 24 anime.', 'Chiedi anche "pressacavo per cavo unipolare 50", "pressacavo 3x50", "corrugato per FG16OR16 5G16".'] },
   { v: '1.10.0', data: '15/11/2026', voci: ['Pressacavi con i modelli veri: Gewiss GW FIT, Cembre 1900 e 7900, Legrand/BTicino, HellermannTyton NGM, Fibox, BM Group, con il diametro di cavo che stringono.', 'Chiedi "pressacavo per cavo da 50 mm²", "pressacavo per 5G16" o "pressacavo diametro 22" e ti dice misura e codici di ogni marca.', 'Diametro esterno dei cavi FG16OR16 e capicorda Cembre A-M: chiedi "capocorda 50 mm² foro M8" → A10-M8.'] },
   { v: '1.9.0', data: '15/11/2026', voci: ['Puoi fare domande come a un collega: "corrugato per cavo 50 mm", "che cavo per il forno a 20 metri", "condizionatore per 30 mq", "quanti ampere sono 3 kW", "cos\'è un deviatore".', 'La risposta arriva subito, anche senza internet, con il pulsante per aprire lo strumento o il reparto giusto.', 'Ricerca nei reparti più furba: trova le marche anche se scrivi la frase intera.'] },
   { v: '1.8.1', data: '15/11/2026', voci: ['Elettrico civile completo: tutte le serie attuali di BTicino (Light Now, Livinglight, Classia…), Vimar (Eikon Exé/Tactil, Arké Fit, Plana Up, Idea…), Gewiss (placche ONE, GEO, LUX, ICE, System Pura), Schneider (Unica Pro, Studio, Pure), Master (Mix, Steel), Simon Urmet (Expì Touch, Flexa, Kàdra).'] },

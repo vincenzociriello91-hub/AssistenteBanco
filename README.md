@@ -20,6 +20,9 @@ App web installabile (PWA) per il banco di un grossista di materiale elettrico. 
 I calcoli sono indicativi (IEC 60364-5-52, CEI-UNEL 35024/1, CEI 64-8). Il dimensionamento definitivo spetta all'installatore o al progettista.
 
 ## Novità
+### 1.10.1 — 15/11/2026
+- Pressacavi BM Group e Gewiss completi (anche passo PG); diametri cavi FG16OR16/FG16R16 dal catalogo Prysmian.
+
 ### 1.10.0 — 15/11/2026
 - Tabelle pressacavi (Gewiss, Cembre, Legrand/BTicino, HellermannTyton, Fibox, BM Group), diametri cavi FG16OR16, capicorda Cembre A-M.
 - Domande su pressacavi e capicorda.
