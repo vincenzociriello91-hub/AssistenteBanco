@@ -293,3 +293,20 @@ summary { flex-wrap: nowrap; }
 .view:not([hidden]), [data-list]:not([hidden]) { animation: entra .22s cubic-bezier(.2,.8,.2,1); }
 @keyframes entra { from { opacity: 0; transform: translateY(8px) scale(.995); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .view:not([hidden]), [data-list]:not([hidden]) { animation: none; } }
+
+/* ===== Facile per tutti (1.7.0) ===== */
+.chips { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0 .75rem; }
+.chip-btn { font: inherit; font-size: .92rem; font-weight: 500; color: var(--on-surface); background: var(--surface-c); border: 1px solid var(--outline);
+  border-radius: .75rem; padding: .55rem .9rem; min-height: 2.75rem; cursor: pointer; transition: background .15s, border-color .15s; }
+.chip-btn.on, .chip-btn:active { background: var(--primary-c); color: var(--on-primary-c); border-color: transparent; }
+@media (pointer: fine) { .chip-btn:hover { background: var(--surface-ch); } }
+.risposta { display: flex; gap: .75rem; align-items: flex-start; border-radius: 1.25rem; padding: 1rem 1.1rem; margin-bottom: .75rem; font-size: 1.08rem; line-height: 1.45; }
+.risposta .msr { font-size: 1.75rem; font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; margin-top: .05rem; }
+.risposta.ok { background: var(--primary-c); color: var(--on-primary-c); }
+.risposta.no { background: var(--bad-c); color: var(--on-surface); }
+.result .hero .kpi:nth-child(3) { background: var(--surface); }
+.result .hero .kpi:nth-child(3) .v { color: var(--primary); } .result .hero .kpi:nth-child(3) .l { color: var(--muted); }
+.result .hero .kpi:first-child { background: var(--primary-c); }
+.result .hero .kpi:first-child .v, .result .hero .kpi:first-child .l { color: var(--on-primary-c); }
+details.dettagli { margin-top: .75rem; }
+.benvenuto { background: linear-gradient(150deg, var(--primary-c), var(--surface-c) 75%); }

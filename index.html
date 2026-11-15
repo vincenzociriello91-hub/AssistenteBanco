@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=ac_unit,arrow_back,barcode_scanner,bolt,cable,calculate,checklist,electric_meter,electrical_services,format_size,home_iot_device,info,lightbulb,linear_scale,power,search,sell,settings_input_component,solar_power,storefront,sync_alt,videocam,wifi_off&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=ac_unit,arrow_back,barcode_scanner,bolt,cable,calculate,check_circle,checklist,electric_meter,electrical_services,error,format_size,home_iot_device,info,lightbulb,linear_scale,power,search,sell,settings_input_component,solar_power,storefront,sync_alt,videocam,wifi_off&display=block">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -31,7 +31,7 @@
 <section id="tab-cerca" class="tab active" aria-label="Cerca">
   <div class="hero-cerca">
     <h1 class="display">Cosa cerca il cliente?</h1>
-    <p class="hint">Codice, EAN, descrizione o marca: articoli, equivalenti e reparto giusto.</p>
+    <p class="hint">Scrivi cosa ti serve o un codice, oppure inquadra il codice a barre.</p>
   </div>
   <div class="card searchcard">
     <div class="searchrow">
@@ -41,6 +41,15 @@
     </div>
   </div>
   <div id="catStats" class="small"></div>
+  <div id="benvenuto" class="card benvenuto" hidden>
+    <h2 style="margin-bottom:.4rem">Benvenuto 👋</h2>
+    <ul class="ref">
+      <li><strong>Cerca</strong>: scrivi un codice o cosa ti serve, oppure inquadra il codice a barre.</li>
+      <li><strong>Strumenti</strong>: calcoli pronti, ad esempio che cavo serve per un forno.</li>
+      <li><strong>Reparti</strong>: marche e consigli per ogni tipo di prodotto.</li>
+    </ul>
+    <div class="row"><span class="small">Il pulsante in alto a destra ingrandisce il testo.</span><button id="btnBenvenuto" class="btn filled">Ho capito</button></div>
+  </div>
   <div id="scanner" class="card" hidden>
     <video id="video" playsinline muted></video>
     <div class="row"><span id="scanMsg" class="small">Inquadra il codice a barre</span><button id="btnStopScan" class="btn">Chiudi</button></div>
@@ -59,24 +68,35 @@
 <section id="tab-strumenti" class="tab" aria-label="Strumenti">
   <div data-list>
     <h1>Strumenti</h1>
-    <p class="hint">Calcoli rapidi per il cliente al banco.</p>
+    <p class="hint">Risposte pronte alle domande più comuni.</p>
     <div class="tiles">
-      <button class="tile" data-open="linea" style="--h:145"><span class="tile-ico"><span class="msr" aria-hidden="true">bolt</span></span><span class="tile-t">Dimensiona linea</span><span class="tile-s">Cavo, interruttore, differenziale</span></button>
-      <button class="tile" data-open="tubo" style="--h:150"><span class="tile-ico"><span class="msr" aria-hidden="true">linear_scale</span></span><span class="tile-t">Tubo / corrugato</span><span class="tile-s">Diametro giusto per i cavi</span></button>
-      <button class="tile" data-open="clima" style="--h:190"><span class="tile-ico"><span class="msr" aria-hidden="true">ac_unit</span></span><span class="tile-t">Climatizzatore</span><span class="tile-s">Quanti BTU per la stanza</span></button>
-      <button class="tile" data-open="luce" style="--h:45"><span class="tile-ico"><span class="msr" aria-hidden="true">lightbulb</span></span><span class="tile-t">Illuminazione</span><span class="tile-s">Lumen e watt LED</span></button>
-      <button class="tile" data-open="conv" style="--h:265"><span class="tile-ico"><span class="msr" aria-hidden="true">sync_alt</span></span><span class="tile-t">Conversioni</span><span class="tile-s">kW, A, CV, kVA</span></button>
-      <button class="tile" data-open="contatore" style="--h:25"><span class="tile-ico"><span class="msr" aria-hidden="true">electric_meter</span></span><span class="tile-t">Contatore</span><span class="tile-s">Potenza prelevabile</span></button>
+      <button class="tile" data-open="linea" style="--h:145"><span class="tile-ico"><span class="msr" aria-hidden="true">bolt</span></span><span class="tile-t">Che cavo serve?</span><span class="tile-s">Che cavo serve per forno, clima, auto…</span></button>
+      <button class="tile" data-open="tubo" style="--h:150"><span class="tile-ico"><span class="msr" aria-hidden="true">linear_scale</span></span><span class="tile-t">Tubo / corrugato</span><span class="tile-s">Che tubo serve per i fili</span></button>
+      <button class="tile" data-open="clima" style="--h:190"><span class="tile-ico"><span class="msr" aria-hidden="true">ac_unit</span></span><span class="tile-t">Climatizzatore</span><span class="tile-s">Che potenza serve per la stanza</span></button>
+      <button class="tile" data-open="luce" style="--h:45"><span class="tile-ico"><span class="msr" aria-hidden="true">lightbulb</span></span><span class="tile-t">Illuminazione</span><span class="tile-s">Quanta luce serve</span></button>
+      <button class="tile" data-open="conv" style="--h:265"><span class="tile-ico"><span class="msr" aria-hidden="true">sync_alt</span></span><span class="tile-t">Conversioni</span><span class="tile-s">Da kW ad ampere e viceversa</span></button>
+      <button class="tile" data-open="contatore" style="--h:25"><span class="tile-ico"><span class="msr" aria-hidden="true">electric_meter</span></span><span class="tile-t">Contatore</span><span class="tile-s">Quando salta la corrente</span></button>
       <button class="tile" data-open="codici" style="--h:330"><span class="tile-ico"><span class="msr" aria-hidden="true">sell</span></span><span class="tile-t">Codici gestionale</span><span class="tile-s">Triple fornitori e famiglie</span></button>
-      <button class="tile" data-open="promemoria" style="--h:215"><span class="tile-ico"><span class="msr" aria-hidden="true">checklist</span></span><span class="tile-t">Promemoria</span><span class="tile-s">Colori, sezioni, IP, cavi</span></button>
+      <button class="tile" data-open="promemoria" style="--h:215"><span class="tile-ico"><span class="msr" aria-hidden="true">checklist</span></span><span class="tile-t">Parole semplici</span><span class="tile-s">Cosa vuol dire salvavita, mm², IP…</span></button>
     </div>
   </div>
 
   <div class="view" data-view="linea" hidden>
-    <div class="viewhead"><button class="back" aria-label="Indietro"><span class="msr" aria-hidden="true">arrow_back</span></button><h1>Dimensiona linea</h1></div>
-    <p class="hint">Sezione del cavo, interruttore e differenziale da potenza e lunghezza.</p>
+    <div class="viewhead"><button class="back" aria-label="Indietro"><span class="msr" aria-hidden="true">arrow_back</span></button><h1>Che cavo serve?</h1></div>
+    <p class="hint">Scopri che cavo, interruttore e salvavita servono. Tocca cosa devi alimentare:</p>
+    <div id="presets" class="chips">
+      <button class="chip-btn" data-carico="prese" data-kw="3">Prese di una stanza</button>
+      <button class="chip-btn" data-carico="luce" data-kw="1">Luci</button>
+      <button class="chip-btn" data-carico="resistivo" data-kw="3">Forno</button>
+      <button class="chip-btn" data-carico="resistivo" data-kw="7.4">Piano a induzione</button>
+      <button class="chip-btn" data-carico="inverter" data-kw="2.2">Lavatrice</button>
+      <button class="chip-btn" data-carico="inverter" data-kw="1.5">Condizionatore</button>
+      <button class="chip-btn" data-carico="resistivo" data-kw="1.5">Scaldabagno</button>
+      <button class="chip-btn" data-carico="inverter" data-kw="4">Pompa di calore</button>
+      <button class="chip-btn" data-carico="wallbox" data-kw="7.4">Auto elettrica</button>
+    </div>
     <form id="formCavi" class="card grid" autocomplete="off">
-      <label class="wide">Tipo di carico
+      <label class="wide">Cosa alimenta la linea
         <select name="carico">
           <option value="prese">Prese / uso generale</option>
           <option value="luce">Illuminazione</option>
@@ -86,14 +106,14 @@
           <option value="wallbox">Wallbox ricarica auto</option>
         </select>
       </label>
-      <label>Sistema
-        <select name="sistema"><option value="mono">Mono 230 V</option><option value="tri">Tri 400 V</option></select>
+      <label>Impianto
+        <select name="sistema"><option value="mono">Casa (230 V)</option><option value="tri">Trifase (400 V)</option></select>
       </label>
-      <label>Lunghezza (m)<input name="L" type="number" inputmode="decimal" step="1" min="1" value="20"></label>
+      <label>Distanza dal quadro (m)<input name="L" type="number" inputmode="decimal" step="1" min="1" value="20"></label>
       <label>Potenza (kW)<input name="kw" type="number" inputmode="decimal" step="0.01" min="0" value="3"></label>
-      <label>o corrente (A)<input name="amp" type="number" inputmode="decimal" step="0.1" min="0" placeholder="facoltativo"></label>
+      <label>Ampere (se li sai)<input name="amp" type="number" inputmode="decimal" step="0.1" min="0" placeholder="facoltativo"></label>
       <details class="wide adv">
-        <summary>Opzioni avanzate (posa, cavo, temperatura)</summary>
+        <summary>Per il tecnico (posa, tipo di cavo, temperatura)</summary>
         <div class="grid" style="margin-top:.5rem">
           <label class="wide">Cavo
             <select name="isolante"><option value="PVC">PVC 70 °C (FS17, N07V-K)</option><option value="EPR">EPR/XLPE 90 °C (FG16, FG17)</option></select>
@@ -118,13 +138,13 @@
 
   <div class="view" data-view="tubo" hidden>
     <div class="viewhead"><button class="back" aria-label="Indietro"><span class="msr" aria-hidden="true">arrow_back</span></button><h1>Tubo / corrugato</h1></div>
-    <p class="hint">Cavi unipolari FS17 / H07V-K. Regola CEI 64-8: diametro interno ≥ 1,3 × diametro del fascio.</p>
+    <p class="hint">Scrivi quanti fili devono passare nel tubo: ti dico che tubo serve.</p>
     <div class="card"><div id="tuboRows" class="grid"></div><div id="tuboOut" class="big"></div></div>
   </div>
 
   <div class="view" data-view="clima" hidden>
     <div class="viewhead"><button class="back" aria-label="Indietro"><span class="msr" aria-hidden="true">arrow_back</span></button><h1>Climatizzatore</h1></div>
-    <p class="hint">Stima rapida per orientare il cliente (circa 340 BTU/h per m² con soffitto a 2,7 m).</p>
+    <p class="hint">Scrivi quanto è grande la stanza: ti dico che condizionatore serve.</p>
     <div class="card">
       <div class="grid">
         <label>Superficie (m²)<input id="btuMq" type="number" inputmode="decimal" value="20"></label>
@@ -138,7 +158,7 @@
 
   <div class="view" data-view="luce" hidden>
     <div class="viewhead"><button class="back" aria-label="Indietro"><span class="msr" aria-hidden="true">arrow_back</span></button><h1>Illuminazione</h1></div>
-    <p class="hint">Lumen necessari per l'ambiente e watt LED equivalenti.</p>
+    <p class="hint">Scegli la stanza e quanto è grande: ti dico quanta luce serve.</p>
     <div class="card">
       <div class="grid">
         <label class="wide">Ambiente<select id="luxRoom"></select></label>
@@ -167,7 +187,7 @@
 
   <div class="view" data-view="contatore" hidden>
     <div class="viewhead"><button class="back" aria-label="Indietro"><span class="msr" aria-hidden="true">arrow_back</span></button><h1>Contatore</h1></div>
-    <p class="hint">Quanta potenza si può prelevare prima che il contatore stacchi.</p>
+    <p class="hint">Quanta corrente puoi usare insieme prima che salti il contatore.</p>
     <div class="card">
       <div class="grid"><label>Potenza impegnata (kW)<select id="ctKw"><option>3</option><option>4.5</option><option selected>6</option><option>10</option><option>15</option></select></label></div>
       <div id="ctOut"></div>
@@ -193,7 +213,7 @@
   </div>
 
   <div class="view" data-view="promemoria" hidden>
-    <div class="viewhead"><button class="back" aria-label="Indietro"><span class="msr" aria-hidden="true">arrow_back</span></button><h1>Promemoria</h1></div>
+    <div class="viewhead"><button class="back" aria-label="Indietro"><span class="msr" aria-hidden="true">arrow_back</span></button><h1>Promemoria e parole semplici</h1></div>
     <div class="card"><div id="promemoria"></div></div>
   </div>
 </section>
@@ -202,7 +222,7 @@
 <section id="tab-reparti" class="tab" aria-label="Reparti">
   <div data-list>
     <h1>Reparti</h1>
-    <p class="hint">Marche, serie e guida rapida di ogni reparto.</p>
+    <p class="hint">Tocca un reparto per vedere marche e consigli.</p>
     <div class="card"><input id="repQ" type="search" placeholder="Filtra per marca o modello (es. Daikin, RK15)" aria-label="Filtra reparti"></div>
     <div id="repartiLista" class="tiles"></div>
   </div>

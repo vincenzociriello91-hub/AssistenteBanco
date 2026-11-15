@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.6.1';
+const VERSION = '1.7.0';
 const CHANGELOG = [
+  { v: '1.7.0', data: '15/11/2026', voci: ['App più semplice anche per chi non è del mestiere: risposte scritte in parole semplici.', 'Dimensiona linea: scegli l\'apparecchio (forno, piano a induzione, condizionatore, auto elettrica…) e la risposta arriva da sola.', 'Benvenuto alla prima apertura, suggerimenti di ricerca, glossario "Parole semplici".'] },
   { v: '1.6.1', data: '15/11/2026', voci: ['Animazioni tra le pagine più leggere: nessun tocco perso.', 'Alla prima apertura l\'app non si ricarica più da sola.'] },
   { v: '1.6.0', data: '15/11/2026', voci: ['Grafica modernizzata in stile Pixel (Material 3 Expressive): icone Material al posto delle emoji, colori diversi per ogni reparto e strumento.', 'Ricerca a pillola con titolo grande, barre traslucide, ombre leggere, angoli più morbidi.', 'Animazioni fluide tra le pagine, senza perdere nessun tocco.'] },
   { v: '1.5.0', data: '15/11/2026', voci: ['Nuovo reparto Raccordi, pressacavi e cassette: Gewiss, BTicino, Vimar, Bocchiotti/Inset, Cembre, BM Group, Palazzoli, Scame.', 'Cassette da parete e da incasso (muratura e cartongesso) con codici e misure principali.', 'Guida rapida per scegliere pressacavi, raccordi e cassette.'] },
@@ -158,6 +159,14 @@ fCavi.carico.addEventListener('change', () => {
   fCavi.cosphi.value = { prese: 0.95, luce: 0.95, resistivo: 1, inverter: 0.95, motore: 0.85, wallbox: 1 }[fCavi.carico.value];
 });
 
+// Scelte rapide: apparecchi comuni con potenza tipica
+$('#presets')?.addEventListener('click', e => {
+  const b = e.target.closest('[data-carico]'); if (!b) return;
+  $$('#presets .chip-btn').forEach(x => x.classList.toggle('on', x === b));
+  fCavi.carico.value = b.dataset.carico; fCavi.carico.dispatchEvent(new Event('change'));
+  fCavi.kw.value = b.dataset.kw; fCavi.amp.value = '';
+  calcolaCavi(); Report.log('preset', { carico: b.dataset.carico, kw: b.dataset.kw });
+});
 function calcolaCavi() {
   const v = Object.fromEntries(new FormData(fCavi));
   const sistema = v.sistema;
@@ -171,28 +180,31 @@ function calcolaCavi() {
   };
   if (amp > 0) p.Ib = amp;
   const out = $('#outCavi');
-  if (!(p.Ib > 0) && !(p.potenzaW > 0)) { out.innerHTML = '<p class="hint">Inserisci potenza o corrente.</p>'; return; }
+  if (!(p.Ib > 0) && !(p.potenzaW > 0)) { out.innerHTML = '<p class="hint">Scegli cosa devi alimentare qui sopra, oppure scrivi la potenza in kW.</p>'; return; }
   const r = Calc.dimensiona(p);
   const curva = Calc.curvaConsigliata(v.carico);
   const diff = Calc.differenzialeConsigliato(v.carico, sistema);
   const s = r.scelta;
   const poli = sistema === 'tri' ? '4P (3P+N)' : '2P (1P+N)';
-  let html = '<div class="hero">';
-  html += kpi('Corrente d\'impiego', fmt(r.Ib) + ' A');
-  html += kpi('Interruttore', r.In ? `${r.In} A curva ${curva.curva}` : 'oltre 125 A', !r.In);
-  html += kpi('Sezione consigliata', s ? `${fmt(s.S)} mm²` : 'nessuna', !s);
-  html += kpi('Caduta di tensione', s ? `${fmt(s.cdt.perc, 2)} % (${fmt(s.cdt.dV)} V)` : '—', !s);
-  html += kpi('Portata cavo Iz', s ? fmt(s.Iz) + ' A' : '—');
-  html += kpi('Differenziale', `Tipo ${diff.tipo}, ${diff.idn}`);
+  const nomeCarico = { prese: 'le prese', luce: 'le luci', resistivo: 'questo apparecchio', inverter: 'questo apparecchio', motore: 'il motore', wallbox: 'la ricarica dell\'auto' }[v.carico];
+  const kwTxt = p.Ib ? `${fmt(p.Ib)} A` : `${fmt(p.potenzaW / 1000, 2)} kW`;
+  let html = s && r.In
+    ? `<div class="risposta ok"><span class="msr" aria-hidden="true">check_circle</span><div>Per ${nomeCarico} (${kwTxt}) a ${fmt(p.L, 0)} m usa <strong>cavo da ${fmt(s.S)} mm²</strong>, <strong>interruttore da ${r.In} A</strong> e <strong>salvavita ${diff.idn} tipo ${esc(diff.tipo.split(' ')[0])}</strong>.</div></div>`
+    : `<div class="risposta no"><span class="msr" aria-hidden="true">error</span><div>Con questa potenza e questa lunghezza non c'è un cavo adatto fino a 120 mm². Accorcia la linea, dividi il carico o chiedi al tecnico.</div></div>`;
+  html += '<div class="hero">';
+  html += kpi('Cavo consigliato', s ? `${fmt(s.S)} mm²` : 'nessuno', !s);
+  html += kpi('Interruttore (magnetotermico)', r.In ? `${r.In} A curva ${curva.curva}` : 'oltre 125 A', !r.In);
+  html += kpi('Salvavita (differenziale)', `${diff.idn} tipo ${diff.tipo}`);
+  html += kpi('Corrente assorbita', fmt(r.Ib) + ' A');
+  html += kpi('Perdita di tensione sul cavo', s ? `${fmt(s.cdt.perc, 1)} %` : '—', !s);
+  html += kpi('Corrente che il cavo regge', s ? fmt(s.Iz) + ' A' : '—');
   html += '</div>';
-  html += `<p class="small">Magnetotermico ${poli}. ${esc(curva.nota)} ${esc(diff.nota)}</p>`;
-  if (!s) html += '<div class="warnbox">Nessuna sezione fino a 120 mm² rispetta portata e caduta di tensione: riduci la lunghezza, alza il limite o dividi il carico.</div>';
-  if (v.carico === 'wallbox') html += '<div class="warnbox">Wallbox: carico continuo per ore, meglio una sezione in più.</div>';
-  html += '<table><thead><tr><th>mm²</th><th>Iz (A)</th><th>Caduta</th><th>Portata</th></tr></thead><tbody>';
+  if (v.carico === 'wallbox') html += '<div class="warnbox">Auto elettrica: carica per molte ore di fila, meglio un cavo di una misura più grande.</div>';
+  html += `<details class="dettagli"><summary>Dettagli tecnici</summary><p class="small">Magnetotermico ${poli}. ${esc(curva.nota)} ${esc(diff.nota)}</p><table><thead><tr><th>mm²</th><th>Iz (A)</th><th>Caduta</th><th>Portata</th></tr></thead><tbody>`;
   for (const row of r.righe.slice(0, 7)) {
     html += `<tr class="${s && row.S === s.S ? 'sel' : ''}"><td>${fmt(row.S)}</td><td>${fmt(row.Iz)}</td><td class="${row.okCdt ? 'ok' : 'no'}">${fmt(row.cdt, 2)} %</td><td class="${row.okPortata ? 'ok' : 'no'}">${row.okPortata ? 'OK' : 'no'}</td></tr>`;
   }
-  html += '</tbody></table>';
+  html += '</tbody></table></details>';
   out.innerHTML = html;
   Report.log('calcolo-linea', { input: p, esito: s ? { S: s.S, In: r.In, cdt: +s.cdt.perc.toFixed(2) } : null });
 }
@@ -249,6 +261,18 @@ function calcolaBtu() {
 ['#btuMq', '#btuH', '#btuEsp'].forEach(s => $(s).addEventListener('input', calcolaBtu)); calcolaBtu();
 
 $('#promemoria').innerHTML = `
+<h2 class="sezione" style="margin-top:0">Parole semplici</h2>
+<ul class="ref">
+<li><strong>Magnetotermico (interruttore automatico):</strong> stacca la corrente se la linea assorbe troppo o c'è un corto. Si sceglie in ampere (A).</li>
+<li><strong>Salvavita (differenziale):</strong> stacca se la corrente scappa verso terra, per esempio se qualcuno tocca un filo. Per la casa 30 mA.</li>
+<li><strong>Sezione del cavo (mm²):</strong> quanto è grosso il filo di rame. Più corrente o più distanza = filo più grosso.</li>
+<li><strong>kW e A:</strong> i kW dicono quanto consuma l'apparecchio, gli ampere quanta corrente passa nel filo. In casa: 1 kW ≈ 4,5 A.</li>
+<li><strong>IP:</strong> quanto un oggetto resiste a polvere e acqua. Più alto il numero, più è protetto.</li>
+<li><strong>BTU:</strong> la potenza di un condizionatore. 9000 BTU ≈ una stanza di 25 m².</li>
+<li><strong>Lumen:</strong> quanta luce fa una lampadina (non i watt).</li>
+<li><strong>Corrugato:</strong> il tubo flessibile dentro il muro dove passano i fili.</li>
+</ul>
+<h2 class="sezione">Per il tecnico</h2>
 <ul class="ref">
 <li><strong>Colori:</strong> fase marrone/nero/grigio, neutro blu, terra giallo-verde.</li>
 <li><strong>Sezioni tipiche (rame, casa):</strong> luce 1,5 mm²; prese 10 A 1,5 mm²; prese 16 A/Schuko 2,5 mm²; forno e piano a induzione 4–6 mm² su linea dedicata; montante 6–10 mm².</li>
@@ -387,13 +411,17 @@ async function caricaCatalogo() {
   const marche = new Set(CATALOGO.map(a => a.marca).filter(Boolean));
   $('#catStats').textContent = CATALOGO.length
     ? `${CATALOGO.length.toLocaleString('it-IT')} articoli · ${marche.size} marche · salvati solo su questo dispositivo`
-    : 'Catalogo vuoto: importa un listino qui sotto. Intanto la ricerca online funziona lo stesso.';
+    : 'Il listino non è ancora caricato: trovi comunque marche, reparti, codici e la ricerca online.';
 }
 
+function suggerimenti() {
+  const es = ['salvavita', 'magnetotermico 16A', 'corrugato 25', 'cavo 2,5', 'Daikin', 'pressacavi', 'scatola 503'];
+  return `<h2 class="sezione">Prova a cercare</h2><div class="chips">${es.map(x => `<button class="chip-btn" data-sugg="${esc(x)}">${esc(x)}</button>`).join('')}</div>`;
+}
 function cerca(q) {
   const out = $('#results');
   q = q.trim();
-  if (!q) { out.innerHTML = ''; return; }
+  if (!q) { out.innerHTML = suggerimenti(); return; }
   const parole = norm(q).split(/\s+/).filter(Boolean);
   const esatto = CATALOGO.filter(a => norm(a.codice) === norm(q) || String(a.ean) === q);
   const altri = CATALOGO.filter(a => !esatto.includes(a)).filter(a => {
@@ -423,6 +451,7 @@ function cerca(q) {
   }).join('') + '<h2 class="sezione">Online</h2>' + web;
   Report.log('ricerca', { lunghezza: q.length, risultati: lista.length });
 }
+$('#results').addEventListener('click', e => { const sg = e.target.closest('[data-sugg]'); if (sg) { $('#q').value = sg.dataset.sugg; cerca(sg.dataset.sugg); return; } });
 $('#results').addEventListener('click', e => { const b = e.target.closest('[data-goto-rep]'); if (!b) return; RepartiUI.apri(b.dataset.gotoRep); apriVista('reparti', 'reparto'); history.replaceState({ tab: 'reparti', vista: 'reparto', rep: b.dataset.gotoRep }, ''); });
 let tQ; $('#q').addEventListener('input', e => { clearTimeout(tQ); tQ = setTimeout(() => cerca(e.target.value), 150); });
 
@@ -611,3 +640,6 @@ $('#btnAa').addEventListener('click', () => setTimeout(rilevaSchermo, 50));
 $('#netstate').hidden = navigator.onLine;
 Report.log('avvio', { versione: VERSION });
 caricaCatalogo();
+$('#results').innerHTML = suggerimenti();
+try { if (!localStorage.getItem('ab_benvenuto')) $('#benvenuto').hidden = false; } catch {}
+$('#btnBenvenuto').addEventListener('click', () => { $('#benvenuto').hidden = true; try { localStorage.setItem('ab_benvenuto', '1'); } catch {} });
