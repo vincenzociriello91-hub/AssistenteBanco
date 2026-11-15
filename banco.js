@@ -251,8 +251,7 @@ const Banco = (() => {
   async function fermaAscolto() {
     ascoltando = false; try { rec && rec.stop(); } catch {}
     aggiornaBtnAscolto();
-    const cfg = gemini();
-    if (cfg.key && trascrittoTemp.trim().length > 10) {
+    if (geminiPronto() && trascrittoTemp.trim().length > 10) {
       $('#ascoltoStato').textContent = 'Riordino l\'elenco…';
       try {
         const r = await chiediGemini(`Sei un banconista di materiale elettrico. Dal parlato del cliente estrai SOLO i materiali elettrici richiesti, con quantità e unità di misura (pz, m, conf). Ignora tutto il resto. Rispondi solo con JSON: [{"desc":"descrizione tecnica breve in italiano","qta":numero,"um":"pz|m|conf"}].\nParlato: """${trascrittoTemp}"""`, []);
@@ -289,9 +288,16 @@ const Banco = (() => {
 
   /* ---------- Gemini: foto del pezzo ---------- */
   const gemini = () => LS.get('ab_gemini', null) || { key: '', modello: 'gemini-flash-latest' };
+  // Con la chiave sul dispositivo chiama Gemini direttamente; altrimenti passa dal ricevitore (chiave lato server).
+  const geminiPronto = () => !!(gemini().key || (REPORT_URL && navigator.onLine));
   async function chiediGemini(testo, immagini) {
     const cfg = gemini();
-    if (!cfg.key) throw new Error('Chiave Gemini mancante (Info → Foto del pezzo)');
+    if (!cfg.key) {
+      if (!REPORT_URL) throw new Error('Assistente non raggiungibile');
+      const r = await fetch(REPORT_URL.replace(/\/$/, '') + '/gemini', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ testo, immagini }) });
+      if (!r.ok) throw new Error('Assistente ha risposto ' + r.status);
+      return (await r.json()).testo || '';
+    }
     const parts = [{ text: testo }, ...immagini.map(b64 => ({ inline_data: { mime_type: 'image/jpeg', data: b64 } }))];
     const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(cfg.modello || 'gemini-flash-latest')}:generateContent?key=${encodeURIComponent(cfg.key)}`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts }], generationConfig: { temperature: 0.2 } })
@@ -320,7 +326,7 @@ const Banco = (() => {
   }
   async function riconosci() {
     const out = $('#fotoRisultato');
-    if (!gemini().key) { out.innerHTML = '<p class="hint">Per riconoscere le foto serve la chiave Gemini: inseriscila in <strong>Info → Foto del pezzo</strong>.</p>'; return; }
+    if (!geminiPronto()) { out.innerHTML = '<p class="hint">Per riconoscere le foto serve la connessione a internet.</p>'; return; }
     out.innerHTML = '<p class="hint">Riconosco il pezzo…</p>';
     try {
       const testo = await chiediGemini('Sei un esperto banconista di materiale elettrico in Italia. Le foto mostrano lo stesso articolo da angolazioni diverse. Identificalo. Rispondi solo con JSON: {"nome":"cosa è, in parole semplici","marca":"","serie":"","codice":"codice articolo se leggibile","caratteristiche":["dati tecnici letti o dedotti"],"ricerca":"testo breve da cercare nel catalogo","equivalenti":"marche o serie equivalenti, o ricambio consigliato","dubbi":"cosa non è certo"}', foto.map(d => d.split(',')[1]));

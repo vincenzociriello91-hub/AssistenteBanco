@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.13.0';
+const VERSION = '1.13.1';
 const CHANGELOG = [
+  { v: '1.13.1', data: '15/11/2026', voci: ['Assistente acceso per tutti.', 'Foto del pezzo e Ascolto funzionano senza inserire nessuna chiave.'] },
   { v: '1.13.0', data: '15/11/2026', voci: ['Assistente: capisce qualsiasi domanda scritta in parole normali, anche da chi non è del mestiere, e risponde con cosa serve e quanto. Premi Invio o aspetta un attimo dopo aver scritto.', 'I prodotti suggeriti dall\'assistente vanno nel preventivo con un tocco.'] },
   { v: '1.12.4', data: '15/11/2026', voci: ['Domande sugli aspiratori: "aspiratore bagno 6 mq" o "ventilatore cucina 10 mq" calcolano la portata e propongono il Vortice giusto con codice.'] },
   { v: '1.12.3', data: '15/11/2026', voci: ['Ricerca: premendo Invio la tastiera si chiude e la pagina scorre fino alla risposta.'] },
