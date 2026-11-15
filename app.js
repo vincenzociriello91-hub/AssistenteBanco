@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.0.3';
+const VERSION = '1.0.4';
 const CHANGELOG = [
+  { v: '1.0.4', data: '15/11/2026', voci: ['Nuove tabelle: videocitofonia Urmet e Comelit (sistemi, monitor, pulsantiere).', 'Videosorveglianza e antintrusione Hikvision (Turbo HD, IP, AcuSense, AX PRO).'] },
   { v: '1.0.3', data: '15/11/2026', voci: ['Aggiornamento dall\'app riparato: l\'app controlla sempre la versione online e installa i file nuovi con un tocco.', '"Cerca aggiornamenti" ora dice se sei già all\'ultima versione.'] },
   { v: '1.0.2', data: '15/11/2026', voci: ['Aggiunte Master (serie Modo) e Simon Urmet (serie Nea) alle serie civili.', 'Promemoria videocitofonia Urmet: sistemi, monitor e pulsantiere abbinate.'] },
   { v: '1.0.1', data: '15/11/2026', voci: ['Testo e pulsanti più grandi sul telefono.', 'Nuovo pulsante Aa in alto: cambia la dimensione del testo (4 livelli), la scelta resta salvata.'] },
@@ -375,7 +376,17 @@ $('#serieCivili').innerHTML = `
 <tr><td>Master</td><td>Modo</td></tr>
 <tr><td>Simon Urmet</td><td>Nea (estetiche Kàdra, Expì, Flexa)</td></tr>
 </tbody></table>
-<p class="small" style="margin-top:12px"><strong>Videocitofonia Urmet</strong>: sistemi digitali 2Voice e IPerCom; monitor Aiko (abbinato a Nea Expì), Folio (Nea Kàdra), Signo (Nea Flexa); pulsantiere Sinthesi, Sinthesi S2, Sinthesi Steel, Alpha. Pulsantiere e monitor vanno scelti dello stesso sistema.</p>`;
+<h2 style="margin-top:16px">Videocitofonia</h2>
+<table><thead><tr><th>Marca</th><th>Sistemi</th><th>Monitor</th><th>Pulsantiere</th></tr></thead><tbody>
+<tr><td>Urmet</td><td>2Voice, IPerCom (digitali)</td><td>Aiko, Folio, Signo</td><td>Sinthesi, Sinthesi S2, Sinthesi Steel, Alpha</td></tr>
+<tr><td>Comelit</td><td>Simplebus 1, Simplebus 2 (2 fili), ViP (IP)</td><td>Maxi 7", Icona 4,3", Mini (cornetta), Mini Handsfree, Mini Wi-Fi</td><td>Ultra, 3One6, Switch, Vandalcom</td></tr>
+</tbody></table>
+<p class="small">Monitor e pulsantiera devono essere dello stesso sistema. Comelit Mini Wi-Fi sostituisce un vecchio monitor Simplebus 2 senza modifiche all'impianto. Urmet: Aiko va con Nea Expì, Folio con Nea Kàdra, Signo con Nea Flexa.</p>
+<h2 style="margin-top:16px">Videosorveglianza e antintrusione</h2>
+<table><thead><tr><th>Marca</th><th>Gamme</th></tr></thead><tbody>
+<tr><td>Hikvision</td><td>Turbo HD (analogico su coassiale, con DVR); IP (con NVR); AcuSense (riconosce persone e veicoli, meno falsi allarmi); ColorVu; linee ProExpert e HiWatch; antintrusione AX PRO</td></tr>
+</tbody></table>
+<p class="small">Telecamere Turbo HD vanno su DVR, telecamere IP su NVR: non si mischiano (salvo DVR ibridi che accettano anche qualche IP).</p>`;
 
 /* ============ SCANNER ============ */
 let stream = null, scanAttivo = false, zxReader = null;
