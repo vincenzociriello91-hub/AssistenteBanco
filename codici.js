@@ -174,7 +174,7 @@ const CODICI_DEFAULT = {
   {
    "nome": "BMM",
    "tripla": "BMM",
-   "alias": ""
+   "alias": "bm group beta"
   },
   {
    "nome": "Usag",

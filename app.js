@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.3.2';
+const VERSION = '1.4.0';
 const CHANGELOG = [
+  { v: '1.4.0', data: '15/11/2026', voci: ['Nuovo reparto Morsetti, capicorda e connessioni: Cembre, BM Group, Weidmüller, Cabur, con guida rapida (colori capicorda, vite/molla/push-in, puntali).', 'Triple gestionale anche per Cembre (CEM), BM Group (BMM) e Weidmüller (WEI).'] },
   { v: '1.3.2', data: '15/11/2026', voci: ['Codici gestionale Elettrocampania già inseriti nell\'app: niente da importare.'] },
   { v: '1.3.1', data: '15/11/2026', voci: ['Controllo completo dell\'app: 50 verifiche automatiche su calcoli, ricerca, reparti, codici, catalogo, rapporti e 7 risoluzioni.', 'Numeri scritti tutti allo stesso modo (es. 7.000 BTU, 1.500 lumen).'] },
   { v: '1.3.0', data: '15/11/2026', voci: ['Nuovo strumento Codici gestionale: triple dei fornitori e codici di ricerca (Siemens, Schneider, Ledvance, cavi e rame).', 'Cerca trova anche i codici (es. "salvamotore" → SIE RV, SNR GV) e nei reparti compare la tripla accanto alla marca.', 'I codici aziendali restano solo sul dispositivo: si importano da file.'] },

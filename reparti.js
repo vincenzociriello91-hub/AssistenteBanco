@@ -138,6 +138,23 @@ const REPARTI = [
     </ul>`
   },
   {
+    id: 'morsetti', nome: 'Morsetti, capicorda e connessioni', icona: '🔩',
+    marche: [
+      { marca: 'Cembre', modelli: 'Capicorda preisolati ANE (PA 6.6), gamme F (PVC) e P (PC); non isolati AM, AP, AU, DIN 46234; giunti LM e LP; tubetti terminali PK; morsetti DIN a vite e push-in; pressacavi; siglatura', note: 'Utensili: pinze Crimpstar (es. HN1 0,25–10 mm²), oleodinamici manuali e a batteria da 15 a 130 kN (es. B500 63 kN)' },
+      { marca: 'BM Group (gruppo Beta)', modelli: 'Capicorda ad aggraffatura preisolati e non isolati, capicorda e giunti a compressione, morsettiere, pressacavi, raccordi, nastri isolanti', note: 'Pinze per aggraffatura e presse idrauliche manuali ed elettriche; BM Work Line (utensili e sicurezza)' },
+      { marca: 'Weidmüller', modelli: 'Klippon Connect serie A PUSH IN (A2C, A3C, A4C, PE, sezionabili ADT, A2T per KNX), serie W a vite, morsetti di alimentazione ALO', note: 'Anche alimentatori, relè Klippon, siglatura M-Print' },
+      { marca: 'Cabur', modelli: 'Morsetti su guida DIN a vite (es. serie CBC), a molla (HMM), push-in serie EFC', note: 'Siglatura con stampanti SmartPrint e SmartRoll' }
+    ],
+    guida: `<ul class="ref">
+      <li><strong>Vite, molla o push-in:</strong> a vite il classico (stringere alla coppia giusta); a molla resiste alle vibrazioni; push-in il filo rigido o con puntale si infila e basta, il più veloce.</li>
+      <li><strong>Capicorda preisolati, colore = sezione:</strong> rosso 0,5–1,5 mm², blu 1,5–2,5 mm², giallo 4–6 mm². Il foro (M4, M5, M6…) va scelto sulla vite del morsetto.</li>
+      <li><strong>Puntali (tubetti terminali):</strong> per cavi flessibili nei morsetti; sezione del puntale = sezione del cavo.</li>
+      <li><strong>Grandi sezioni:</strong> capicorda a compressione con la matrice giusta per sezione; serve pinza o pressa oleodinamica adeguata (kN).</li>
+      <li><strong>Morsetti su guida DIN 35:</strong> sezione del morsetto ≥ sezione del cavo; verde-giallo per la terra (PE), blu per il neutro; testate di chiusura e fermi a fine fila.</li>
+      <li><strong>Equivalenze:</strong> tra marche si confrontano tipo di connessione, sezione, numero di connessioni e tensione/corrente nominale.</li>
+    </ul>`
+  },
+  {
     id: 'citofonia', nome: 'Citofonia e videosorveglianza', icona: '📹',
     marche: [
       { marca: 'Urmet', modelli: 'Sistemi 2Voice, IPerCom; monitor Aiko, Folio, Signo; pulsantiere Sinthesi, Sinthesi S2, Sinthesi Steel, Alpha', note: 'Aiko con Nea Expì, Folio con Nea Kàdra, Signo con Nea Flexa' },
@@ -153,27 +170,28 @@ const REPARTI = [
 
 const RepartiUI = {
   aperto: null,
+  n: s => String(s ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
   utente() { try { return JSON.parse(localStorage.getItem('ab_reparti_utente') || '{}'); } catch { return {}; } },
   salva(dati) { try { localStorage.setItem('ab_reparti_utente', JSON.stringify(dati)); } catch {} },
   esc: s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])),
   marche(r) { const mie = this.utente(); return [...r.marche.map(m => ({ ...m })), ...(mie[r.id] || []).map((m, i) => ({ ...m, mia: i }))]; },
   // Ricerca usata anche dalla scheda Cerca
   cerca(q) {
-    q = q.toLowerCase().trim(); if (q.length < 2) return [];
+    q = this.n(q).trim(); if (q.length < 2) return [];
     const out = [];
     for (const r of REPARTI) for (const m of this.marche(r)) {
-      if (`${m.marca} ${m.modelli} ${m.note || ''}`.toLowerCase().includes(q)) out.push({ reparto: r, marca: m });
+      if (this.n(`${m.marca} ${m.modelli} ${m.note || ''}`).includes(q)) out.push({ reparto: r, marca: m });
     }
     return out;
   },
   render() {
     const box = document.getElementById('repartiLista');
     if (!box) return;
-    const q = (document.getElementById('repQ')?.value || '').toLowerCase().trim();
+    const q = this.n(document.getElementById('repQ')?.value || '').trim();
     const tiles = REPARTI.map(r => {
       const tutte = this.marche(r);
-      const trovate = q ? tutte.filter(m => `${m.marca} ${m.modelli} ${m.note || ''}`.toLowerCase().includes(q)) : [];
-      if (q && !trovate.length && !r.nome.toLowerCase().includes(q)) return '';
+      const trovate = q ? tutte.filter(m => this.n(`${m.marca} ${m.modelli} ${m.note || ''}`).includes(q)) : [];
+      if (q && !trovate.length && !this.n(r.nome).includes(q)) return '';
       const sotto = q && trovate.length ? trovate.map(m => m.marca).join(', ') : `${tutte.length} marche`;
       return `<button class="tile" data-rep="${r.id}"><span class="tile-ico">${r.icona}</span><span class="tile-t">${this.esc(r.nome)}</span><span class="tile-s">${this.esc(sotto)}</span></button>`;
     }).join('');
