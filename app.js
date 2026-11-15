@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.1.0';
+const VERSION = '1.2.0';
 const CHANGELOG = [
+  { v: '1.2.0', data: '15/11/2026', voci: ['App riordinata in 4 schede: Cerca, Strumenti, Reparti, Info.', 'Strumenti e reparti come riquadri uguali: tocchi e si apre la pagina, freccia o tasto indietro per tornare.', 'Cerca trova insieme articoli del catalogo, marche nei reparti e ricerca online.', 'Dimensiona linea più semplice: opzioni avanzate nascoste finché non servono.'] },
   { v: '1.1.0', data: '15/11/2026', voci: ['Marche aggiunte: illuminazione (Philips, Ledvance, Beghelli, Disano, Fosnova, 3F Filippi, Performance in Lighting, iGuzzini).', 'Cavi (Prysmian, La Triveneta Cavi, Baldassari, Icel); fotovoltaico (Huawei, SMA, Fronius, SolarEdge, ZCS Azzurro, Sungrow, Kostal, GoodWe, BYD, moduli).', 'Domotica (Gewiss, ABB, Schneider); cassette (Gewiss 44 CE, Bocchiotti Pico, Scame Scabox).'] },
   { v: '1.0.9', data: '15/11/2026', voci: ['Reparto corrugati: aggiunte Tubifor e Inset con serie, colori, codici e accessori.', 'Equivalenze automatiche anche per corrugati e tubi rigidi (stesso diametro e stessa classificazione, es. 3321).'] },
   { v: '1.0.8', data: '15/11/2026', voci: ['Adattamento automatico a ogni schermo: telefoni, tablet, pieghevoli, monitor fino al 4K e oltre.', 'Schermi HDR e a colori ampi (P3/Rec.2020) riconosciuti: colori più ricchi, sfondo meno abbagliante.', 'Tema scuro con nero puro: meno consumo su OLED/AMOLED.', 'Mouse o touch riconosciuti; contrasto elevato e colori forzati del sistema rispettati.'] },
@@ -93,14 +94,49 @@ function scarica(nome, contenuto, tipo) {
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
-/* ============ NAVIGAZIONE ============ */
-function apriTab(nome) {
+/* ============ NAVIGAZIONE: 4 schede, ognuna con elenco → dettaglio ============ */
+let tabCorrente = 'cerca';
+function mostraTab(nome) {
+  tabCorrente = nome;
   $$('.tab').forEach(t => t.classList.toggle('active', t.id === 'tab-' + nome));
   $$('.bottombar button').forEach(b => b.classList.toggle('active', b.dataset.tab === nome));
+}
+function chiudiViste(tab) {
+  const sez = $('#tab-' + tab); if (!sez) return;
+  $$('.view', sez).forEach(v => v.hidden = true);
+  const l = $('[data-list]', sez); if (l) l.hidden = false;
+}
+function apriVista(tab, id, push = true) {
+  const sez = $('#tab-' + tab); if (!sez) return;
+  mostraTab(tab);
+  const l = $('[data-list]', sez); if (l) l.hidden = true;
+  $$('.view', sez).forEach(v => v.hidden = v.dataset.view !== id);
+  window.scrollTo(0, 0);
+  if (push) history.pushState({ tab, vista: id }, '');
+  Report.log('vista', { tab, id });
+}
+function apriTab(nome, push = true) {
+  if (nome === tabCorrente) chiudiViste(nome);
+  mostraTab(nome);
+  window.scrollTo(0, 0);
+  if (push) history.pushState({ tab: nome }, '');
   Report.log('tab', { nome });
-  if (nome === 'catalogo') setTimeout(() => $('#q').focus(), 50);
+  if (nome === 'cerca' && matchMedia('(pointer: fine)').matches) setTimeout(() => $('#q').focus(), 50);
 }
 $$('.bottombar button').forEach(b => b.addEventListener('click', () => apriTab(b.dataset.tab)));
+$$('[data-open]').forEach(t => t.addEventListener('click', () => apriVista('strumenti', t.dataset.open)));
+document.addEventListener('click', e => { if (e.target.closest('.back')) history.back(); });
+// Tasto indietro di Android: chiude la vista aperta, poi torna alla scheda precedente
+history.replaceState({ tab: 'cerca' }, '');
+const hashIniziale = location.hash.slice(1);
+if (['strumenti', 'reparti', 'info'].includes(hashIniziale)) setTimeout(() => apriTab(hashIniziale, false), 0);
+else if (hashIniziale.startsWith('s-')) setTimeout(() => apriVista('strumenti', hashIniziale.slice(2), false), 0);
+else if (hashIniziale.startsWith('r-')) setTimeout(() => { RepartiUI.apri(hashIniziale.slice(2)); apriVista('reparti', 'reparto', false); }, 0);
+window.addEventListener('popstate', e => {
+  const s = e.state || { tab: 'cerca' };
+  if (s.vista) { apriVista(s.tab, s.vista, false); if (s.tab === 'reparti' && s.rep) RepartiUI.apri(s.rep); }
+  else { chiudiViste(s.tab); mostraTab(s.tab); }
+});
 
 /* ============ CAVI ============ */
 const fCavi = $('#formCavi');
@@ -302,9 +338,11 @@ function cerca(q) {
     <a href="https://www.google.com/search?q=${encodeURIComponent(q + ' scheda tecnica')}" target="_blank" rel="noopener">Scheda tecnica</a> ·
     <a href="https://www.google.com/search?q=${encodeURIComponent(q + ' equivalente')}" target="_blank" rel="noopener">Equivalenti</a> ·
     <a href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}" target="_blank" rel="noopener">Foto</a></div></div>`;
-  if (!lista.length) { out.innerHTML = (CATALOGO.length ? '<p class="hint">Nessun articolo nel catalogo.</p>' : '') + web; return; }
+  const rep = RepartiUI.cerca(q).slice(0, 6);
+  const repHtml = rep.length ? `<h2 class="sezione">Nei reparti</h2>${rep.map(x => `<button class="item item-link" data-goto-rep="${x.reparto.id}"><div class="t">${esc(x.marca.marca)} <span class="chip">${x.reparto.icona} ${esc(x.reparto.nome)}</span></div><div class="m">${esc(x.marca.modelli)}</div></button>`).join('')}` : '';
+  if (!lista.length) { out.innerHTML = repHtml + (CATALOGO.length ? '<h2 class="sezione">Catalogo</h2><p class="hint">Nessun articolo nel catalogo.</p>' : '') + '<h2 class="sezione">Online</h2>' + web; return; }
   const etichetta = (k, v) => ({ curva: 'curva ' + String(v).toUpperCase(), tipo: 'tipo ' + String(v).toUpperCase(), poli: v + 'P', polin: String(v).toUpperCase(), IP: 'IP' + v }[k] ?? `${v} ${k}`);
-  out.innerHTML = lista.map(a => {
+  out.innerHTML = repHtml + '<h2 class="sezione">Catalogo</h2>' + lista.map(a => {
     const eq = equivalenti(a).slice(0, 6);
     const f = a._f || caratteristiche(a.descrizione);
     const tag = ['A', 'poli', 'polin', 'curva', 'mA', 'tipo', 'kA', 'mm2', 'W', 'IP'].filter(k => f[k] != null).map(k => `<span class="chip">${esc(etichetta(k, f[k]))}</span>`).join(' ');
@@ -313,9 +351,10 @@ function cerca(q) {
       ${tag ? `<div class="m">${tag}</div>` : ''}
       ${eq.length ? `<div class="eq"><strong>Equivalenti:</strong><br>${eq.map(b => `${esc(b.marca)} <strong>${esc(b.codice)}</strong> — ${esc(b.descrizione)}${b.prezzo ? ' · € ' + esc(b.prezzo) : ''}`).join('<br>')}</div>` : ''}
     </div>`;
-  }).join('') + web;
+  }).join('') + '<h2 class="sezione">Online</h2>' + web;
   Report.log('ricerca', { lunghezza: q.length, risultati: lista.length });
 }
+$('#results').addEventListener('click', e => { const b = e.target.closest('[data-goto-rep]'); if (!b) return; RepartiUI.apri(b.dataset.gotoRep); apriVista('reparti', 'reparto'); history.replaceState({ tab: 'reparti', vista: 'reparto', rep: b.dataset.gotoRep }, ''); });
 let tQ; $('#q').addEventListener('input', e => { clearTimeout(tQ); tQ = setTimeout(() => cerca(e.target.value), 150); });
 
 // Import
@@ -386,7 +425,7 @@ $('#btnClearCat').addEventListener('click', async () => {
   await DB.svuota(); await caricaCatalogo(); cerca($('#q').value); Report.log('catalogo-svuotato', {});
 });
 
-RepartiUI.init((t, d) => Report.log(t, d));
+RepartiUI.init((t, d) => Report.log(t, d), apriVista);
 
 /* ============ SCANNER ============ */
 let stream = null, scanAttivo = false, zxReader = null;

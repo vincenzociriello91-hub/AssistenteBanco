@@ -152,52 +152,76 @@ const REPARTI = [
 ];
 
 const RepartiUI = {
+  aperto: null,
   utente() { try { return JSON.parse(localStorage.getItem('ab_reparti_utente') || '{}'); } catch { return {}; } },
   salva(dati) { try { localStorage.setItem('ab_reparti_utente', JSON.stringify(dati)); } catch {} },
   esc: s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])),
+  marche(r) { const mie = this.utente(); return [...r.marche.map(m => ({ ...m })), ...(mie[r.id] || []).map((m, i) => ({ ...m, mia: i }))]; },
+  // Ricerca usata anche dalla scheda Cerca
+  cerca(q) {
+    q = q.toLowerCase().trim(); if (q.length < 2) return [];
+    const out = [];
+    for (const r of REPARTI) for (const m of this.marche(r)) {
+      if (`${m.marca} ${m.modelli} ${m.note || ''}`.toLowerCase().includes(q)) out.push({ reparto: r, marca: m });
+    }
+    return out;
+  },
   render() {
     const box = document.getElementById('repartiLista');
     if (!box) return;
-    const mie = this.utente();
     const q = (document.getElementById('repQ')?.value || '').toLowerCase().trim();
-    box.innerHTML = REPARTI.map(r => {
-      const tutte = [...r.marche.map(m => ({ ...m })), ...(mie[r.id] || []).map((m, i) => ({ ...m, mia: i }))];
-      const filtrate = q ? tutte.filter(m => `${m.marca} ${m.modelli} ${m.note || ''}`.toLowerCase().includes(q)) : tutte;
-      if (q && !filtrate.length && !r.nome.toLowerCase().includes(q)) return '';
-      const righe = filtrate.length ? `<table><thead><tr><th>Marca</th><th>Modelli / serie</th></tr></thead><tbody>${filtrate.map(m => `<tr><td><strong>${this.esc(m.marca)}</strong>${m.mia != null ? ` <button class="btn-mini" data-del="${r.id}:${m.mia}" aria-label="Elimina">✕</button>` : ''}</td><td>${this.esc(m.modelli)}${m.note ? `<div class="small">${this.esc(m.note)}</div>` : ''}</td></tr>`).join('')}</tbody></table>`
-        : '<p class="hint">Nessuna marca ancora: aggiungi quelle che vendete.</p>';
-      return `<details class="card" ${q ? 'open' : ''}><summary>${r.icona} ${this.esc(r.nome)} <span class="small">· ${tutte.length} marche</span></summary>
-        ${righe}
-        <form class="grid addmarca" data-rep="${r.id}" style="margin-top:12px">
-          <label>Marca<input name="marca" required></label>
+    const tiles = REPARTI.map(r => {
+      const tutte = this.marche(r);
+      const trovate = q ? tutte.filter(m => `${m.marca} ${m.modelli} ${m.note || ''}`.toLowerCase().includes(q)) : [];
+      if (q && !trovate.length && !r.nome.toLowerCase().includes(q)) return '';
+      const sotto = q && trovate.length ? trovate.map(m => m.marca).join(', ') : `${tutte.length} marche`;
+      return `<button class="tile" data-rep="${r.id}"><span class="tile-ico">${r.icona}</span><span class="tile-t">${this.esc(r.nome)}</span><span class="tile-s">${this.esc(sotto)}</span></button>`;
+    }).join('');
+    box.innerHTML = tiles || '<p class="hint">Nessun reparto trovato.</p>';
+  },
+  apri(id) {
+    const r = REPARTI.find(x => x.id === id); if (!r) return;
+    this.aperto = id;
+    document.getElementById('repTitolo').textContent = `${r.icona} ${r.nome}`;
+    const tutte = this.marche(r);
+    const lista = tutte.length ? tutte.map(m => `<div class="item"><div class="t">${this.esc(m.marca)}${m.mia != null ? ` <span class="chip">aggiunta da te</span> <button class="btn-mini" data-del="${r.id}:${m.mia}" aria-label="Elimina ${this.esc(m.marca)}">✕</button>` : ''}</div>${m.modelli ? `<div class="m">${this.esc(m.modelli)}</div>` : ''}${m.note ? `<div class="m">${this.esc(m.note)}</div>` : ''}</div>`).join('')
+      : '<p class="hint">Nessuna marca ancora: aggiungi quelle che vendete.</p>';
+    document.getElementById('repDettaglio').innerHTML = `
+      <h2 class="sezione">Marche e serie</h2>${lista}
+      <h2 class="sezione">Guida rapida</h2><div class="card">${r.guida}</div>
+      <details class="card"><summary>Aggiungi una marca</summary>
+        <form class="grid addmarca" data-rep="${r.id}" style="margin-top:.5rem">
+          <label class="wide">Marca<input name="marca" required></label>
           <label class="wide">Modelli / serie<input name="modelli" placeholder="separati da virgola"></label>
           <label class="wide">Note<input name="note" placeholder="facoltativo"></label>
-          <button class="btn tonal" type="submit">Aggiungi marca</button>
+          <button class="btn filled wide" type="submit">Aggiungi</button>
         </form>
-        <details style="margin-top:12px"><summary>Guida rapida</summary>${r.guida}</details>
       </details>`;
-    }).join('') || '<p class="hint">Nessun risultato.</p>';
   },
-  init(log) {
+  init(log, apriVista) {
     const box = document.getElementById('repartiLista');
-    if (!box) return;
-    box.addEventListener('submit', e => {
+    const det = document.getElementById('repDettaglio');
+    if (!box || !det) return;
+    this.apriVista = apriVista;
+    box.addEventListener('click', e => {
+      const t = e.target.closest('[data-rep]'); if (!t) return;
+      this.apri(t.dataset.rep); apriVista('reparti', 'reparto'); log?.('reparto-aperto', { reparto: t.dataset.rep });
+    });
+    det.addEventListener('submit', e => {
       const f = e.target.closest('form.addmarca'); if (!f) return;
       e.preventDefault();
       const d = Object.fromEntries(new FormData(f));
       if (!d.marca.trim()) return;
       const mie = this.utente(); (mie[f.dataset.rep] ||= []).push({ marca: d.marca.trim(), modelli: d.modelli.trim(), note: d.note.trim() });
       this.salva(mie); log?.('reparto-aggiunta', { reparto: f.dataset.rep });
-      this.render();
-      box.querySelector(`form[data-rep="${f.dataset.rep}"]`)?.closest('details.card')?.setAttribute('open', '');
+      this.apri(f.dataset.rep); this.render();
     });
-    box.addEventListener('click', e => {
+    det.addEventListener('click', e => {
       const b = e.target.closest('[data-del]'); if (!b) return;
       const [rep, i] = b.dataset.del.split(':');
       const mie = this.utente(); mie[rep]?.splice(Number(i), 1); this.salva(mie);
       log?.('reparto-eliminazione', { reparto: rep });
-      this.render();
-      box.querySelector(`form[data-rep="${rep}"]`)?.closest('details.card')?.setAttribute('open', '');
+      this.apri(rep); this.render();
     });
     document.getElementById('repQ')?.addEventListener('input', () => this.render());
     this.render();

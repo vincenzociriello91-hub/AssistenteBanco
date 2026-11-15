@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1b6c3f">
-<meta name="description" content="Assistente da banco per materiale elettrico: calcoli, catalogo, equivalenze, scanner.">
+<meta name="description" content="Assistente da banco per materiale elettrico: catalogo, equivalenze, scanner, calcoli e reparti.">
 <title>Assistente Banco</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -26,55 +26,16 @@
 </div>
 
 <main>
-<!-- ================= CAVI ================= -->
-<section id="tab-cavi" class="tab active" aria-label="Dimensiona linea">
-  <h1>Dimensiona una linea</h1>
-  <p class="hint">Sezione del cavo, interruttore e differenziale da potenza e lunghezza.</p>
-  <form id="formCavi" class="card grid" autocomplete="off">
-    <label class="wide">Tipo di carico
-      <select name="carico">
-        <option value="prese">Prese / uso generale</option>
-        <option value="luce">Illuminazione</option>
-        <option value="resistivo">Forno, piano cottura, scaldabagno</option>
-        <option value="inverter">Pompa di calore, clima, lavatrice (inverter)</option>
-        <option value="motore">Motore / spunto forte</option>
-        <option value="wallbox">Wallbox ricarica auto</option>
-      </select>
-    </label>
-    <label>Sistema
-      <select name="sistema"><option value="mono">Mono 230 V</option><option value="tri">Tri 400 V</option></select>
-    </label>
-    <label>Potenza (kW)<input name="kw" type="number" inputmode="decimal" step="0.01" min="0" value="3"></label>
-    <label>o corrente (A)<input name="amp" type="number" inputmode="decimal" step="0.1" min="0" placeholder="facoltativo"></label>
-    <label>cos φ<input name="cosphi" type="number" inputmode="decimal" step="0.01" min="0.5" max="1" value="0.95"></label>
-    <label>Lunghezza (m)<input name="L" type="number" inputmode="decimal" step="1" min="1" value="20"></label>
-    <label class="wide">Cavo
-      <select name="isolante"><option value="PVC">PVC 70 °C (FS17, N07V-K)</option><option value="EPR">EPR/XLPE 90 °C (FG16, FG17)</option></select>
-    </label>
-    <label class="wide">Posa
-      <select name="posa"></select>
-    </label>
-    <label>Conduttori caricati
-      <select name="conduttori"><option value="2">2 (mono)</option><option value="3">3 (tri)</option></select>
-    </label>
-    <label>Temp. ambiente °C
-      <select name="temp"><option>20</option><option>25</option><option selected>30</option><option>35</option><option>40</option><option>45</option><option>50</option></select>
-    </label>
-    <label>Circuiti nel tubo<input name="circuiti" type="number" inputmode="numeric" min="1" max="20" value="1"></label>
-    <label>Caduta max (%)<input name="cdt" type="number" inputmode="decimal" step="0.5" min="1" max="10" value="4"></label>
-  </form>
-  <div id="outCavi" class="card result" aria-live="polite"></div>
-</section>
-
-<!-- ================= CATALOGO ================= -->
-<section id="tab-catalogo" class="tab" aria-label="Catalogo">
-  <h1>Catalogo ed equivalenze</h1>
+<!-- ================= CERCA ================= -->
+<section id="tab-cerca" class="tab active" aria-label="Cerca">
+  <h1>Cerca</h1>
+  <p class="hint">Codice, EAN, descrizione o marca. Trovi articoli, equivalenti e il reparto giusto.</p>
   <div class="card">
     <div class="searchrow">
-      <input id="q" type="search" placeholder="Codice, EAN o descrizione (es. magnetotermico 16A 2P C)" enterkeyhint="search">
-      <button id="btnScan" class="btn tonal" title="Scansiona codice a barre" aria-label="Scansiona">📷</button>
+      <input id="q" type="search" placeholder="Es. magnetotermico 16A C, FMP25, Daikin" enterkeyhint="search" aria-label="Cerca">
+      <button id="btnScan" class="btn tonal" title="Scansiona codice a barre" aria-label="Scansiona codice a barre">📷</button>
     </div>
-    <div id="catStats" class="small"></div>
+    <div id="catStats" class="small" style="margin-top:.5rem"></div>
   </div>
   <div id="scanner" class="card" hidden>
     <video id="video" playsinline muted></video>
@@ -82,76 +43,149 @@
   </div>
   <div id="results"></div>
   <details class="card">
-    <summary>Importa listino (Excel o CSV)</summary>
-    <p class="small">Il listino resta solo su questo dispositivo. Colonne riconosciute: <code>codice</code>, <code>descrizione</code>, <code>marca</code>, <code>ean</code>, <code>categoria</code>, <code>prezzo</code>, <code>gruppo</code> (articoli con lo stesso gruppo sono equivalenti).</p>
-    <input id="fileImport" type="file" accept=".csv,.xlsx,.xls,.txt">
+    <summary>Gestisci catalogo (importa listino)</summary>
+    <p class="small">Excel o CSV. Il listino resta solo su questo dispositivo. Colonne riconosciute: <code>codice</code>, <code>descrizione</code>, <code>marca</code>, <code>ean</code>, <code>categoria</code>, <code>prezzo</code>, <code>gruppo</code> (stesso gruppo = equivalenti).</p>
+    <input id="fileImport" type="file" accept=".csv,.xlsx,.xls,.txt" aria-label="Scegli listino">
     <div class="row"><button id="btnTemplate" class="btn">Scarica modello CSV</button><button id="btnClearCat" class="btn danger">Svuota catalogo</button></div>
     <div id="importMsg" class="small"></div>
   </details>
 </section>
 
-<!-- ================= REPARTI ================= -->
-<section id="tab-reparti" class="tab" aria-label="Reparti">
-  <h1>Reparti</h1>
-  <p class="hint">Marche e modelli per reparto, con guida rapida. Le marche che aggiungi restano su questo dispositivo.</p>
-  <div class="card"><input id="repQ" type="search" placeholder="Cerca marca o modello (es. Daikin, RK15, Comelit)"></div>
-  <div id="repartiLista"></div>
-</section>
-
 <!-- ================= STRUMENTI ================= -->
 <section id="tab-strumenti" class="tab" aria-label="Strumenti">
-  <h1>Strumenti</h1>
+  <div data-list>
+    <h1>Strumenti</h1>
+    <p class="hint">Calcoli rapidi per il cliente al banco.</p>
+    <div class="tiles">
+      <button class="tile" data-open="linea"><span class="tile-ico">⚡</span><span class="tile-t">Dimensiona linea</span><span class="tile-s">Cavo, interruttore, differenziale</span></button>
+      <button class="tile" data-open="tubo"><span class="tile-ico">〰️</span><span class="tile-t">Tubo / corrugato</span><span class="tile-s">Diametro giusto per i cavi</span></button>
+      <button class="tile" data-open="clima"><span class="tile-ico">❄️</span><span class="tile-t">Climatizzatore</span><span class="tile-s">Quanti BTU per la stanza</span></button>
+      <button class="tile" data-open="luce"><span class="tile-ico">💡</span><span class="tile-t">Illuminazione</span><span class="tile-s">Lumen e watt LED</span></button>
+      <button class="tile" data-open="conv"><span class="tile-ico">🔁</span><span class="tile-t">Conversioni</span><span class="tile-s">kW, A, CV, kVA</span></button>
+      <button class="tile" data-open="contatore"><span class="tile-ico">🔌</span><span class="tile-t">Contatore</span><span class="tile-s">Potenza prelevabile</span></button>
+      <button class="tile" data-open="promemoria"><span class="tile-ico">📋</span><span class="tile-t">Promemoria</span><span class="tile-s">Colori, sezioni, IP, cavi</span></button>
+    </div>
+  </div>
 
-  <div class="card">
-    <h2>Conversioni</h2>
-    <div class="grid">
-      <label>Valore<input id="cvVal" type="number" inputmode="decimal" step="any" value="3"></label>
-      <label>Da
-        <select id="cvType"><option value="kwA">kW → A</option><option value="aKw">A → kW</option><option value="hpKw">CV/HP → kW</option><option value="kvaKw">kVA → kW</option></select>
+  <div class="view" data-view="linea" hidden>
+    <div class="viewhead"><button class="back" aria-label="Indietro">←</button><h1>Dimensiona linea</h1></div>
+    <p class="hint">Sezione del cavo, interruttore e differenziale da potenza e lunghezza.</p>
+    <form id="formCavi" class="card grid" autocomplete="off">
+      <label class="wide">Tipo di carico
+        <select name="carico">
+          <option value="prese">Prese / uso generale</option>
+          <option value="luce">Illuminazione</option>
+          <option value="resistivo">Forno, piano cottura, scaldabagno</option>
+          <option value="inverter">Pompa di calore, clima, lavatrice (inverter)</option>
+          <option value="motore">Motore / spunto forte</option>
+          <option value="wallbox">Wallbox ricarica auto</option>
+        </select>
       </label>
-      <label>Sistema<select id="cvSis"><option value="mono">Mono 230 V</option><option value="tri">Tri 400 V</option></select></label>
-      <label>cos φ<input id="cvCos" type="number" inputmode="decimal" step="0.01" value="1"></label>
+      <label>Sistema
+        <select name="sistema"><option value="mono">Mono 230 V</option><option value="tri">Tri 400 V</option></select>
+      </label>
+      <label>Lunghezza (m)<input name="L" type="number" inputmode="decimal" step="1" min="1" value="20"></label>
+      <label>Potenza (kW)<input name="kw" type="number" inputmode="decimal" step="0.01" min="0" value="3"></label>
+      <label>o corrente (A)<input name="amp" type="number" inputmode="decimal" step="0.1" min="0" placeholder="facoltativo"></label>
+      <details class="wide adv">
+        <summary>Opzioni avanzate (posa, cavo, temperatura)</summary>
+        <div class="grid" style="margin-top:.5rem">
+          <label class="wide">Cavo
+            <select name="isolante"><option value="PVC">PVC 70 °C (FS17, N07V-K)</option><option value="EPR">EPR/XLPE 90 °C (FG16, FG17)</option></select>
+          </label>
+          <label class="wide">Posa
+            <select name="posa"></select>
+          </label>
+          <label>cos φ<input name="cosphi" type="number" inputmode="decimal" step="0.01" min="0.5" max="1" value="0.95"></label>
+          <label>Conduttori caricati
+            <select name="conduttori"><option value="2">2 (mono)</option><option value="3">3 (tri)</option></select>
+          </label>
+          <label>Temp. ambiente °C
+            <select name="temp"><option>20</option><option>25</option><option selected>30</option><option>35</option><option>40</option><option>45</option><option>50</option></select>
+          </label>
+          <label>Circuiti nel tubo<input name="circuiti" type="number" inputmode="numeric" min="1" max="20" value="1"></label>
+          <label>Caduta max (%)<input name="cdt" type="number" inputmode="decimal" step="0.5" min="1" max="10" value="4"></label>
+        </div>
+      </details>
+    </form>
+    <div id="outCavi" class="card result" aria-live="polite"></div>
+  </div>
+
+  <div class="view" data-view="tubo" hidden>
+    <div class="viewhead"><button class="back" aria-label="Indietro">←</button><h1>Tubo / corrugato</h1></div>
+    <p class="hint">Cavi unipolari FS17 / H07V-K. Regola CEI 64-8: diametro interno ≥ 1,3 × diametro del fascio.</p>
+    <div class="card"><div id="tuboRows" class="grid"></div><div id="tuboOut" class="big"></div></div>
+  </div>
+
+  <div class="view" data-view="clima" hidden>
+    <div class="viewhead"><button class="back" aria-label="Indietro">←</button><h1>Climatizzatore</h1></div>
+    <p class="hint">Stima rapida per orientare il cliente (circa 340 BTU/h per m² con soffitto a 2,7 m).</p>
+    <div class="card">
+      <div class="grid">
+        <label>Superficie (m²)<input id="btuMq" type="number" inputmode="decimal" value="20"></label>
+        <label>Altezza soffitto (m)<input id="btuH" type="number" inputmode="decimal" step="0.1" value="2.7"></label>
+        <label class="wide">Esposizione<select id="btuEsp"><option value="0.9">Poco soleggiata / nord</option><option value="1" selected>Normale</option><option value="1.2">Molto soleggiata / ultimo piano</option><option value="1.3">Ultimo piano al sole, tante vetrate</option></select></label>
+      </div>
+      <div id="btuOut" class="big"></div>
     </div>
-    <div id="cvOut" class="big"></div>
+    <p class="small">Per ambienti particolari serve il calcolo del tecnico. Marche e serie: Reparti → Condizionatori.</p>
   </div>
 
-  <div class="card">
-    <h2>Contatore</h2>
-    <div class="grid"><label>Potenza impegnata (kW)<select id="ctKw"><option>3</option><option>4.5</option><option selected>6</option><option>10</option><option>15</option></select></label></div>
-    <div id="ctOut"></div>
-  </div>
-
-  <div class="card">
-    <h2>Tubo / corrugato</h2>
-    <p class="small">Cavi unipolari FS17 / H07V-K. Regola CEI 64-8: diametro interno ≥ 1,3 × diametro del fascio.</p>
-    <div id="tuboRows" class="grid"></div>
-    <div id="tuboOut" class="big"></div>
-  </div>
-
-  <div class="card">
-    <h2>Climatizzatore: quanti BTU</h2>
-    <div class="grid">
-      <label>Superficie (m²)<input id="btuMq" type="number" inputmode="decimal" value="20"></label>
-      <label>Altezza soffitto (m)<input id="btuH" type="number" inputmode="decimal" step="0.1" value="2.7"></label>
-      <label>Esposizione<select id="btuEsp"><option value="0.9">Poco soleggiata / nord</option><option value="1" selected>Normale</option><option value="1.2">Molto soleggiata / ultimo piano</option><option value="1.3">Ultimo piano al sole, tante vetrate</option></select></label>
+  <div class="view" data-view="luce" hidden>
+    <div class="viewhead"><button class="back" aria-label="Indietro">←</button><h1>Illuminazione</h1></div>
+    <p class="hint">Lumen necessari per l'ambiente e watt LED equivalenti.</p>
+    <div class="card">
+      <div class="grid">
+        <label class="wide">Ambiente<select id="luxRoom"></select></label>
+        <label>Superficie (m²)<input id="luxMq" type="number" inputmode="decimal" value="15"></label>
+        <label>Efficienza LED (lm/W)<input id="luxEff" type="number" inputmode="decimal" value="100"></label>
+      </div>
+      <div id="luxOut" class="big"></div>
     </div>
-    <div id="btuOut" class="big"></div>
-    <p class="small">Stima rapida per orientare il cliente (circa 340 BTU/h per m² con soffitto a 2,7 m). Per ambienti particolari serve il calcolo del tecnico.</p>
   </div>
 
-  <div class="card">
-    <h2>Illuminazione</h2>
-    <div class="grid">
-      <label>Ambiente<select id="luxRoom"></select></label>
-      <label>Superficie (m²)<input id="luxMq" type="number" inputmode="decimal" value="15"></label>
-      <label>Efficienza LED (lm/W)<input id="luxEff" type="number" inputmode="decimal" value="100"></label>
+  <div class="view" data-view="conv" hidden>
+    <div class="viewhead"><button class="back" aria-label="Indietro">←</button><h1>Conversioni</h1></div>
+    <p class="hint">Da potenza a corrente e viceversa.</p>
+    <div class="card">
+      <div class="grid">
+        <label>Valore<input id="cvVal" type="number" inputmode="decimal" step="any" value="3"></label>
+        <label>Converti
+          <select id="cvType"><option value="kwA">kW → A</option><option value="aKw">A → kW</option><option value="hpKw">CV → kW</option><option value="kvaKw">kVA → kW</option></select>
+        </label>
+        <label>Sistema<select id="cvSis"><option value="mono">Mono 230 V</option><option value="tri">Tri 400 V</option></select></label>
+        <label>cos φ<input id="cvCos" type="number" inputmode="decimal" step="0.01" value="1"></label>
+      </div>
+      <div id="cvOut" class="big"></div>
     </div>
-    <div id="luxOut" class="big"></div>
   </div>
 
-  <div class="card">
-    <h2>Promemoria rapido</h2>
-    <div id="promemoria"></div>
+  <div class="view" data-view="contatore" hidden>
+    <div class="viewhead"><button class="back" aria-label="Indietro">←</button><h1>Contatore</h1></div>
+    <p class="hint">Quanta potenza si può prelevare prima che il contatore stacchi.</p>
+    <div class="card">
+      <div class="grid"><label>Potenza impegnata (kW)<select id="ctKw"><option>3</option><option>4.5</option><option selected>6</option><option>10</option><option>15</option></select></label></div>
+      <div id="ctOut"></div>
+    </div>
+  </div>
+
+  <div class="view" data-view="promemoria" hidden>
+    <div class="viewhead"><button class="back" aria-label="Indietro">←</button><h1>Promemoria</h1></div>
+    <div class="card"><div id="promemoria"></div></div>
+  </div>
+</section>
+
+<!-- ================= REPARTI ================= -->
+<section id="tab-reparti" class="tab" aria-label="Reparti">
+  <div data-list>
+    <h1>Reparti</h1>
+    <p class="hint">Marche, serie e guida rapida di ogni reparto.</p>
+    <div class="card"><input id="repQ" type="search" placeholder="Filtra per marca o modello (es. Daikin, RK15)" aria-label="Filtra reparti"></div>
+    <div id="repartiLista" class="tiles"></div>
+  </div>
+  <div class="view" data-view="reparto" hidden>
+    <div class="viewhead"><button class="back" aria-label="Indietro">←</button><h1 id="repTitolo">Reparto</h1></div>
+    <div id="repDettaglio"></div>
   </div>
 </section>
 
@@ -159,26 +193,25 @@
 <section id="tab-info" class="tab" aria-label="Info">
   <h1>Info</h1>
   <div class="card">
-    <div class="row"><strong>Versione <span id="ver"></span></strong><button id="btnCheck" class="btn tonal">Cerca aggiornamenti</button></div>
+    <div class="row" style="margin-top:0"><strong>Versione <span id="ver"></span></strong><button id="btnCheck" class="btn tonal">Cerca aggiornamenti</button></div>
+    <button id="btnInstall" class="btn filled" hidden style="margin-top:.6rem">Installa l'app</button>
     <p class="small">Su Android: menu di Chrome → <em>Installa app</em>. Su PC: icona di installazione nella barra degli indirizzi.</p>
-    <button id="btnInstall" class="btn filled" hidden>Installa l'app</button>
-    <p class="small" id="schermoInfo"></p>
   </div>
-  <div class="card"><h2>Novità</h2><div id="changelog"></div></div>
-  <div class="card">
-    <h2>Rapporti</h2>
+  <details class="card"><summary>Novità</summary><div id="changelog"></div></details>
+  <details class="card"><summary>Schermo rilevato</summary><p class="small" id="schermoInfo"></p></details>
+  <details class="card">
+    <summary>Rapporti</summary>
     <p class="small">L'app registra cosa succede (errori compresi) in rapporti cifrati: solo lo sviluppatore può leggerli. Non contengono il tuo listino.</p>
     <div class="row"><button id="btnReport" class="btn">Salva rapporto</button><span id="repInfo" class="small"></span></div>
-  </div>
+  </details>
   <p class="small disclaimer">I calcoli sono indicativi (IEC 60364-5-52, CEI-UNEL 35024/1, CEI 64-8) e servono per orientare il cliente. Il dimensionamento definitivo spetta all'installatore o al progettista.</p>
 </section>
 </main>
 
 <nav class="bottombar" role="tablist">
-  <button data-tab="cavi" class="active" role="tab"><span class="ico">⚡</span><span>Cavi</span></button>
-  <button data-tab="catalogo" role="tab"><span class="ico">🔎</span><span>Catalogo</span></button>
+  <button data-tab="cerca" class="active" role="tab"><span class="ico">🔎</span><span>Cerca</span></button>
+  <button data-tab="strumenti" role="tab"><span class="ico">🧮</span><span>Strumenti</span></button>
   <button data-tab="reparti" role="tab"><span class="ico">🏬</span><span>Reparti</span></button>
-  <button data-tab="strumenti" role="tab"><span class="ico">🧰</span><span>Strumenti</span></button>
   <button data-tab="info" role="tab"><span class="ico">ℹ️</span><span>Info</span></button>
 </nav>
 

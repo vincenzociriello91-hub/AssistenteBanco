@@ -185,3 +185,24 @@ select { padding-left: .6em; padding-right: .3em; }
 @media (horizontal-viewport-segments: 2) {
   main { max-width: none; padding-left: calc(env(viewport-segment-right 0 0, 50vw) - env(viewport-segment-left 0 0, 0px) + var(--pad)); }
 }
+
+/* ===== Struttura coerente (1.2.0): riquadri → pagina di dettaglio ===== */
+.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); margin: var(--gap) 0; }
+@media (min-width: 700px) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 339px) { .tiles { grid-template-columns: 1fr; } }
+.tile { font: inherit; color: var(--on-surface); text-align: left; background: var(--surface-c); border: 0; border-radius: var(--radius);
+  padding: 1rem; min-height: 7.5rem; display: flex; flex-direction: column; gap: .25rem; cursor: pointer; transition: background .15s, transform .1s; }
+.tile:active { transform: scale(.98); }
+.tile:focus-visible, .back:focus-visible, .item-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+@media (pointer: fine) { .tile:hover { background: var(--surface-ch); } }
+.tile-ico { font-size: 1.5rem; width: 2.75rem; height: 2.75rem; display: grid; place-items: center; border-radius: .9rem; background: var(--primary-c); margin-bottom: .35rem; }
+.tile-t { font-weight: 500; font-size: 1rem; line-height: 1.25; }
+.tile-s { font-size: .8rem; color: var(--muted); line-height: 1.3; overflow-wrap: anywhere; }
+.viewhead { display: flex; align-items: center; gap: .5rem; margin-top: .25rem; }
+.viewhead h1 { margin: .2rem 0; }
+.back { font: inherit; font-size: 1.3rem; width: 3rem; height: 3rem; flex: none; border: 0; border-radius: 50%; background: var(--surface-c); color: var(--on-surface); cursor: pointer; }
+h2.sezione { font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 1.25rem .25rem .25rem; }
+.item-link { display: block; width: 100%; font: inherit; color: inherit; text-align: left; border: 0; cursor: pointer; }
+details.adv { background: var(--surface); border-radius: .9rem; padding: .25rem .75rem .75rem; }
+.view .card:first-of-type { margin-top: .5rem; }
