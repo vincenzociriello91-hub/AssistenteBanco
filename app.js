@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.8.0';
+const VERSION = '1.8.1';
 const CHANGELOG = [
+  { v: '1.8.1', data: '15/11/2026', voci: ['Elettrico civile completo: tutte le serie attuali di BTicino (Light Now, Livinglight, Classia…), Vimar (Eikon Exé/Tactil, Arké Fit, Plana Up, Idea…), Gewiss (placche ONE, GEO, LUX, ICE, System Pura), Schneider (Unica Pro, Studio, Pure), Master (Mix, Steel), Simon Urmet (Expì Touch, Flexa, Kàdra).'] },
   { v: '1.8.0', data: '15/11/2026', voci: ['6 nuovi reparti: Protezioni e quadri, Automazione cancelli, Ventilazione e aspiratori, Antifurto e antincendio, Canali e passerelle, Nastri giunzioni fissaggi e attrezzi.', 'Nuove marche: Siemens, ABB, Hager, Legrand, Lovato, Finder, FAAC, BFT, CAME, Nice, Vortice, Bentel, Notifier, Arnocanali, 3M, Cellpack, Etelec, Intercable, Panduit, Fischer, AVE, Beta Cavi, ITC.', 'Serie complete per Gewiss (Chorus, ChoruSmart) e Aermec (SLG, SE, multisplit MLG).'] },
   { v: '1.7.0', data: '15/11/2026', voci: ['App più semplice anche per chi non è del mestiere: risposte scritte in parole semplici.', 'Dimensiona linea: scegli l\'apparecchio (forno, piano a induzione, condizionatore, auto elettrica…) e la risposta arriva da sola.', 'Benvenuto alla prima apertura, suggerimenti di ricerca, glossario "Parole semplici".'] },
   { v: '1.6.1', data: '15/11/2026', voci: ['Animazioni tra le pagine più leggere: nessun tocco perso.', 'Alla prima apertura l\'app non si ricarica più da sola.'] },

@@ -20,6 +20,9 @@ App web installabile (PWA) per il banco di un grossista di materiale elettrico. 
 I calcoli sono indicativi (IEC 60364-5-52, CEI-UNEL 35024/1, CEI 64-8). Il dimensionamento definitivo spetta all'installatore o al progettista.
 
 ## Novità
+### 1.8.1 — 15/11/2026
+- Elettrico civile: serie complete per BTicino, Vimar, Gewiss, Schneider, Master e Simon Urmet.
+
 ### 1.8.0 — 15/11/2026
 - 6 nuovi reparti: Protezioni e quadri, Automazione cancelli, Ventilazione e aspiratori, Antifurto e antincendio, Canali e passerelle, Nastri giunzioni fissaggi e attrezzi.
 - Oltre 20 marche nuove (Siemens, ABB, Hager, Legrand, Lovato, Finder, FAAC, BFT, CAME, Nice, Vortice, Bentel, Notifier, Arnocanali, 3M, AVE…).

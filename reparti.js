@@ -6,13 +6,13 @@ const REPARTI = [
   {
     id: 'civile', nome: 'Elettrico civile', icona: 'electrical_services', tinta: 215,
     marche: [
-      { marca: 'BTicino', modelli: 'Living Now, Matix, Matix GO, Axolute' },
-      { marca: 'Vimar', modelli: 'Plana, Arké, Eikon, Linea, Neve Up' },
-      { marca: 'Gewiss', modelli: 'Chorus (bianco lucido, nero satinato, titanio), ChoruSmart (bianco, nero, titanio, beige naturale satinato)' },
-      { marca: 'Schneider Electric', modelli: 'Unica' },
+      { marca: 'BTicino', modelli: 'Living Now (placche Air e Square, 16 finiture, anche Monochrome e filomuro), Light Now, Livinglight (ex Living International, Light e Light Tech), Axolute, Classia, MatixGO; ricambi Matix e Magic', note: 'Placche sottili AIR per Livinglight e Axolute; versioni Smart Netatmo (Living Now, Light Now, Classia, MatixGO); domotica MyHOME' },
+      { marca: 'Vimar', modelli: 'Eikon Evo, Eikon Exé (comandi Flat, Vintage, Tondo), Eikon Tactil (touch), Eikon Chrome, Eikon Total Look; Linea (piattaforma XT); Arké Classic, Round e Fit; Plana, Plana Silver, Plana Up; Idea; Neve Up', note: 'Supporti e frutti di una serie non vanno sulle placche di un\'altra (es. Eikon ≠ Arké ≠ Plana)' },
+      { marca: 'Gewiss', modelli: 'Chorus e ChoruSmart (frutti bianco, nero, titanio, beige naturale satinato) con placche ONE, GEO, LUX, EGO, ICE e ICE Touch (vetro), Monochrome; System e System Pura (nuova serie)', note: 'Placche ONE, GEO e LUX International per scatole tonde e quadrate; vecchie placche ART e FLAT' },
+      { marca: 'Schneider Electric', modelli: 'New Unica con placche Unica Pro, Unica Studio (Studio, Studio Color, Studio Metal, Studio Outline) e Unica Pure (vetro, pietra, legno, metallo)', note: 'Unica System+ per torrette, scatole a pavimento e canali OptiLine 45' },
       { marca: 'AVE', modelli: 'Sistema 44: Domus (bianco lucido, anche antibatterica), Whitek (bianco opaco), Tekla (grigio opaco), Class (avorio), Life (nero lucido), Allumia (grigio tech); Smart 44 (connessa)', note: 'Placche Zama 44, Vera 44, Young 44, Personal 44, New Style e England Style; supporto unico per tutte le serie 44' },
-      { marca: 'Master', modelli: 'Modo' },
-      { marca: 'Simon Urmet', modelli: 'Nea (estetiche Kàdra, Expì, Flexa)' }
+      { marca: 'Master', modelli: 'Modo, Mix, Steel (finiture metallizzate)', note: 'Placche Modo in tecnopolimero, es. 39TC442 (2 moduli) su supporto 38020-I' },
+      { marca: 'Simon Urmet', modelli: 'Nea con tre estetiche: Expì (vetro, alluminio, metallo; anche Expì Touch), Flexa (tecnopolimero, colori neutri e brillanti), Kàdra (design Citterio)', note: 'Frutti Nea in 5 finiture; supporti 10703N / 10704N / 10706N / 10707; torrette a scomparsa Simon K45' }
     ],
     guida: `<ul class="ref">
       <li>I frutti non sono intercambiabili tra marche diverse; le scatole da incasso 503 (3 moduli) vanno bene per tutte, le placche no.</li>
