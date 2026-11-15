@@ -120,6 +120,21 @@ const Domande = (() => {
     return box(`Capocorda per ${f(d.S)} mm²`, `<p>Cembre <strong>${cod}</strong> (tubolare in rame${d.vite ? '' : `, fori da ${c[2]}`}).</p><p class="small">Il numero dopo la M è il diametro della vite. Si pressa con la matrice per ${c[0]} mm².</p>`, az);
   }
 
+
+  function rAspiratore(d) {
+    const az = vaiRep('ventilazione', 'Reparto ventilazione');
+    const cucina = /cucin/.test(d.t), bagno = /bagn|wc|lavanderi/.test(d.t);
+    const ricambi = cucina ? 10 : 8; // ricambi d'aria all'ora, valori indicativi
+    const stanza = cucina ? 'cucina' : bagno ? 'bagno' : 'stanza';
+    if (d.mq == null) return box(`Aspiratore per ${stanza}`, `<p>Dimmi quanti metri quadri è la ${stanza}, per esempio: <em>aspiratore ${stanza} 8 mq</em>.</p><p class="small">Regola veloce: portata = volume della stanza × ${ricambi} ricambi all'ora${cucina ? ' (in cucina la cappa resta comunque la prima scelta sopra i fornelli)' : ''}.</p>`, az);
+    const vol = d.mq * 2.7, serve = Math.ceil(vol * ricambi);
+    const ok = Schede.ASPIRATORI.filter(a => a[2] >= serve).sort((a, b) => a[2] - b[2]);
+    const lista = ok.slice(0, 3).map(a => `<tr><td>Vortice ${esc(a[0])}</td><td>Ø ${a[1]}</td><td><strong>${a[2]} m³/h</strong></td><td class="small">${a[3] ? 'cod. ' + a[3] : ''}${a[4] ? ' · timer ' + a[4] : ''}</td></tr>`).join('');
+    return box(`Aspiratore per ${stanza} di ${f(d.mq, 0)} m²`,
+      `<p>Serve una portata di almeno <strong>${serve} m³/h</strong> (${f(vol, 0)} m³ × ${ricambi} ricambi all'ora).</p>` +
+      (lista ? `<table class="tab-risp">${lista}</table><p class="small">Il diametro deve corrispondere al foro nel muro. Bagno cieco: prendi la versione con timer.${cucina ? ' Sopra i fornelli resta meglio la cappa.' : ''}</p>` : '<p>Oltre 335 m³/h: serve un aspiratore centrifugo (Vort Quadro, Vort Press) o più aspiratori.</p>'), az);
+  }
+
   function rCavo(d) {
     const c = carico(d.t);
     const kW = d.kW ?? (d.A ? null : c?.[2]);
@@ -240,6 +255,7 @@ const Domande = (() => {
     let r = rGlossario(d);
     if (!r && /pressacav|passacav/.test(t)) r = rPressacavo(d);
     if (!r && /capocord|capicord|terminal[ei] ad occhiello/.test(t)) r = rCapocorda(d);
+    if (!r && /aspirator|ventilator|ventol|estrattor/.test(t) && !/soffitto|piantana|colonna/.test(t)) r = rAspiratore(d);
     if (!r && /strisc|led strip/.test(t)) r = rStriscia(d);
     if (!r && /corrugat|\btub[oi]\b|guain|cavidott|\brk\b|quanti cavi/.test(t)) r = rTubo(d);
     if (!r && /condizionat|climatizz|\bsplit\b|\bbtu\b/.test(t) && !/\bcav|interrutt|magnetot|\blinea\b/.test(t)) r = rBtu(d);

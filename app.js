@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.12.3';
+const VERSION = '1.12.4';
 const CHANGELOG = [
+  { v: '1.12.4', data: '15/11/2026', voci: ['Domande sugli aspiratori: "aspiratore bagno 6 mq" o "ventilatore cucina 10 mq" calcolano la portata e propongono il Vortice giusto con codice.'] },
   { v: '1.12.3', data: '15/11/2026', voci: ['Ricerca: premendo Invio la tastiera si chiude e la pagina scorre fino alla risposta.'] },
   { v: '1.12.2', data: '15/11/2026', voci: ['Rapporti: un invio alla volta, niente più errore 409.'] },
   { v: '1.12.1', data: '15/11/2026', voci: ['Info → Rapporti: pulsante "Invia ora" ed esito dell\'ultimo invio.'] },

@@ -35,6 +35,16 @@ const Schede = (() => {
     [70, 'A14', 'M6–M16'], [95, 'A19', 'M6–M20'], [120, 'A24', 'M8–M20'], [150, 'A30', 'M8–M12'], [185, 'A37', 'M10–M16'], [240, 'A48', 'M10–M16'], [300, 'A60', 'M10–M12']
   ];
 
+  // Aspiratori elicoidali Vortice: [modello, Ø foro mm, portata max m³/h, codice base, codice con timer]
+  const ASPIRATORI = [
+    ['Punto M 90/3,5"', 90, 70, '', ''],
+    ['Punto Evo ME 100/4" LL', 100, 95, '11260', '11264'],
+    ['Punto M 100/4"', 100, 90, '11201', '11211'],
+    ['Punto Evo ME 120/5" LL', 120, 175, '11270', '11274'],
+    ['Punto M 120/5"', 120, 175, '11301', '11311'],
+    ['Punto M 150/6"', 150, 335, '11401', '11411']
+  ];
+
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const f = x => Number(x).toLocaleString('it-IT', { maximumFractionDigits: 1 });
 
@@ -78,5 +88,5 @@ const Schede = (() => {
     const m = REPARTI.find(x => x.id === 'morsetti'); if (m) m.guida += tabCapicorda();
   }
 
-  return { PRESSACAVI, FG16OR16, CEMBRE_AM, pressacaviPer, misuraTipica, diametroCavo, capocorda };
+  return { ASPIRATORI, PRESSACAVI, FG16OR16, CEMBRE_AM, pressacaviPer, misuraTipica, diametroCavo, capocorda };
 })();
