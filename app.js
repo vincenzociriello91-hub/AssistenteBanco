@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.0.5';
+const VERSION = '1.0.6';
 const CHANGELOG = [
+  { v: '1.0.6', data: '15/11/2026', voci: ['Nuova sezione Reparti: elettrico civile, illuminazione, condizionatori, cavi, fotovoltaico, domotica, corrugati/cassette/tubi RK, citofonia e TVCC.', 'Ogni reparto ha le sue marche e modelli, una guida rapida e il pulsante per aggiungere le marche che vendete.'] },
   { v: '1.0.5', data: '15/11/2026', voci: ['Nuova tabella climatizzazione: Daikin, Mitsubishi Electric, Samsung, Haier, Clivet, Aermec.', 'Nuovo strumento: stima dei BTU del climatizzatore per stanza.'] },
   { v: '1.0.4', data: '15/11/2026', voci: ['Nuove tabelle: videocitofonia Urmet e Comelit (sistemi, monitor, pulsantiere).', 'Videosorveglianza e antintrusione Hikvision (Turbo HD, IP, AcuSense, AX PRO).'] },
   { v: '1.0.3', data: '15/11/2026', voci: ['Aggiornamento dall\'app riparato: l\'app controlla sempre la versione online e installa i file nuovi con un tocco.', '"Cerca aggiornamenti" ora dice se sei già all\'ultima versione.'] },
@@ -377,37 +378,7 @@ $('#btnClearCat').addEventListener('click', async () => {
   await DB.svuota(); await caricaCatalogo(); cerca($('#q').value); Report.log('catalogo-svuotato', {});
 });
 
-$('#serieCivili').innerHTML = `
-<p class="small">I frutti non sono intercambiabili tra marche diverse. Le scatole da incasso 503 (3 moduli) vanno bene per tutte; le placche no.</p>
-<table><thead><tr><th>Marca</th><th>Serie</th></tr></thead><tbody>
-<tr><td>BTicino</td><td>Living Now, Matix, Matix GO, Axolute</td></tr>
-<tr><td>Vimar</td><td>Plana, Arké, Eikon, Linea, Neve Up</td></tr>
-<tr><td>Gewiss</td><td>Chorus</td></tr>
-<tr><td>Schneider Electric</td><td>Unica</td></tr>
-<tr><td>Master</td><td>Modo</td></tr>
-<tr><td>Simon Urmet</td><td>Nea (estetiche Kàdra, Expì, Flexa)</td></tr>
-</tbody></table>
-<h2 style="margin-top:16px">Videocitofonia</h2>
-<table><thead><tr><th>Marca</th><th>Sistemi</th><th>Monitor</th><th>Pulsantiere</th></tr></thead><tbody>
-<tr><td>Urmet</td><td>2Voice, IPerCom (digitali)</td><td>Aiko, Folio, Signo</td><td>Sinthesi, Sinthesi S2, Sinthesi Steel, Alpha</td></tr>
-<tr><td>Comelit</td><td>Simplebus 1, Simplebus 2 (2 fili), ViP (IP)</td><td>Maxi 7", Icona 4,3", Mini (cornetta), Mini Handsfree, Mini Wi-Fi</td><td>Ultra, 3One6, Switch, Vandalcom</td></tr>
-</tbody></table>
-<p class="small">Monitor e pulsantiera devono essere dello stesso sistema. Comelit Mini Wi-Fi sostituisce un vecchio monitor Simplebus 2 senza modifiche all'impianto. Urmet: Aiko va con Nea Expì, Folio con Nea Kàdra, Signo con Nea Flexa.</p>
-<h2 style="margin-top:16px">Videosorveglianza e antintrusione</h2>
-<table><thead><tr><th>Marca</th><th>Gamme</th></tr></thead><tbody>
-<tr><td>Hikvision</td><td>Turbo HD (analogico su coassiale, con DVR); IP (con NVR); AcuSense (riconosce persone e veicoli, meno falsi allarmi); ColorVu; linee ProExpert e HiWatch; antintrusione AX PRO</td></tr>
-</tbody></table>
-<p class="small">Telecamere Turbo HD vanno su DVR, telecamere IP su NVR: non si mischiano (salvo DVR ibridi che accettano anche qualche IP).</p>
-<h2 style="margin-top:16px">Climatizzazione e pompe di calore</h2>
-<table><thead><tr><th>Marca</th><th>Split a parete</th><th>Altro</th></tr></thead><tbody>
-<tr><td>Daikin</td><td>Ururu Sarara (FTXZ), Emura (FTXJ), Stylish (FTXA), Perfera (FTXM), Comfora (FTXP), Sensira (FTXF)</td><td>Esterne mono RXZ, RXJ, RXA, RXM, RXP; multisplit 2MXM–5MXM; pompe di calore Altherma</td></tr>
-<tr><td>Mitsubishi Electric</td><td>Kirigamine Style (MSZ-LN), Kirigamine Zen (MSZ-EF), Linea Plus (MSZ-AP), Linea Smart (MSZ-HR, MSZ-DW)</td><td>Esterne mono MUZ; multisplit MXZ; pompe di calore Ecodan</td></tr>
-<tr><td>Samsung</td><td>WindFree Elite S2, WindFree Comfort S2, Luzon S2, AR30 Malibu</td><td>Pompe di calore EHS (Mono, Split, TDM Plus, ClimateHub)</td></tr>
-<tr><td>Haier</td><td>Expert, Flexis / Flexis Plus, Pearl Premium, Revive Plus, Serene</td><td>Multisplit fino a 5 interne; app hOn</td></tr>
-<tr><td>Clivet</td><td>Cervino (monosplit R290)</td><td>Pompe di calore Sphera EVO 2.0 (splittata), Edge / Edge Pro (monoblocco), Hydro-Split</td></tr>
-<tr><td>Aermec</td><td>Climatizzatori split</td><td>VRF MVA, pompe di calore, ventilconvettori</td></tr>
-</tbody></table>
-<p class="small">Interna ed esterna vanno abbinate come indica il costruttore (es. Daikin Stylish con esterna RXA, Emura con RXJ, Perfera con RXM). In multisplit controlla che l'interna sia compatibile con quell'esterna. Il climatizzatore va su linea dedicata con magnetotermico: taglia e sezione dalla corrente massima scritta sulla scheda dell'esterna.</p>`;
+RepartiUI.init((t, d) => Report.log(t, d));
 
 /* ============ SCANNER ============ */
 let stream = null, scanAttivo = false, zxReader = null;

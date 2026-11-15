@@ -89,3 +89,5 @@ ul.ref { margin: 0; padding-left: 18px; line-height: 1.6; }
 }
 
 .btn-aa { font: inherit; font-weight: 600; border: 0; background: var(--primary-c); color: var(--on-primary-c); border-radius: 100px; padding: .35em .9em; cursor: pointer; }
+.btn-mini { font: inherit; font-size: .8rem; border: 0; background: var(--surface-ch); color: var(--bad); border-radius: 8px; padding: 2px 8px; cursor: pointer; margin-left: 4px; }
+.card details summary { font-size: .95rem; }

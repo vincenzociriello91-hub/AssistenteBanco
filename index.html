@@ -85,10 +85,14 @@
     <div class="row"><button id="btnTemplate" class="btn">Scarica modello CSV</button><button id="btnClearCat" class="btn danger">Svuota catalogo</button></div>
     <div id="importMsg" class="small"></div>
   </details>
-  <details class="card">
-    <summary>Marche: serie civili, citofonia, TVCC, clima</summary>
-    <div id="serieCivili"></div>
-  </details>
+</section>
+
+<!-- ================= REPARTI ================= -->
+<section id="tab-reparti" class="tab" aria-label="Reparti">
+  <h1>Reparti</h1>
+  <p class="hint">Marche e modelli per reparto, con guida rapida. Le marche che aggiungi restano su questo dispositivo.</p>
+  <div class="card"><input id="repQ" type="search" placeholder="Cerca marca o modello (es. Daikin, RK15, Comelit)"></div>
+  <div id="repartiLista"></div>
 </section>
 
 <!-- ================= STRUMENTI ================= -->
@@ -169,11 +173,13 @@
 <nav class="bottombar" role="tablist">
   <button data-tab="cavi" class="active" role="tab"><span class="ico">⚡</span><span>Cavi</span></button>
   <button data-tab="catalogo" role="tab"><span class="ico">🔎</span><span>Catalogo</span></button>
+  <button data-tab="reparti" role="tab"><span class="ico">🏬</span><span>Reparti</span></button>
   <button data-tab="strumenti" role="tab"><span class="ico">🧰</span><span>Strumenti</span></button>
   <button data-tab="info" role="tab"><span class="ico">ℹ️</span><span>Info</span></button>
 </nav>
 
 <script src="calc.js"></script>
+<script src="reparti.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
