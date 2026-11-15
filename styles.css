@@ -402,3 +402,11 @@ html.banco .chip-btn, html.banco .btn { min-height: 3.2rem; }
 .assist-attesa .msr { animation: pulsaIco 1.2s ease-in-out infinite; color: var(--primary); }
 @keyframes pulsaIco { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { .assist-attesa .msr { animation: none; } }
+
+/* 1.13.2 elenco marche nelle risposte (niente colonne strette sul telefono) */
+.lista-marche { display: grid; gap: .5rem; margin: .4rem 0; }
+.lm-voce { padding: .45rem 0; border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent); }
+.lm-marca { font-size: .85rem; opacity: .8; margin-bottom: .15rem; }
+.lm-art { overflow-wrap: anywhere; }
+.risp, .risp-corpo { min-width: 0; overflow-wrap: anywhere; }
+.tab-risp td:first-child { min-width: 7em; }

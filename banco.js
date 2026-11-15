@@ -373,7 +373,9 @@ const Banco = (() => {
       const b = $('#assist'); if (b) b.innerHTML = '<p class="hint assist-attesa"><span class="msr" aria-hidden="true">auto_awesome</span> L\'assistente sta pensando…</p>';
       const t0 = Date.now();
       try {
-        const r = await fetch(REPORT_URL.replace(/\/$/, '') + '/chiedi', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ domanda: q, contesto: contesto(q) }) });
+        Report.log('assistente-invio', { lunghezza: q.length });
+        const ac = new AbortController(); const tt = setTimeout(() => ac.abort(), 30000);
+        const r = await fetch(REPORT_URL.replace(/\/$/, '') + '/chiedi', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ domanda: q, contesto: contesto(q) }), signal: ac.signal }).finally(() => clearTimeout(tt));
         if (r.status === 503) { attivo = false; if ($('#assist')) $('#assist').innerHTML = ''; Report.log('assistente', { stato: 503 }); return; }
         const o = await r.json();
         if (!r.ok || !o.risposta) throw new Error('stato ' + r.status);
@@ -382,7 +384,7 @@ const Banco = (() => {
         Report.log('assistente', { ok: true, ms: Date.now() - t0, prodotti: (o.prodotti || []).length });
       } catch (e) {
         if ($('#assist')) $('#assist').innerHTML = '';
-        Report.log('assistente', { ok: false, msg: String(e.message || e) });
+        Report.log('assistente', { ok: false, ms: Date.now() - t0, msg: e.name === 'AbortError' ? 'nessuna risposta in 30 s' : String(e.message || e) });
       }
     }, subito ? 0 : 1300);
   }

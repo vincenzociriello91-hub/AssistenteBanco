@@ -96,7 +96,7 @@ const Domande = (() => {
       if (!l.length) return '<p>Nessun pressacavo standard lo stringe bene: serve una misura più grande (M75 o oltre) o un pressacavo speciale.</p>';
       const tip = Schede.misuraTipica(l);
       const per = {}; l.forEach(x => { (per[x.marca + ' · ' + x.serie] ||= []).push(x); });
-      return `<p>Pressacavo <strong>${tip}</strong>.</p><table class="tab-risp">${Object.entries(per).map(([k, v]) => `<tr><td>${esc(k)}</td><td><strong>${v.map(x => esc(x.mis + (x.cod ? ' ' + x.cod : '')) + ` <span class="small">(${f(x.a)}–${f(x.b)})${x.limite ? ' ⚠ al limite: misura il cavo' : ''}</span>`).join('<br>')}</strong></td></tr>`).join('')}</table>`;
+      return `<p>Pressacavo <strong>${tip}</strong>.</p><div class="lista-marche">${Object.entries(per).map(([k, v]) => `<div class="lm-voce"><div class="lm-marca">${esc(k)}</div>${v.map(x => `<div class="lm-art"><strong>${esc(x.mis + (x.cod ? ' · ' + x.cod : ''))}</strong> <span class="small">serra da ${f(x.a)} a ${f(x.b)} mm${x.limite ? ' · ⚠ al limite, misura il cavo' : ''}</span></div>`).join('')}</div>`).join('')}</div>`;
     };
     if (d.Dcavo) return box(`Pressacavo per cavo Ø ${f(d.Dcavo)} mm`, lista(d.Dcavo, d.Dcavo), az);
     if (d.S != null) {
