@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.12.2';
+const VERSION = '1.12.3';
 const CHANGELOG = [
+  { v: '1.12.3', data: '15/11/2026', voci: ['Ricerca: premendo Invio la tastiera si chiude e la pagina scorre fino alla risposta.'] },
   { v: '1.12.2', data: '15/11/2026', voci: ['Rapporti: un invio alla volta, niente più errore 409.'] },
   { v: '1.12.1', data: '15/11/2026', voci: ['Info → Rapporti: pulsante "Invia ora" ed esito dell\'ultimo invio.'] },
   { v: '1.12.0', data: '15/11/2026', voci: ['Nuova scheda Preventivo: aggiungi articoli, quantità con + e −, condividi o stampa in PDF con il logo.', 'Ascolto: premi il pulsante, il cliente parla e l\'app scrive da sola l\'elenco dei materiali con le quantità. L\'audio non viene mai salvato.', 'Kit pronti: punto luce, deviata, invertita, prese, punto TV, quadretto, linea forno e condizionatore, luce esterna. Calcola cavo, corrugato, scatole e placche.', 'Suggerimenti automatici e pulsante "Ho dimenticato qualcosa?".', 'Foto del pezzo: fino a 4 foto da angolazioni diverse e Gemini lo riconosce.', 'Ricerca a voce, ultime ricerche, più chieste e preferiti nella pagina Cerca.', 'Modalità banco (occhio in alto): testo grande e contrasto forte.', 'Annulla dopo ogni eliminazione.', 'Pressacavi: se scrivi solo la sezione considera anche l\'unipolare; BM compare anche quando il cavo è al limite, con avviso.'] },
@@ -479,7 +480,9 @@ function cerca(q) {
 $('#results').addEventListener('click', e => { const sg = e.target.closest('[data-sugg]'); if (sg) { $('#q').value = sg.dataset.sugg; cerca(sg.dataset.sugg); return; } });
 $('#results').addEventListener('click', e => { const b = e.target.closest('[data-goto-tool]'); if (!b) return; apriVista('strumenti', b.dataset.gotoTool); Report.log('domanda-vai', { tool: b.dataset.gotoTool }); });
 $('#results').addEventListener('click', e => { const b = e.target.closest('[data-goto-rep]'); if (!b) return; RepartiUI.apri(b.dataset.gotoRep); apriVista('reparti', 'reparto'); history.replaceState({ tab: 'reparti', vista: 'reparto', rep: b.dataset.gotoRep }, ''); });
-let tQ; $('#q').addEventListener('input', e => { clearTimeout(tQ); tQ = setTimeout(() => cerca(e.target.value), 150); });
+let tQ; $('#q').addEventListener('input', e => { clearTimeout(tQ); tQ = setTimeout(() => { try { cerca(e.target.value); } catch (err) { Report.log('errore-cerca', { msg: err.message, stack: err.stack }); } }, 150); });
+// Invio sulla tastiera: cerca, chiude la tastiera e porta alla risposta
+$('#q').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); clearTimeout(tQ); try { cerca(e.target.value); } catch (err) { Report.log('errore-cerca', { msg: err.message, stack: err.stack }); } e.target.blur(); setTimeout(() => $('#results').scrollIntoView({ behavior: 'smooth', block: 'start' }), 150); Report.log('cerca-invio', { lunghezza: e.target.value.length }); } });
 
 // Import
 const ALIAS = {
