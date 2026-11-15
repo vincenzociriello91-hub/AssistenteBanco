@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.4.0';
+const VERSION = '1.5.0';
 const CHANGELOG = [
+  { v: '1.5.0', data: '15/11/2026', voci: ['Nuovo reparto Raccordi, pressacavi e cassette: Gewiss, BTicino, Vimar, Bocchiotti/Inset, Cembre, BM Group, Palazzoli, Scame.', 'Cassette da parete e da incasso (muratura e cartongesso) con codici e misure principali.', 'Guida rapida per scegliere pressacavi, raccordi e cassette.'] },
   { v: '1.4.0', data: '15/11/2026', voci: ['Nuovo reparto Morsetti, capicorda e connessioni: Cembre, BM Group, Weidmüller, Cabur, con guida rapida (colori capicorda, vite/molla/push-in, puntali).', 'Triple gestionale anche per Cembre (CEM), BM Group (BMM) e Weidmüller (WEI).'] },
   { v: '1.3.2', data: '15/11/2026', voci: ['Codici gestionale Elettrocampania già inseriti nell\'app: niente da importare.'] },
   { v: '1.3.1', data: '15/11/2026', voci: ['Controllo completo dell\'app: 50 verifiche automatiche su calcoli, ricerca, reparti, codici, catalogo, rapporti e 7 risoluzioni.', 'Numeri scritti tutti allo stesso modo (es. 7.000 BTU, 1.500 lumen).'] },

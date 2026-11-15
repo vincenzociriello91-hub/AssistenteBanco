@@ -117,13 +117,10 @@ const REPARTI = [
     </ul>`
   },
   {
-    id: 'tubi', nome: 'Corrugati, cassette e tubi RK', icona: '🧰',
+    id: 'tubi', nome: 'Corrugati e tubi RK', icona: '🧰',
     marche: [
       { marca: 'Gewiss', modelli: 'Tubi rigidi RK9 (leggero), RK15 (medio), RKB (pesante), RK9 HF e RKHF (halogen free)', note: 'Diametri 16–63 mm, verghe da 2 e 3 m' },
       { marca: 'Tubifor', modelli: 'Corrugati PVC classe 3321 (con o senza tirafilo, vari colori), corrugati ICTA in polipropilene 3422 halogen free, tubi precablati, tubi rigidi PVC, cavidotti interrati, guaine spiralate, canali portacavi', note: 'Codice corrugato es. TF01032AT025 = Ø32, azzurro (A), con tirafilo (T), rotolo 25 m; TF01025NT050 = Ø25 nero 50 m' },
-      { marca: 'Gewiss (cassette)', modelli: 'Cassette di derivazione stagne da parete serie 44 CE: IP44, IP55, IP56, pareti lisce o passacavi rapidi', note: 'Es. GW44206 IP56 interne 150×110×70 mm' },
-      { marca: 'Bocchiotti (Hager)', modelli: 'Cassette Pico IP56 (chiusura ¼ di giro o viti inox, GWT 650/960 °C), centralini Pablo IP65' },
-      { marca: 'Scame', modelli: 'Cassette Scabox IP56 halogen free, IK08' },
       { marca: 'Inset (Hager Bocchiotti)', modelli: 'Corrugati pieghevoli FMP 3321 (Ø16–50): FMP nero, FMPA azzurro, FMPB bianco, FMPL lilla, FMPM marrone, FMPV verde; tubi rigidi GRI 3321 e RFG 4321; guaine GHF halogen free', note: 'Accessori: manicotto MFL IP64, raccordo tubo-scatola PREG IP64-67, raccordo rigido-scatola RSTN IP67, sonde tirafili STC. Ora nella stessa gamma Pmflex' }
     ],
     guida: `<ul class="ref">
@@ -132,7 +129,7 @@ const REPARTI = [
       <li><strong>Cavidotto</strong> doppia parete 450 N o 750 N (CEI EN 61386-24): interrato.</li>
       <li><strong>Tubo rigido RK:</strong> posa a vista su parete, controsoffitti, pavimenti flottanti; si raccorda a scatole e guaine con gli accessori della serie (l'IP dipende dagli accessori).</li>
       <li><strong>Halogen free</strong> (HF): locali pubblici, gallerie, dove i fumi devono essere poco tossici.</li>
-      <li><strong>Cassette di derivazione/ispezione:</strong> da incasso o da parete; scegli misura dal numero di tubi e morsetti, IP44 interno umido, IP55/IP56 esterno, IP65 dove arriva acqua a getto. Non chiudere giunzioni fuori dalle cassette.</li>
+      <li>Raccordi, pressacavi e cassette: reparto <em>Raccordi, pressacavi e cassette</em>.</li>
       <li><strong>Equivalenze tra marche:</strong> stesso diametro + stessa classificazione = stesso tubo (es. Inset FMP 3321 Ø25 ≈ Tubifor corrugato 3321 Ø25 ≈ corrugato medio 750 N Gewiss Ø25). Il colore serve solo a distinguere gli impianti (energia, dati, citofono…).</li>
       <li>Diametro del corrugato giusto: strumento <em>Tubo / corrugato</em> in Strumenti.</li>
     </ul>`
@@ -152,6 +149,28 @@ const REPARTI = [
       <li><strong>Grandi sezioni:</strong> capicorda a compressione con la matrice giusta per sezione; serve pinza o pressa oleodinamica adeguata (kN).</li>
       <li><strong>Morsetti su guida DIN 35:</strong> sezione del morsetto ≥ sezione del cavo; verde-giallo per la terra (PE), blu per il neutro; testate di chiusura e fermi a fine fila.</li>
       <li><strong>Equivalenze:</strong> tra marche si confrontano tipo di connessione, sezione, numero di connessioni e tensione/corrente nominale.</li>
+    </ul>`
+  },
+  {
+    id: 'raccordi', nome: 'Raccordi, pressacavi e cassette', icona: '🧩',
+    marche: [
+      { marca: 'Gewiss — raccordi e pressacavi', modelli: 'Serie RK: manicotti, curve, raccordi tubo-scatola Morbidx IP67 (DX43216–DX43250), tubo-guaina IP65 (DX433..), accessorio universale tubo-tubo; guaine DF con raccordi IP54 diritti o girevoli (passo GAS/PG, DX54..); GW FIT: pressacavi metrici e PG IP68 (GW52..), pressacavi con alloggiamento tubo rigido IP66, raccordi tubo/cassetta IP66 e IP44, passacavi IP55; collari e fissaggi (DX51..)' },
+      { marca: 'Gewiss — cassette', modelli: 'Parete: 44 CE in tecnopolimero IP44/IP55/IP56 (es. GW44024 100×100×70 IP55, GW44206 150×110×70 IP56, GW44209 300×220×120), GW Connect in metallo. Incasso: serie 48 (GW48001 92×92×45, GW48002 118×96×50, fino a 479×154×70), scatole 24 SC per serie civili (GW24203 3 moduli, GW24403/24404/24406), Green Wall per cartongesso (scatole, cassette 48 PTDIN con guida DIN, cassette prese interbloccate 44IB/67IB), torrette a pavimento' },
+      { marca: 'BTicino — scatole incasso', modelli: '500 tonda, 502E (2 moduli), 503E (3 moduli, 108×74×53,5), 504E (4 moduli), 506E (3+3), 506L (6/7 moduli), 510L/510N; accessori 503CG paramalta, 503ED affiancamento, 503EV separatore, 506ESE prolunga +1 cm', note: 'Supporti: 503SA e 504SA (Matix), K4703 (Living Now); placche IP55 per 503E/504E' },
+      { marca: 'Vimar — Isobox', modelli: 'Incasso muratura: V71001 tonda, V71303 (3M), V71304 (4M), V71305 (5M), V71306 (6-7M), versioni .AU nere GWT 960 °C; pareti leggere: V71601, V71613, V71703, V71720 (12-14M); derivazione da incasso fino a V70009 479×154×70', note: 'Accessori: paramalta V71323/V71324/V71326, separatore V71550, giunto V71563, griffe V71540, staffa per cappotto V71543, coperchio filo muro V71633/V71634' },
+      { marca: 'Bocchiotti / Inset (Hager)', modelli: 'Cassette parete Pico IP55 e IP56 (chiusura ¼ di giro o viti inox, GWT 650/960 °C), centralini Pablo IP65, Pablo Style da incasso (scatole per muratura arancioni e per cartongesso bianche), quadri IP40 da incasso 4–72 moduli', note: 'Raccordi Inset: manicotto MFL IP64, raccordo tubo-scatola PREG IP64-67, raccordo rigido-scatola RSTN IP67' },
+      { marca: 'Cembre — pressacavi', modelli: 'Serie 1900 in poliammide (PG e metrico, es. 1900.16 PG16 cavo Ø10–14), 2900 in ottone nichelato IP68, MAXIblock 1940.M e MAXIbrass 2940.M a serraggio esteso (M25–M63, IP68), dadi e controdadi in ottone' },
+      { marca: 'BM Group — pressacavi', modelli: 'Pressacavi in nylon e ottone, filetto metrico, PG e GAS, con o senza controdado, IP68, grigio RAL 7035 e nero' },
+      { marca: 'Palazzoli', modelli: 'Cassette TAIS e TAISBOX in termoindurente (IP66/67/69, IK10, GWT 960 °C), UNIBOX e ALUPRES in alluminio, PRIMA, FIREBOX resistenti al fuoco (E30/E60/E90), ATEX TAIS-EX e ALUCASE-EX; pressacavi', note: 'FIREBOX: obbligatorie dove si riuniscono molte persone (scuole, ospedali, centri commerciali)' },
+      { marca: 'Scame', modelli: 'Cassette Scabox IP56 halogen free, IK08' }
+    ],
+    guida: `<ul class="ref">
+      <li><strong>Pressacavo:</strong> scegli il <em>filetto</em> (metrico M16, M20, M25… = diametro del foro; PG è il vecchio passo) e il <em>campo di serraggio</em> sul diametro esterno del cavo. Per esterno IP68; ottone nichelato dove serve robustezza o schermatura.</li>
+      <li><strong>Raccordo tubo-scatola:</strong> stesso diametro del tubo (16, 20, 25, 32…) e IP adatto (IP65–IP67 per esterno); tubo-guaina per passare da tubo rigido a guaina flessibile.</li>
+      <li><strong>Raccordi per tubo rigido:</strong> manicotti, curve, raccordi a T e scatole a più ingressi della stessa serie del tubo.</li>
+      <li><strong>Cassette da parete:</strong> IP44 interno umido, IP55/IP56 esterno, IP65+ con getti d'acqua; misura dal numero di tubi e morsetti.</li>
+      <li><strong>Cassette e scatole da incasso:</strong> per muratura (con paramalta durante l'intonaco) o per cartongesso (con alette, GWT 850 °C). Scatola 503 = 3 moduli, standard per tutte le serie civili.</li>
+      <li>Le giunzioni si fanno solo dentro le cassette, mai nei tubi.</li>
     </ul>`
   },
   {
