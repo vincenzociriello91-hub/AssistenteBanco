@@ -1,93 +1,147 @@
+/* Assistente Banco — grafica adattiva in stile Pixel (Material 3).
+   Tutto è in rem: il carattere base segue la larghezza dello schermo (clamp) e il pulsante Aa (--scala). */
 :root {
   --primary: #1b6c3f; --on-primary: #fff;
   --primary-c: #a6f4bb; --on-primary-c: #00210f;
-  --surface: #f6fbf3; --surface-c: #eaefe8; --surface-ch: #dfe4dd;
+  --surface: #f6fbf3; --surface-c: #eaefe8; --surface-ch: #dfe4dd; --surface-lo: #f0f5ed;
   --on-surface: #181d19; --muted: #414942; --outline: #c0c9bf;
   --ok: #1b6c3f; --warn: #8a5100; --bad: #ba1a1a; --bad-c: #ffdad6;
-  --radius: 20px;
+  --radius: 1.25rem; --gap: .75rem; --pad: 1rem;
+  --font: "Google Sans", "Google Sans Text", "Roboto Flex", Roboto, "Segoe UI", system-ui, sans-serif;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --primary: #8bd7a0; --on-primary: #00391c;
     --primary-c: #00522b; --on-primary-c: #a6f4bb;
-    --surface: #0f1511; --surface-c: #1b211c; --surface-ch: #262b26;
+    --surface: #0f1511; --surface-c: #1b211c; --surface-ch: #262b26; --surface-lo: #171d18;
     --on-surface: #dfe4dd; --muted: #c0c9bf; --outline: #414942;
     --ok: #8bd7a0; --warn: #ffb870; --bad: #ffb4ab; --bad-c: #93000a;
   }
 }
+
+/* Carattere base: 16 px sui telefoni piccoli, ~17,5 px su Pixel (412 px), max 19 px su tablet e PC */
+html { font-size: calc(clamp(16px, 2.6vw + 7px, 19px) * var(--scala, 1)); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { font-size: calc(18px * var(--scala, 1)); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 html, body { margin: 0; }
 body {
-  font-family: "Google Sans", Roboto, "Segoe UI", system-ui, sans-serif;
+  font-family: var(--font); line-height: 1.45; letter-spacing: .01em;
   background: var(--surface); color: var(--on-surface);
-  padding-bottom: calc(6.5rem + env(safe-area-inset-bottom));
-  -webkit-tap-highlight-color: transparent;
+  padding: 0 env(safe-area-inset-right) calc(5.6rem + env(safe-area-inset-bottom)) env(safe-area-inset-left);
+  -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;
 }
+
+/* Barra in alto */
 .topbar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px; background: var(--surface); }
-.brand { display: flex; gap: 10px; align-items: center; font-size: 1.2rem; font-weight: 500; }
-main { max-width: 960px; margin: 0 auto; padding: 0 16px; }
-h1 { font-size: 1.6rem; font-weight: 400; margin: 8px 0 4px; }
-h2 { font-size: 1.05rem; font-weight: 500; margin: 0 0 12px; }
-.hint, .small { color: var(--muted); font-size: .88rem; }
+  padding: calc(.6rem + env(safe-area-inset-top)) var(--pad) .6rem; background: var(--surface); }
+.brand { display: flex; gap: .6rem; align-items: center; font-size: 1.15rem; font-weight: 500; }
+.brand img { width: 1.9rem; height: 1.9rem; }
+main { max-width: 64rem; margin: 0 auto; padding: 0 var(--pad); }
+
+/* Tipografia (scala Material 3) */
+h1 { font-size: 1.55rem; font-weight: 400; line-height: 1.25; margin: .4rem 0 .2rem; }
+h2 { font-size: 1.05rem; font-weight: 500; margin: 0 0 .75rem; }
+.hint, .small { color: var(--muted); font-size: .85rem; }
+.big { font-size: 1.25rem; font-weight: 500; margin-top: .75rem; }
+code { font-size: .85em; }
+
+/* Schede */
 .tab { display: none; }
 .tab.active { display: block; animation: fade .18s ease-out; }
 @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-.card { background: var(--surface-c); border-radius: var(--radius); padding: 16px; margin: 12px 0; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 12px; }
+@media (prefers-reduced-motion: reduce) { .tab.active { animation: none; } }
+.card { background: var(--surface-c); border-radius: var(--radius); padding: var(--pad); margin: var(--gap) 0; }
+
+/* Griglia dei campi: 1 colonna sui telefoni stretti, 2 sui telefoni normali, 3–4 su tablet/PC */
+.grid { display: grid; grid-template-columns: 1fr; gap: var(--gap); }
+@media (min-width: 360px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 700px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .wide { grid-column: 1 / -1; }
-label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; color: var(--muted); }
+label { display: flex; flex-direction: column; gap: .35rem; font-size: .82rem; color: var(--muted); min-width: 0; }
 input, select { font: inherit; font-size: 1rem; color: var(--on-surface); background: var(--surface);
-  border: 1px solid var(--outline); border-radius: 14px; padding: .7em .8em; min-height: 3em; width: 100%; }
+  border: 1px solid var(--outline); border-radius: .85rem; padding: .65em .8em; min-height: 3rem; width: 100%; min-width: 0;
+  text-overflow: ellipsis; }
 input:focus, select:focus { outline: 2px solid var(--primary); border-color: transparent; }
-.btn { font: inherit; font-weight: 500; border: 1px solid var(--outline); background: transparent; color: var(--primary);
-  border-radius: 100px; padding: .6em 1.1em; min-height: 2.8em; cursor: pointer; }
+
+/* Pulsanti (area di tocco ≥ 48 px) */
+.btn { font: inherit; font-size: .95rem; font-weight: 500; border: 1px solid var(--outline); background: transparent; color: var(--primary);
+  border-radius: 100px; padding: .6em 1.15em; min-height: 3rem; cursor: pointer; }
 .btn.filled { background: var(--primary); color: var(--on-primary); border-color: transparent; }
 .btn.tonal { background: var(--primary-c); color: var(--on-primary-c); border-color: transparent; }
 .btn.danger { color: var(--bad); }
-.row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-top: 10px; }
-.searchrow { display: flex; gap: 8px; }
-.searchrow .btn { font-size: 1.2rem; padding: 0 16px; }
-.chip { font-size: .8rem; padding: 4px 10px; border-radius: 8px; background: var(--surface-ch); color: var(--muted); }
-.big { font-size: 1.3rem; margin-top: 12px; }
-.result .hero { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
-.kpi { background: var(--surface); border-radius: 16px; padding: 12px; }
-.kpi .v { font-size: 1.25rem; font-weight: 500; color: var(--primary); }
-.kpi .l { font-size: .8rem; color: var(--muted); }
+.btn-aa { font: inherit; font-weight: 600; border: 0; background: var(--primary-c); color: var(--on-primary-c); border-radius: 100px;
+  min-width: 3rem; min-height: 2.6rem; padding: 0 .9rem; cursor: pointer; }
+.btn-mini { font: inherit; font-size: .8rem; border: 0; background: var(--surface-ch); color: var(--bad); border-radius: .5rem; padding: .1rem .5rem; cursor: pointer; margin-left: .25rem; }
+.row { display: flex; gap: .6rem; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-top: .6rem; }
+.searchrow { display: flex; gap: .5rem; }
+.searchrow input { flex: 1; }
+.searchrow .btn { font-size: 1.2rem; padding: 0 1rem; }
+.chip { display: inline-block; font-size: .78rem; padding: .2rem .6rem; border-radius: .5rem; background: var(--surface-ch); color: var(--muted); margin: .1rem 0; }
+
+/* Risultati del dimensionamento */
+.result .hero { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
+@media (min-width: 700px) { .result .hero { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.kpi { background: var(--surface); border-radius: 1rem; padding: .75rem; min-width: 0; }
+.kpi .v { font-size: 1.2rem; font-weight: 500; color: var(--primary); line-height: 1.25; overflow-wrap: anywhere; }
+.kpi .l { font-size: .78rem; color: var(--muted); }
 .kpi.bad .v { color: var(--bad); }
-table { width: 100%; border-collapse: collapse; font-size: .9rem; margin-top: 12px; }
-th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--outline); }
+
+/* Tabelle: si adattano, e se servono scorrono di lato senza rompere la pagina */
+table { width: 100%; border-collapse: collapse; font-size: .88rem; margin-top: .75rem; }
+th, td { text-align: left; padding: .5rem .4rem; border-bottom: 1px solid var(--outline); vertical-align: top; overflow-wrap: anywhere; }
+th { font-weight: 500; color: var(--muted); font-size: .8rem; }
 td.ok { color: var(--ok); } td.no { color: var(--bad); }
 tr.sel td { background: var(--primary-c); color: var(--on-primary-c); }
-.item { background: var(--surface-c); border-radius: 16px; padding: 12px 14px; margin: 8px 0; }
-.item .t { font-weight: 500; }
-.item .m { font-size: .85rem; color: var(--muted); margin-top: 2px; }
-.item .eq { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--outline); font-size: .88rem; }
-.item a { color: var(--primary); }
-summary { cursor: pointer; font-weight: 500; padding: 4px 0; }
-video { width: 100%; max-height: 50vh; border-radius: 14px; background: #000; }
-.updatebar { position: sticky; top: 56px; z-index: 6; margin: 0 16px; display: flex; gap: 12px; align-items: center; justify-content: space-between;
-  background: var(--primary-c); color: var(--on-primary-c); border-radius: 16px; padding: 12px 16px; }
-.warnbox { background: var(--bad-c); color: var(--on-surface); border-radius: 12px; padding: 10px 12px; margin-top: 10px; font-size: .9rem; }
-.disclaimer { margin: 24px 4px; }
-ul.ref { margin: 0; padding-left: 18px; line-height: 1.6; }
-.bottombar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: flex; justify-content: space-around;
-  background: var(--surface-c); padding: 8px 4px calc(8px + env(safe-area-inset-bottom)); }
-.bottombar button { flex: 1 1 0; min-width: 0; max-width: 160px; background: none; border: 0; color: var(--muted); font: inherit; font-size: .72rem;
-  display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
-.bottombar .ico { font-size: 1.25rem; width: 2.8em; height: 1.8em; display: grid; place-items: center; border-radius: 16px; transition: background .15s; }
-.bottombar button.active { color: var(--on-surface); font-weight: 500; }
-.bottombar button.active .ico { background: var(--primary-c); }
-@media (min-width: 900px) {
-  body { padding-bottom: 0; padding-left: 96px; }
-  .bottombar { top: 0; right: auto; width: 88px; flex-direction: column; justify-content: center; gap: 12px; padding: 16px 0; }
-  .bottombar button { max-width: none; flex: 0; }
-  .updatebar { top: 64px; }
-}
+.card { overflow-x: auto; }
 
-.btn-aa { font: inherit; font-weight: 600; border: 0; background: var(--primary-c); color: var(--on-primary-c); border-radius: 100px; padding: .35em .9em; cursor: pointer; }
-.btn-mini { font: inherit; font-size: .8rem; border: 0; background: var(--surface-ch); color: var(--bad); border-radius: 8px; padding: 2px 8px; cursor: pointer; margin-left: 4px; }
-.card details summary { font-size: .95rem; }
+/* Elenchi */
+.item { background: var(--surface-c); border-radius: 1rem; padding: .75rem .9rem; margin: .5rem 0; }
+.item .t { font-weight: 500; }
+.item .m { font-size: .85rem; color: var(--muted); margin-top: .15rem; }
+.item .eq { margin-top: .5rem; padding-top: .5rem; border-top: 1px dashed var(--outline); font-size: .88rem; }
+.item a { color: var(--primary); }
+summary { cursor: pointer; font-weight: 500; padding: .35rem 0; min-height: 2.4rem; display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+summary::-webkit-details-marker { display: none; }
+summary::before { content: "›"; display: inline-block; transition: transform .15s; color: var(--muted); font-size: 1.2rem; width: 1rem; }
+details[open] > summary::before { transform: rotate(90deg); }
+ul.ref { margin: 0; padding-left: 1.1rem; line-height: 1.6; }
+ul.ref li { margin: .2rem 0; }
+video { width: 100%; max-height: 50vh; border-radius: .9rem; background: #000; }
+
+.updatebar { position: sticky; top: calc(3.4rem + env(safe-area-inset-top)); z-index: 6; margin: 0 var(--pad); display: flex; gap: .75rem; align-items: center; justify-content: space-between;
+  background: var(--primary-c); color: var(--on-primary-c); border-radius: 1rem; padding: .75rem 1rem; }
+.warnbox { background: var(--bad-c); color: var(--on-surface); border-radius: .75rem; padding: .6rem .75rem; margin-top: .6rem; font-size: .9rem; }
+.disclaimer { margin: 1.5rem .25rem; }
+
+/* Navigazione: barra in basso su telefono, rail laterale su tablet orizzontale e PC */
+.bottombar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: flex; justify-content: space-around;
+  background: var(--surface-c); padding: .45rem calc(.25rem + env(safe-area-inset-right)) calc(.45rem + env(safe-area-inset-bottom)) calc(.25rem + env(safe-area-inset-left)); }
+.bottombar button { flex: 1 1 0; min-width: 0; max-width: 10rem; background: none; border: 0; color: var(--muted); font: inherit; font-size: .72rem;
+  display: flex; flex-direction: column; align-items: center; gap: .2rem; cursor: pointer; padding: 0; min-height: 3.3rem; }
+.bottombar button span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.bottombar .ico { font-size: 1.2rem; width: 3.5rem; max-width: 100%; height: 2rem; display: grid; place-items: center; border-radius: 1rem; transition: background .15s; }
+.bottombar button.active { color: var(--on-surface); font-weight: 600; }
+.bottombar button.active .ico { background: var(--primary-c); }
+
+/* Schermi molto stretti (es. 320–359 px) */
+@media (max-width: 359px) {
+  :root { --pad: .75rem; --gap: .6rem; }
+  .bottombar .ico { width: 2.6rem; }
+  .bottombar button { font-size: .66rem; }
+}
+/* Telefono in orizzontale (poca altezza): barra più bassa */
+@media (max-height: 480px) and (orientation: landscape) {
+  body { padding-bottom: calc(3.6rem + env(safe-area-inset-bottom)); }
+  .bottombar button { flex-direction: row; min-height: 2.6rem; gap: .35rem; }
+  .bottombar .ico { width: 2.2rem; height: 1.8rem; }
+}
+/* Tablet orizzontale e PC: rail laterale */
+@media (min-width: 840px) and (min-height: 481px) {
+  body { padding-bottom: 0; padding-left: calc(5.5rem + env(safe-area-inset-left)); }
+  .bottombar { top: 0; right: auto; width: 5.5rem; flex-direction: column; justify-content: center; gap: .9rem; padding: 1rem 0; }
+  .bottombar button { max-width: none; flex: 0 0 auto; }
+  .bottombar .ico { width: 3.5rem; }
+}
+select { padding-left: .6em; padding-right: .3em; }

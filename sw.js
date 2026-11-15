@@ -1,7 +1,7 @@
 // Service worker: prima la rete (sempre l'ultima versione), cache solo se offline.
-const CACHE = 'assistentebanco-1.0.6';
+const CACHE = 'assistentebanco-1.0.7';
 const FILES = ['./', 'index.html', 'styles.css', 'calc.js', 'reparti.js', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png'];
-const CDN = ['cdn.jsdelivr.net', 'unpkg.com'];
+const CDN = ['cdn.jsdelivr.net', 'unpkg.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 
 self.addEventListener('install', e => {
   // cache: 'reload' salta la cache HTTP di GitHub Pages (10 minuti) e scarica i file nuovi

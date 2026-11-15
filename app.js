@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.0.6';
+const VERSION = '1.0.7';
 const CHANGELOG = [
+  { v: '1.0.7', data: '15/11/2026', voci: ['Grafica rifatta: testo, campi e pulsanti si adattano alla risoluzione dello schermo (telefono piccolo, Pixel, tablet, PC).', 'Nuovo carattere Roboto Flex in stile Pixel, funziona anche offline.', 'Telefono in orizzontale e tablet/PC con menu laterale.', 'In Info si vede lo schermo rilevato.'] },
   { v: '1.0.6', data: '15/11/2026', voci: ['Nuova sezione Reparti: elettrico civile, illuminazione, condizionatori, cavi, fotovoltaico, domotica, corrugati/cassette/tubi RK, citofonia e TVCC.', 'Ogni reparto ha le sue marche e modelli, una guida rapida e il pulsante per aggiungere le marche che vendete.'] },
   { v: '1.0.5', data: '15/11/2026', voci: ['Nuova tabella climatizzazione: Daikin, Mitsubishi Electric, Samsung, Haier, Clivet, Aermec.', 'Nuovo strumento: stima dei BTU del climatizzatore per stanza.'] },
   { v: '1.0.4', data: '15/11/2026', voci: ['Nuove tabelle: videocitofonia Urmet e Comelit (sistemi, monitor, pulsantiere).', 'Videosorveglianza e antintrusione Hikvision (Turbo HD, IP, AcuSense, AX PRO).'] },
@@ -471,6 +472,18 @@ let scala = 0; try { scala = Number(localStorage.getItem('ab_scala')) || 0; } ca
 const applicaScala = () => document.documentElement.style.setProperty('--scala', SCALE[scala]);
 applicaScala();
 $('#btnAa').addEventListener('click', () => { scala = (scala + 1) % SCALE.length; applicaScala(); try { localStorage.setItem('ab_scala', scala); } catch {} Report.log('scala-testo', { scala: SCALE[scala] }); });
+/* Riconoscimento dello schermo: classe di layout Material (telefono / pieghevole-tablet / PC) */
+function rilevaSchermo() {
+  const w = window.innerWidth, h = window.innerHeight, dpr = window.devicePixelRatio || 1;
+  const layout = w < 600 ? 'telefono' : w < 840 ? 'tablet verticale' : 'tablet orizzontale / PC';
+  document.documentElement.dataset.layout = layout;
+  const base = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  $('#schermoInfo').textContent = `Schermo rilevato: ${w}×${h} px (${Math.round(screen.width * dpr)}×${Math.round(screen.height * dpr)} reali, densità ${fmt(dpr, 2)}x) · layout ${layout} · testo ${fmt(base, 1)} px`;
+  return { w, h, dpr, layout, base };
+}
+let tSchermo; window.addEventListener('resize', () => { clearTimeout(tSchermo); tSchermo = setTimeout(rilevaSchermo, 150); });
+Report.log('schermo', rilevaSchermo());
+$('#btnAa').addEventListener('click', () => setTimeout(rilevaSchermo, 50));
 $('#netstate').hidden = navigator.onLine;
 Report.log('avvio', { versione: VERSION });
 caricaCatalogo();

@@ -9,11 +9,14 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600&display=swap">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><img src="icon.svg" alt="" width="32" height="32"><span>Assistente Banco</span></div>
+  <div class="brand"><img src="icon.svg" alt=""><span>Assistente Banco</span></div>
   <div class="row" style="margin:0"><span id="netstate" class="chip" hidden>Offline</span><button id="btnAa" class="btn-aa" title="Dimensione testo" aria-label="Dimensione testo">Aa</button></div>
 </header>
 
@@ -39,12 +42,12 @@
       </select>
     </label>
     <label>Sistema
-      <select name="sistema"><option value="mono">Monofase 230 V</option><option value="tri">Trifase 400 V</option></select>
+      <select name="sistema"><option value="mono">Mono 230 V</option><option value="tri">Tri 400 V</option></select>
     </label>
     <label>Potenza (kW)<input name="kw" type="number" inputmode="decimal" step="0.01" min="0" value="3"></label>
-    <label>oppure corrente (A)<input name="amp" type="number" inputmode="decimal" step="0.1" min="0" placeholder="facoltativo"></label>
+    <label>o corrente (A)<input name="amp" type="number" inputmode="decimal" step="0.1" min="0" placeholder="facoltativo"></label>
     <label>cos φ<input name="cosphi" type="number" inputmode="decimal" step="0.01" min="0.5" max="1" value="0.95"></label>
-    <label>Lunghezza linea (m)<input name="L" type="number" inputmode="decimal" step="1" min="1" value="20"></label>
+    <label>Lunghezza (m)<input name="L" type="number" inputmode="decimal" step="1" min="1" value="20"></label>
     <label class="wide">Cavo
       <select name="isolante"><option value="PVC">PVC 70 °C (FS17, N07V-K)</option><option value="EPR">EPR/XLPE 90 °C (FG16, FG17)</option></select>
     </label>
@@ -52,13 +55,13 @@
       <select name="posa"></select>
     </label>
     <label>Conduttori caricati
-      <select name="conduttori"><option value="2">2 (monofase)</option><option value="3">3 (trifase)</option></select>
+      <select name="conduttori"><option value="2">2 (mono)</option><option value="3">3 (tri)</option></select>
     </label>
-    <label>Temperatura ambiente
+    <label>Temp. ambiente °C
       <select name="temp"><option>20</option><option>25</option><option selected>30</option><option>35</option><option>40</option><option>45</option><option>50</option></select>
     </label>
-    <label>Circuiti nello stesso tubo/fascio<input name="circuiti" type="number" inputmode="numeric" min="1" max="20" value="1"></label>
-    <label>Caduta di tensione max (%)<input name="cdt" type="number" inputmode="decimal" step="0.5" min="1" max="10" value="4"></label>
+    <label>Circuiti nel tubo<input name="circuiti" type="number" inputmode="numeric" min="1" max="20" value="1"></label>
+    <label>Caduta max (%)<input name="cdt" type="number" inputmode="decimal" step="0.5" min="1" max="10" value="4"></label>
   </form>
   <div id="outCavi" class="card result" aria-live="polite"></div>
 </section>
@@ -106,7 +109,7 @@
       <label>Da
         <select id="cvType"><option value="kwA">kW → A</option><option value="aKw">A → kW</option><option value="hpKw">CV/HP → kW</option><option value="kvaKw">kVA → kW</option></select>
       </label>
-      <label>Sistema<select id="cvSis"><option value="mono">Monofase 230 V</option><option value="tri">Trifase 400 V</option></select></label>
+      <label>Sistema<select id="cvSis"><option value="mono">Mono 230 V</option><option value="tri">Tri 400 V</option></select></label>
       <label>cos φ<input id="cvCos" type="number" inputmode="decimal" step="0.01" value="1"></label>
     </div>
     <div id="cvOut" class="big"></div>
@@ -159,6 +162,7 @@
     <div class="row"><strong>Versione <span id="ver"></span></strong><button id="btnCheck" class="btn tonal">Cerca aggiornamenti</button></div>
     <p class="small">Su Android: menu di Chrome → <em>Installa app</em>. Su PC: icona di installazione nella barra degli indirizzi.</p>
     <button id="btnInstall" class="btn filled" hidden>Installa l'app</button>
+    <p class="small" id="schermoInfo"></p>
   </div>
   <div class="card"><h2>Novità</h2><div id="changelog"></div></div>
   <div class="card">
