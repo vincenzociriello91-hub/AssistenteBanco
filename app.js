@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.0.8';
+const VERSION = '1.0.9';
 const CHANGELOG = [
+  { v: '1.0.9', data: '15/11/2026', voci: ['Reparto corrugati: aggiunte Tubifor e Inset con serie, colori, codici e accessori.', 'Equivalenze automatiche anche per corrugati e tubi rigidi (stesso diametro e stessa classificazione, es. 3321).'] },
   { v: '1.0.8', data: '15/11/2026', voci: ['Adattamento automatico a ogni schermo: telefoni, tablet, pieghevoli, monitor fino al 4K e oltre.', 'Schermi HDR e a colori ampi (P3/Rec.2020) riconosciuti: colori più ricchi, sfondo meno abbagliante.', 'Tema scuro con nero puro: meno consumo su OLED/AMOLED.', 'Mouse o touch riconosciuti; contrasto elevato e colori forzati del sistema rispettati.'] },
   { v: '1.0.7', data: '15/11/2026', voci: ['Grafica rifatta: testo, campi e pulsanti si adattano alla risoluzione dello schermo (telefono piccolo, Pixel, tablet, PC).', 'Nuovo carattere Roboto Flex in stile Pixel, funziona anche offline.', 'Telefono in orizzontale e tablet/PC con menu laterale.', 'In Info si vede lo schermo rilevato.'] },
   { v: '1.0.6', data: '15/11/2026', voci: ['Nuova sezione Reparti: elettrico civile, illuminazione, condizionatori, cavi, fotovoltaico, domotica, corrugati/cassette/tubi RK, citofonia e TVCC.', 'Ogni reparto ha le sue marche e modelli, una guida rapida e il pulsante per aggiungere le marche che vendete.'] },
@@ -243,6 +244,8 @@ function caratteristiche(desc) {
   m(/(\d+(?:\.\d+)?)\s*(?:mm2|mm²|mmq)/, 'mm2', Number);
   m(/(\d+(?:\.\d+)?)\s*w\b/, 'W', Number);
   m(/\bip\s?(\d{2})\b/, 'IP');
+  m(/\b([1-5][1-5][1-5][1-5])\b/, 'classe');
+  m(/(?:ø|diam\.?|d\.)\s?(\d{2})\b/, 'diam', Number);
   const famiglie = [
     ['magnetotermico differenziale', /(magnetotermico\s+differenziale|differenziale\s+magnetotermico|\brcbo\b)/],
     ['differenziale', /(differenziale|salvavita|\brcd\b|\brccb\b)/],
@@ -251,13 +254,15 @@ function caratteristiche(desc) {
     ['presa', /(presa|schuko|bipasso)/],
     ['interruttore civile', /(interruttore|deviatore|invertitore|pulsante)/],
     ['lampada', /(lampada|faretto|plafoniera|tubo led|lampadina)/],
-    ['corrugato', /(corrugato|guaina|tubo rigido)/]
+    ['corrugato', /(corrugato|pieghevole)/],
+    ['tubo rigido', /(tubo rigido|\brk ?(9|15|b|hf)\b|rigido medio|rigido pesante)/],
+    ['guaina', /(guaina)/]
   ];
   for (const [nome, re] of famiglie) if (re.test(d)) { f.famiglia = nome; break; }
   return f;
 }
 const CHIAVI_FAMIGLIA = { magnetotermico: ['A', 'poli', 'polin', 'curva', 'kA'], differenziale: ['A', 'mA', 'poli', 'polin', 'tipo'],
-  'magnetotermico differenziale': ['A', 'mA', 'curva', 'tipo', 'polin', 'poli'], cavo: ['mm2'], lampada: ['W'] };
+  'magnetotermico differenziale': ['A', 'mA', 'curva', 'tipo', 'polin', 'poli'], cavo: ['mm2'], lampada: ['W'], corrugato: ['diam', 'classe'], 'tubo rigido': ['diam', 'classe'] };
 function firma(a) {
   if (a.gruppo) return 'g:' + norm(a.gruppo);
   const f = a._f || (a._f = caratteristiche(a.descrizione));

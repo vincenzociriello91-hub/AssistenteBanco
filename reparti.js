@@ -92,7 +92,9 @@ const REPARTI = [
   {
     id: 'tubi', nome: 'Corrugati, cassette e tubi RK', icona: '🧰',
     marche: [
-      { marca: 'Gewiss', modelli: 'Tubi rigidi RK9 (leggero), RK15 (medio), RKB (pesante), RK9 HF e RKHF (halogen free)', note: 'Diametri 16–63 mm, verghe da 2 e 3 m' }
+      { marca: 'Gewiss', modelli: 'Tubi rigidi RK9 (leggero), RK15 (medio), RKB (pesante), RK9 HF e RKHF (halogen free)', note: 'Diametri 16–63 mm, verghe da 2 e 3 m' },
+      { marca: 'Tubifor', modelli: 'Corrugati PVC classe 3321 (con o senza tirafilo, vari colori), corrugati ICTA in polipropilene 3422 halogen free, tubi precablati, tubi rigidi PVC, cavidotti interrati, guaine spiralate, canali portacavi', note: 'Codice corrugato es. TF01032AT025 = Ø32, azzurro (A), con tirafilo (T), rotolo 25 m; TF01025NT050 = Ø25 nero 50 m' },
+      { marca: 'Inset (Hager Bocchiotti)', modelli: 'Corrugati pieghevoli FMP 3321 (Ø16–50): FMP nero, FMPA azzurro, FMPB bianco, FMPL lilla, FMPM marrone, FMPV verde; tubi rigidi GRI 3321 e RFG 4321; guaine GHF halogen free', note: 'Accessori: manicotto MFL IP64, raccordo tubo-scatola PREG IP64-67, raccordo rigido-scatola RSTN IP67, sonde tirafili STC. Ora nella stessa gamma Pmflex' }
     ],
     guida: `<ul class="ref">
       <li><strong>Classificazione CEI EN 61386</strong> (le cifre sul tubo): 1ª cifra compressione 2 = leggero 320 N, 3 = medio 750 N, 4 = pesante 1250 N; 2ª cifra urto (2 J medio, 6 J pesante).</li>
@@ -101,6 +103,7 @@ const REPARTI = [
       <li><strong>Tubo rigido RK:</strong> posa a vista su parete, controsoffitti, pavimenti flottanti; si raccorda a scatole e guaine con gli accessori della serie (l'IP dipende dagli accessori).</li>
       <li><strong>Halogen free</strong> (HF): locali pubblici, gallerie, dove i fumi devono essere poco tossici.</li>
       <li><strong>Cassette di derivazione/ispezione:</strong> da incasso o da parete; scegli misura dal numero di tubi e morsetti, IP44 interno umido, IP55/IP56 esterno, IP65 dove arriva acqua a getto. Non chiudere giunzioni fuori dalle cassette.</li>
+      <li><strong>Equivalenze tra marche:</strong> stesso diametro + stessa classificazione = stesso tubo (es. Inset FMP 3321 Ø25 ≈ Tubifor corrugato 3321 Ø25 ≈ corrugato medio 750 N Gewiss Ø25). Il colore serve solo a distinguere gli impianti (energia, dati, citofono…).</li>
       <li>Diametro del corrugato giusto: strumento <em>Tubo / corrugato</em> in Strumenti.</li>
     </ul>`
   },
