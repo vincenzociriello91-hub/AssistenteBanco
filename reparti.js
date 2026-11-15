@@ -184,7 +184,8 @@ const RepartiUI = {
     this.aperto = id;
     document.getElementById('repTitolo').textContent = `${r.icona} ${r.nome}`;
     const tutte = this.marche(r);
-    const lista = tutte.length ? tutte.map(m => `<div class="item"><div class="t">${this.esc(m.marca)}${m.mia != null ? ` <span class="chip">aggiunta da te</span> <button class="btn-mini" data-del="${r.id}:${m.mia}" aria-label="Elimina ${this.esc(m.marca)}">✕</button>` : ''}</div>${m.modelli ? `<div class="m">${this.esc(m.modelli)}</div>` : ''}${m.note ? `<div class="m">${this.esc(m.note)}</div>` : ''}</div>`).join('')
+    const tri = m => (typeof Codici !== 'undefined' && Codici.tripla(m.marca)) ? ` <span class="codice">${this.esc(Codici.tripla(m.marca))}</span>` : '';
+    const lista = tutte.length ? tutte.map(m => `<div class="item"><div class="t">${this.esc(m.marca)}${tri(m)}${m.mia != null ? ` <span class="chip">aggiunta da te</span> <button class="btn-mini" data-del="${r.id}:${m.mia}" aria-label="Elimina ${this.esc(m.marca)}">✕</button>` : ''}</div>${m.modelli ? `<div class="m">${this.esc(m.modelli)}</div>` : ''}${m.note ? `<div class="m">${this.esc(m.note)}</div>` : ''}</div>`).join('')
       : '<p class="hint">Nessuna marca ancora: aggiungi quelle che vendete.</p>';
     document.getElementById('repDettaglio').innerHTML = `
       <h2 class="sezione">Marche e serie</h2>${lista}

@@ -63,6 +63,7 @@
       <button class="tile" data-open="luce"><span class="tile-ico">💡</span><span class="tile-t">Illuminazione</span><span class="tile-s">Lumen e watt LED</span></button>
       <button class="tile" data-open="conv"><span class="tile-ico">🔁</span><span class="tile-t">Conversioni</span><span class="tile-s">kW, A, CV, kVA</span></button>
       <button class="tile" data-open="contatore"><span class="tile-ico">🔌</span><span class="tile-t">Contatore</span><span class="tile-s">Potenza prelevabile</span></button>
+      <button class="tile" data-open="codici"><span class="tile-ico">🏷️</span><span class="tile-t">Codici gestionale</span><span class="tile-s">Triple fornitori e famiglie</span></button>
       <button class="tile" data-open="promemoria"><span class="tile-ico">📋</span><span class="tile-t">Promemoria</span><span class="tile-s">Colori, sezioni, IP, cavi</span></button>
     </div>
   </div>
@@ -166,6 +167,24 @@
     <div class="card">
       <div class="grid"><label>Potenza impegnata (kW)<select id="ctKw"><option>3</option><option>4.5</option><option selected>6</option><option>10</option><option>15</option></select></label></div>
       <div id="ctOut"></div>
+    </div>
+  </div>
+
+  <div class="view" data-view="codici" hidden>
+    <div class="viewhead"><button class="back" aria-label="Indietro">←</button><h1>Codici gestionale</h1></div>
+    <p class="hint">Triple dei fornitori e codici di ricerca del gestionale. Restano solo su questo dispositivo.</p>
+    <div class="card" id="codNoData">
+      <p>Nessun codice caricato. Importa il file <code>codici-elettrocampania.json</code>.</p>
+      <input id="codImport" type="file" accept=".json,application/json" aria-label="Importa codici">
+      <div id="codMsg" class="small"></div>
+    </div>
+    <div id="codData" hidden>
+      <div class="card"><input id="codQ" type="search" placeholder="Filtra (es. Siemens, SIE, salvamotore)" aria-label="Filtra codici"></div>
+      <div id="codLista"></div>
+      <details class="card"><summary>Sostituisci o elimina i codici</summary>
+        <input id="codImport2" type="file" accept=".json,application/json" aria-label="Sostituisci codici">
+        <div class="row"><button id="codClear" class="btn danger">Elimina codici da questo dispositivo</button></div>
+      </details>
     </div>
   </div>
 

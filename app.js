@@ -1,8 +1,9 @@
 /* Assistente Banco — interfaccia */
 'use strict';
 
-const VERSION = '1.2.0';
+const VERSION = '1.3.0';
 const CHANGELOG = [
+  { v: '1.3.0', data: '15/11/2026', voci: ['Nuovo strumento Codici gestionale: triple dei fornitori e codici di ricerca (Siemens, Schneider, Ledvance, cavi e rame).', 'Cerca trova anche i codici (es. "salvamotore" → SIE RV, SNR GV) e nei reparti compare la tripla accanto alla marca.', 'I codici aziendali restano solo sul dispositivo: si importano da file.'] },
   { v: '1.2.0', data: '15/11/2026', voci: ['App riordinata in 4 schede: Cerca, Strumenti, Reparti, Info.', 'Strumenti e reparti come riquadri uguali: tocchi e si apre la pagina, freccia o tasto indietro per tornare.', 'Cerca trova insieme articoli del catalogo, marche nei reparti e ricerca online.', 'Dimensiona linea più semplice: opzioni avanzate nascoste finché non servono.'] },
   { v: '1.1.0', data: '15/11/2026', voci: ['Marche aggiunte: illuminazione (Philips, Ledvance, Beghelli, Disano, Fosnova, 3F Filippi, Performance in Lighting, iGuzzini).', 'Cavi (Prysmian, La Triveneta Cavi, Baldassari, Icel); fotovoltaico (Huawei, SMA, Fronius, SolarEdge, ZCS Azzurro, Sungrow, Kostal, GoodWe, BYD, moduli).', 'Domotica (Gewiss, ABB, Schneider); cassette (Gewiss 44 CE, Bocchiotti Pico, Scame Scabox).'] },
   { v: '1.0.9', data: '15/11/2026', voci: ['Reparto corrugati: aggiunte Tubifor e Inset con serie, colori, codici e accessori.', 'Equivalenze automatiche anche per corrugati e tubi rigidi (stesso diametro e stessa classificazione, es. 3321).'] },
@@ -32,6 +33,7 @@ const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const fmt = (n, d = 1) => Number.isFinite(n) ? n.toLocaleString('it-IT', { maximumFractionDigits: d, minimumFractionDigits: 0 }) : '—';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const norm = s => String(s ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
 /* ============ RAPPORTI ============ */
 const Report = {
@@ -247,6 +249,63 @@ $('#promemoria').innerHTML = `
 <li><strong>Potere di interruzione:</strong> casa 4,5 kA; dove la corrente di cortocircuito è più alta 6 kA o 10 kA.</li>
 </ul>`;
 
+/* ============ CODICI GESTIONALE (dati aziendali: solo sul dispositivo) ============ */
+const Codici = {
+  dati: null,
+  carica() { try { this.dati = JSON.parse(localStorage.getItem('ab_codici') || 'null'); } catch { this.dati = null; } return this.dati; },
+  salva(d) { localStorage.setItem('ab_codici', JSON.stringify(d)); this.dati = d; },
+  valida(d) { return d && d.tipo === 'codici-gestionale' && Array.isArray(d.fornitori); },
+  // Tripla del fornitore partendo dal nome marca (con alias: Hager, Hikvision, Panduit…)
+  tripla(marca) {
+    if (!this.dati) return null;
+    const m = norm(marca).replace(/\(.*?\)/g, '').trim();
+    const f = this.dati.fornitori.find(f => { const nomi = [norm(f.nome), ...norm(f.alias).split(' ').filter(Boolean)]; return nomi.some(n => n && (m === n || m.startsWith(n + ' ') || n.startsWith(m + ' ') || m.split(' ')[0] === n.split(' ')[0])); });
+    return f ? f.tripla : null;
+  },
+  cerca(q) {
+    if (!this.dati) return { fornitori: [], famiglie: [] };
+    const p = norm(q).split(/\s+/).filter(Boolean);
+    if (!p.length) return { fornitori: this.dati.fornitori, famiglie: this.dati.famiglie };
+    const ok = s => p.every(x => norm(s).includes(x));
+    return {
+      fornitori: this.dati.fornitori.filter(f => ok(`${f.nome} ${f.tripla} ${f.alias}`)),
+      famiglie: this.dati.famiglie.filter(f => ok(`${f.fornitore} ${f.tripla} ${f.descrizione} ${f.codice} ${f.parole}`))
+    };
+  },
+  html(r, limite) {
+    const fam = r.famiglie.slice(0, limite || 999), forn = r.fornitori.slice(0, limite || 999);
+    let s = '';
+    if (fam.length) s += fam.map(f => `<div class="item"><div class="t"><span class="codice">${esc(f.codice)}</span> ${esc(f.descrizione)}</div><div class="m">${esc(f.fornitore)}</div></div>`).join('');
+    if (forn.length) s += `<div class="item"><div class="codgrid">${forn.map(f => `<span><span class="codice">${esc(f.tripla)}</span> ${esc(f.nome)}</span>`).join('')}</div></div>`;
+    return s;
+  },
+  renderVista() {
+    const ok = !!this.carica();
+    $('#codNoData').hidden = ok; $('#codData').hidden = !ok;
+    if (!ok) return;
+    const r = this.cerca($('#codQ').value);
+    const fam = r.famiglie.length ? `<h2 class="sezione">Codici di ricerca</h2>${this.html({ famiglie: r.famiglie, fornitori: [] })}` : '';
+    const forn = r.fornitori.length ? `<h2 class="sezione">Triple fornitori (${r.fornitori.length})</h2>${this.html({ famiglie: [], fornitori: r.fornitori })}` : '';
+    $('#codLista').innerHTML = fam + forn || '<p class="hint">Nessun codice trovato.</p>';
+  },
+  async importa(file, msgEl) {
+    try {
+      const d = JSON.parse(await file.text());
+      if (!this.valida(d)) throw new Error('File non valido: serve codici-elettrocampania.json');
+      this.salva(d);
+      if (msgEl) msgEl.textContent = `Caricati ${d.fornitori.length} fornitori e ${d.famiglie.length} codici.`;
+      Report.log('codici-import', { fornitori: d.fornitori.length, famiglie: d.famiglie.length });
+      this.renderVista(); RepartiUI.render();
+    } catch (e) { if (msgEl) msgEl.textContent = 'Errore: ' + e.message; Report.log('errore-codici', { msg: e.message }); }
+  }
+};
+Codici.carica();
+$('#codImport').addEventListener('change', e => { const f = e.target.files[0]; if (f) Codici.importa(f, $('#codMsg')); e.target.value = ''; });
+$('#codImport2').addEventListener('change', e => { const f = e.target.files[0]; if (f) Codici.importa(f, null); e.target.value = ''; });
+$('#codClear').addEventListener('click', () => { localStorage.removeItem('ab_codici'); Codici.dati = null; Codici.renderVista(); Report.log('codici-eliminati', {}); });
+$('#codQ').addEventListener('input', () => Codici.renderVista());
+Codici.renderVista();
+
 /* ============ CATALOGO (IndexedDB) ============ */
 const DB = {
   db: null,
@@ -264,7 +323,6 @@ const DB = {
 };
 let CATALOGO = [];
 
-const norm = s => String(s ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 // Estrae caratteristiche tecniche dalla descrizione per le equivalenze tra marche
 function caratteristiche(desc) {
   const d = norm(desc).replace(/(\d),(\d)/g, '$1.$2');
@@ -338,8 +396,10 @@ function cerca(q) {
     <a href="https://www.google.com/search?q=${encodeURIComponent(q + ' scheda tecnica')}" target="_blank" rel="noopener">Scheda tecnica</a> ·
     <a href="https://www.google.com/search?q=${encodeURIComponent(q + ' equivalente')}" target="_blank" rel="noopener">Equivalenti</a> ·
     <a href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}" target="_blank" rel="noopener">Foto</a></div></div>`;
+  const cod = Codici.cerca(q);
+  const codHtml = Codici.dati && (cod.famiglie.length || cod.fornitori.length) && cod.fornitori.length < Codici.dati.fornitori.length ? `<h2 class="sezione">Codici gestionale</h2>${Codici.html(cod, 6)}` : '';
   const rep = RepartiUI.cerca(q).slice(0, 6);
-  const repHtml = rep.length ? `<h2 class="sezione">Nei reparti</h2>${rep.map(x => `<button class="item item-link" data-goto-rep="${x.reparto.id}"><div class="t">${esc(x.marca.marca)} <span class="chip">${x.reparto.icona} ${esc(x.reparto.nome)}</span></div><div class="m">${esc(x.marca.modelli)}</div></button>`).join('')}` : '';
+  const repHtml = codHtml + (rep.length ? `<h2 class="sezione">Nei reparti</h2>${rep.map(x => `<button class="item item-link" data-goto-rep="${x.reparto.id}"><div class="t">${esc(x.marca.marca)}${Codici.tripla(x.marca.marca) ? ` <span class="codice">${esc(Codici.tripla(x.marca.marca))}</span>` : ''} <span class="chip">${x.reparto.icona} ${esc(x.reparto.nome)}</span></div><div class="m">${esc(x.marca.modelli)}</div></button>`).join('')}` : '');
   if (!lista.length) { out.innerHTML = repHtml + (CATALOGO.length ? '<h2 class="sezione">Catalogo</h2><p class="hint">Nessun articolo nel catalogo.</p>' : '') + '<h2 class="sezione">Online</h2>' + web; return; }
   const etichetta = (k, v) => ({ curva: 'curva ' + String(v).toUpperCase(), tipo: 'tipo ' + String(v).toUpperCase(), poli: v + 'P', polin: String(v).toUpperCase(), IP: 'IP' + v }[k] ?? `${v} ${k}`);
   out.innerHTML = repHtml + '<h2 class="sezione">Catalogo</h2>' + lista.map(a => {
